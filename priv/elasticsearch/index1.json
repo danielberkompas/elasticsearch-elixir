@@ -1,0 +1,14 @@
+{
+  "mappings": {
+    "type1": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

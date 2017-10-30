@@ -11,28 +11,54 @@ defmodule Elasticsearch.Exception do
     :col,
     :message,
     :type,
-    :query
+    :query,
+    :raw
   ]
 
   @enforce_keys @keys
   defexception @keys
 
   def exception(opts \\ []) do
-    %Exception{
-      status: opts[:response]["status"],
-      line: get_in(opts[:response], ["error", "line"]),
-      col: get_in(opts[:response], ["error", "col"]),
-      message: get_in(opts[:response], ["error", "reason"]),
-      type: get_in(opts[:response], ["error", "root_cause", Access.at(0), "type"]),
-      query: opts[:query]
-    }
+    attrs = build(opts[:response], opts[:query])
+    struct(Exception, attrs)
   end
 
   def message(exception) do
-    """
-    (#{exception.type}) #{exception.message}
+    type = if exception.type, do: "(#{exception.type})"
+    msg = if exception.message, do: exception.message
 
-    #{inspect(exception.query)}
-    """
+    [type, msg]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+  end
+
+  defp build(response, query) when is_map(response) do
+    [
+      status: response["status"],
+      line: get_in(response, ["error", "line"]),
+      col: get_in(response, ["error", "col"]),
+      message: get_in(response, ["error", "reason"]),
+      type: type(response),
+      raw: response,
+      query: query
+    ]
+  end
+
+  defp build(response, query) when is_binary(response) do
+    [
+      status: nil,
+      line: nil,
+      col: nil,
+      message: response,
+      type: nil,
+      query: query
+    ]
+  end
+
+  defp type(%{"error" => %{"root_cause" => causes}}) do
+    get_in(causes, [Access.at(0), "type"])
+  end
+  defp type(%{"error" => %{"type" => type}}) do
+    type
   end
 end

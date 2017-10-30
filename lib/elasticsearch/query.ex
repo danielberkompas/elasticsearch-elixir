@@ -21,6 +21,8 @@ defmodule Elasticsearch.Query do
 
   alias __MODULE__
 
+  @enforce_keys [:indexes, :types, :query]
+
   defstruct indexes: [],
             types: [],
             query: %{}
