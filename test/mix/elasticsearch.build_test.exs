@@ -48,6 +48,10 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
       {:ok, indexes} = Elasticsearch.indexes_starting_with("index1")
       assert length(indexes) == 2
+      [_previous, current] = Enum.sort(indexes)
+
+      # assert that the most recent index is the one that is aliased
+      assert {:ok, %{^current => _}} = Elasticsearch.get("/index1_alias/_alias")
     end
 
     test "--existing checks if index exists" do

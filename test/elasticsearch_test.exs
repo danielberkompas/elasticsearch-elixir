@@ -1,8 +1,6 @@
 defmodule ElasticsearchTest do
   use ExUnit.Case
 
-  alias Elasticsearch.Query
-
   doctest Elasticsearch
 
   setup do

@@ -33,9 +33,10 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   defp build(config, :rebuild) do
     index_name = Config.build_index_name(config[:alias])
 
-    with :ok <- Elasticsearch.create_index(index_name, config[:schema]),
+    with :ok <- Elasticsearch.create_index_from_file(index_name, config[:schema]),
          :ok <- Elasticsearch.Bulk.upload(index_name, config[:sources]),
          :ok <- Elasticsearch.alias_index(index_name, config[:alias]),
+         :ok <- Elasticsearch.clean_indexes_starting_with(config[:alias], 2),
          :ok <- Elasticsearch.refresh_index(index_name) do
            :ok
     else
