@@ -182,8 +182,8 @@ defmodule Elasticsearch do
     with {:ok, indexes} <- get("/_cat/indices?format=json") do
       indexes =
         indexes
-        |> Stream.map(&(&1["index"]))
-        |> Stream.filter(&String.starts_with?(&1, prefix))
+        |> Enum.map(&(&1["index"]))
+        |> Enum.filter(&String.starts_with?(&1, prefix))
         |> Enum.sort()
 
       {:ok, indexes}

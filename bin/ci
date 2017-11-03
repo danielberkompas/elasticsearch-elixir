@@ -5,14 +5,6 @@
 # This script contains all the test commands for this app, which will be run
 # on the continuous integration server.
 
-if [ $CI ]; then
-  # Setup steps to ensure fast builds on Semaphore CI
-  export MIX_HOME=$SEMAPHORE_CACHE_DIR
-  mkdir -p $SEMAPHORE_CACHE_DIR/{_build,deps}
-  ln -s $SEMAPHORE_CACHE_DIR/deps $SEMAPHORE_PROJECT_DIR/deps
-  ln -s $SEMAPHORE_CACHE_DIR/_build $SEMAPHORE_PROJECT_DIR/_build
-fi
-
 MIX_ENV=test mix compile --warnings-as-errors --force || { echo 'Please fix all compiler warnings.'; exit 1; }
 MIX_ENV=test mix docs || { echo 'Elixir HTML docs were not generated!'; exit 1; }
 MIX_ENV=test mix dialyze || { echo 'Dialyzer checks failed.'; exit 1; }

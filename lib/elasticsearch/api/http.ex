@@ -38,10 +38,14 @@ defmodule Elasticsearch.API.HTTP do
 
   @doc false
   def process_response_body(body) do
-    if body =~ "{" do
+    if json?(body) do
       Poison.decode!(body)
     else
       body
     end
+  end
+
+  defp json?(str) do
+    str =~ ~r/^\{/ || str =~ ~r/^\[/
   end
 end
