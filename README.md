@@ -64,7 +64,7 @@ config :elasticsearch,
       # This file describes the mappings and settings for your index. It will
       # be posted as-is to Elasticsearch when you create your index, and
       # therefore allows all the settings you could post directly.
-      schema: "priv/elasticsearch/cities.json",
+      settings: "priv/elasticsearch/cities.json",
 
       # This is the list of data sources that should be used to populate this
       # index. The `:loader` module above will be passed each one of these

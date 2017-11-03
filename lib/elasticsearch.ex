@@ -14,10 +14,7 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index("test1", "{}")
-      :ok
-
-      iex> Elasticsearch.create_index("test1", %{})
+      iex> Elasticsearch.create_index("posts-1", "{}")
       :ok
   """
   @spec create_index(String.t, map | String.t) :: 
@@ -32,10 +29,10 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       :ok
 
-      iex> Elasticsearch.create_index_from_file("test2", "nonexistent.json")
+      iex> Elasticsearch.create_index_from_file("posts-1", "nonexistent.json")
       {:error, :enoent}
   """
   @spec create_index_from_file(String.t, Path.t) ::
@@ -55,13 +52,13 @@ defmodule Elasticsearch do
 
   ## Example
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> struct = %Type1{id: 123, name: "Post", author: "Author"}
-      ...> Elasticsearch.put_document(struct, "test1")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> struct = %Post{id: 123, title: "Post", author: "Author"}
+      ...> Elasticsearch.put_document(struct, "posts-1")
       {:ok,
-       %{"_id" => "123", "_index" => "test1",
+       %{"_id" => "123", "_index" => "posts-1",
          "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-         "_type" => "type1", "_version" => 1, "created" => true,
+         "_type" => "post", "_version" => 1, "created" => true,
          "result" => "created"}}
   """
   @spec put_document(Document.t, String.t) :: response
@@ -113,8 +110,8 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.alias_index("test1", "test")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.alias_index("posts-1", "posts")
       :ok
   """
   @spec alias_index(String.t, String.t) ::
@@ -173,13 +170,17 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.create_index_from_file("test2", "test/support/settings/index2.json")
-      ...> Elasticsearch.indexes_starting_with("test")
-      {:ok, ["test1", "test2"]}
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.indexes_starting_with("posts")
+      {:ok, ["posts-1"]}
   """
+  @spec indexes_starting_with(String.t | atom) ::
+    {:ok, [String.t]} |
+    {:error, Elasticsearch.Exception.t}
   def indexes_starting_with(prefix) do
     with {:ok, indexes} <- get("/_cat/indices?format=json") do
+      prefix = to_string(prefix)
+
       indexes =
         indexes
         |> Enum.map(&(&1["index"]))
@@ -195,17 +196,17 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.create_index_from_file("test2", "test/support/settings/index2.json")
-      ...> Elasticsearch.latest_index_starting_with("test")
-      {:ok, "test2"}
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.create_index_from_file("posts-2", "test/support/settings/posts.json")
+      ...> Elasticsearch.latest_index_starting_with("posts")
+      {:ok, "posts-2"}
 
   If there are no indexes matching that prefix:
 
       iex> Elasticsearch.latest_index_starting_with("nonexistent")
       {:error, :not_found}
   """
-  @spec latest_index_starting_with(String.t) ::
+  @spec latest_index_starting_with(String.t | atom) ::
     {:ok, String.t} |
     {:error, :not_found} |
     {:error, Elasticsearch.Exception.t}
@@ -228,8 +229,8 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.refresh_index("test1")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.refresh_index("posts-1")
       :ok
   """
   @spec refresh_index(String.t) :: :ok | {:error, Elasticsearch.Exception.t}
@@ -244,8 +245,8 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.refresh_index!("test1")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.refresh_index!("posts-1")
       :ok
 
       iex> Elasticsearch.refresh_index!("nonexistent")
@@ -270,17 +271,17 @@ defmodule Elasticsearch do
 
   If there is only one index, and `num_to_keep` is >= 1, the index is not deleted.
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.clean_indexes_starting_with("test", 1)
-      ...> Elasticsearch.indexes_starting_with("test")
-      {:ok, ["test1"]}
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.clean_indexes_starting_with("posts", 1)
+      ...> Elasticsearch.indexes_starting_with("posts")
+      {:ok, ["posts-1"]}
 
   If `num_to_keep` is less than the number of indexes, the older indexes are
   deleted.
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.clean_indexes_starting_with("test", 0)
-      ...> Elasticsearch.indexes_starting_with("test")
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.clean_indexes_starting_with("posts", 0)
+      ...> Elasticsearch.indexes_starting_with("posts")
       {:ok, []}
   """
   @spec clean_indexes_starting_with(String.t, integer) ::
@@ -363,15 +364,15 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.put("/test1/type1/id", %{"name" => "name", "author" => "author"})
+      iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
+      ...> Elasticsearch.put("/posts-1/post/id", %{"title" => "title", "author" => "author"})
       {:ok,
-        %{"_id" => "id", "_index" => "test1",
+        %{"_id" => "id", "_index" => "posts-1",
           "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-          "_type" => "type1", "_version" => 1, "created" => true,
+          "_type" => "post", "_version" => 1, "created" => true,
           "result" => "created"}}
 
-      iex> Elasticsearch.put("/bad/url", %{"name" => "name", "author" => "author"})
+      iex> Elasticsearch.put("/bad/url", %{"title" => "title", "author" => "author"})
       {:error,
        %Elasticsearch.Exception{col: nil, line: nil,
         message: "No handler found for uri [/bad/url] and method [PUT]",
@@ -388,11 +389,11 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.put!("/test1/type1/id", %{"name" => "name", "author" => "author"})
-      %{"_id" => "id", "_index" => "test1",
+      iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
+      ...> Elasticsearch.put!("/posts/post/id", %{"name" => "name", "author" => "author"})
+      %{"_id" => "id", "_index" => "posts",
         "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-        "_type" => "type1", "_version" => 1, "created" => true,
+        "_type" => "post", "_version" => 1, "created" => true,
         "result" => "created"}
 
       iex> Elasticsearch.put!("/bad/url", %{"data" => "here"})
@@ -411,9 +412,9 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
+      iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
-      ...> {:ok, resp} = Elasticsearch.post("/test1/_search", query)
+      ...> {:ok, resp} = Elasticsearch.post("/posts/_search", query)
       ...> resp["hits"]["hits"]
       []
   """
@@ -427,9 +428,9 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
+      iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
-      ...> resp = Elasticsearch.post!("/test1/_search", query)
+      ...> resp = Elasticsearch.post!("/posts/_search", query)
       ...> is_map(resp)
       true
 
@@ -451,8 +452,8 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.delete("/test1")
+      iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
+      ...> Elasticsearch.delete("/posts")
       {:ok, %{"acknowledged" => true}}
 
   It returns an error if the given resource does not exist.
@@ -483,8 +484,8 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
-      ...> Elasticsearch.delete!("/test1")
+      iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
+      ...> Elasticsearch.delete!("/posts")
       %{"acknowledged" => true}
 
   Raises an error if the resource is invalid.

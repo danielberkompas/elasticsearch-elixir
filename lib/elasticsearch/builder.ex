@@ -16,12 +16,12 @@ defmodule Elasticsearch.Builder do
 
   ## Example
 
-      iex> file = "test/support/settings/index1.json"
+      iex> file = "test/support/settings/posts.json"
       ...> loader = Elasticsearch.Test.DataLoader
-      ...> Builder.hot_swap_index("index1", file, loader, [Type1])
+      ...> Builder.hot_swap_index("posts", file, loader, [Post])
       :ok
   """
-  @spec hot_swap_index(String.t, Path.t, Elasticsearch.DataLoader.t, list) ::
+  @spec hot_swap_index(String.t | atom, String.t, Elasticsearch.DataLoader.t, list) ::
     :ok |
     {:error, Elasticsearch.Exception.t}
   def hot_swap_index(alias, settings_file, loader, sources) do
@@ -45,7 +45,7 @@ defmodule Elasticsearch.Builder do
       Config.build_index_name("main")
       # => "main-1509581256"
   """
-  @spec build_index_name(String.t) :: String.t
+  @spec build_index_name(String.t | atom) :: String.t
   def build_index_name(alias) do
     "#{alias}-#{system_timestamp()}"
   end

@@ -66,26 +66,24 @@ defmodule Elasticsearch.Config do
 
       config :elasticsearch,
         indexes: %{
-          index1: %{
-            alias: "index1_alias",
-            schema: "test/support/settings/index1.json",
-            sources: [Type1]
+          posts: %{
+            settings: "test/support/settings/posts.json",
+            loader: Elasticsearch.Test.DataLoader,
+            sources: [Post]
           }
         }
 
   ## Example
   
-      iex> Config.config_for_index(:index1)
+      iex> Config.config_for_index(:posts)
       %{
-         alias: "index1_alias",
-         schema: "test/support/settings/index1.json",
+         settings: "test/support/settings/posts.json",
          loader: Elasticsearch.Test.DataLoader,
-         sources: [Type1]
+         sources: [Post]
        }
   """
   @spec config_for_index(atom) :: %{
-    alias: String.t, 
-    schema: String.t, 
+    settings: String.t, 
     loader: DataLoader.t, 
     sources: [DataLoader.source]
   } | nil

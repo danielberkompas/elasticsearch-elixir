@@ -16,10 +16,10 @@ defmodule Elasticsearch.Bulk do
 
   ## Examples
   
-      iex> Bulk.encode(%Type1{id: "my-id"}, "my-index")
+      iex> Bulk.encode(%Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
-      {"create":{"_type":"type1","_index":"my-index","_id":"my-id"}}
-      {"name":null,"author":null}
+      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"title":null,"author":null}
       \"\"\"}
 
       iex> Bulk.encode(123, "my-index")
@@ -42,14 +42,14 @@ defmodule Elasticsearch.Bulk do
 
   ## Example
   
-      iex> Bulk.encode!(%Type1{id: "my-id"}, "my-index")
+      iex> Bulk.encode!(%Post{id: "my-id"}, "my-index")
       \"\"\"
-      {"create":{"_type":"type1","_index":"my-index","_id":"my-id"}}
-      {"name":null,"author":null}
+      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"title":null,"author":null}
       \"\"\"
       
       iex> Bulk.encode!(123, "my-index")
-      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Type1, Type2
+      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Post
   """
   def encode!(struct, index) do
     header = header("create", index, struct)
@@ -65,11 +65,6 @@ defmodule Elasticsearch.Bulk do
   @doc """
   Uploads all the data from the list of `sources` to the given index.
   Data for each `source` will be fetched using the configured `:loader`.
-
-  ## Example
-  
-      iex> Bulk.upload("test1", Elasticsearch.Test.DataLoader, [Type1])
-      :ok
   """
   @spec upload(String.t, Elasticsearch.DataLoader.t, list) :: :ok | {:error, [map]}
   def upload(index_name, loader, sources, errors \\ [])
