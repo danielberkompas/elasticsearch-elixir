@@ -24,14 +24,14 @@ defmodule Elasticsearch.DataStream do
 
   ## Example
   
-      iex> stream = DataStream.stream(MyApp.Schema)
+      iex> stream = DataStream.stream(MyApp.Schema, Elasticsearch.Test.DataLoader)
       ...> is_function(stream)
       true
       
   """
-  @spec stream(source) :: Stream.t
-  def stream(source) do
-    Stream.resource(&init/0, &next(&1, source), &finish/1)
+  @spec stream(source, Elasticsearch.DataLoader.t) :: Stream.t
+  def stream(source, loader) do
+    Stream.resource(&init/0, &next(&1, source, loader), &finish/1)
   end
 
   # Store state in the following format:
@@ -42,21 +42,21 @@ defmodule Elasticsearch.DataStream do
   end
 
   # If no items, load another page of items
-  defp next({[], offset, limit}, source) do
-    load_page(source, offset, limit)
+  defp next({[], offset, limit}, source, loader) do
+    load_page(source, loader, offset, limit)
   end
 
   # If there are items, return the next item, and set the new state equal to
   # {tail, offset, limit}
-  defp next({[h | t], offset, limit}, _source) do
+  defp next({[h | t], offset, limit}, _source, _loader) do
     {[h], {t, offset, limit}}
   end
 
   # Fetch a new page of items
-  defp load_page(source, offset, limit) do
+  defp load_page(source, loader, offset, limit) do
     page_size = config()[:bulk_page_size]
 
-    case config()[:loader].load(source, offset, limit) do
+    case loader.load(source, offset, limit) do
       # If the load returns no more items (i.e., we've iterated through them
       # all) then halt the stream and leave offset and limit unchanged.
       [] -> 

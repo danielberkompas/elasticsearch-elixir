@@ -68,17 +68,17 @@ defmodule Elasticsearch.Bulk do
 
   ## Example
   
-      iex> Bulk.upload("test1", [:type1])
+      iex> Bulk.upload("test1", Elasticsearch.Test.DataLoader, [Type1])
       :ok
   """
-  @spec upload(String.t, list) :: :ok | {:error, [map]}
-  def upload(index_name, sources, errors \\ [])
-  def upload(_index_name, [], []), do: :ok
-  def upload(_index_name, [], errors), do: {:error, errors}
-  def upload(index_name, [source | tail] = _sources, errors) do
+  @spec upload(String.t, Elasticsearch.DataLoader.t, list) :: :ok | {:error, [map]}
+  def upload(index_name, loader, sources, errors \\ [])
+  def upload(_index_name, _loader, [], []), do: :ok
+  def upload(_index_name, _loader, [], errors), do: {:error, errors}
+  def upload(index_name, loader, [source | tail] = _sources, errors) do
     errors =
       source
-      |> DataStream.stream()
+      |> DataStream.stream(loader)
       |> Stream.map(&encode!(&1, index_name))
       |> Stream.chunk_every(config()[:bulk_page_size])
       |> Stream.map(&Elasticsearch.put("/#{index_name}/_bulk", Enum.join(&1)))

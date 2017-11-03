@@ -32,7 +32,7 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       :ok
 
       iex> Elasticsearch.create_index_from_file("test2", "nonexistent.json")
@@ -55,7 +55,7 @@ defmodule Elasticsearch do
 
   ## Example
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> struct = %Type1{id: 123, name: "Post", author: "Author"}
       ...> Elasticsearch.put_document(struct, "test1")
       {:ok,
@@ -113,7 +113,7 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.alias_index("test1", "test")
       :ok
   """
@@ -173,8 +173,8 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
-      ...> Elasticsearch.create_index_from_file("test2", "priv/elasticsearch/index2.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
+      ...> Elasticsearch.create_index_from_file("test2", "test/support/settings/index2.json")
       ...> Elasticsearch.indexes_starting_with("test")
       {:ok, ["test1", "test2"]}
   """
@@ -195,8 +195,8 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
-      ...> Elasticsearch.create_index_from_file("test2", "priv/elasticsearch/index2.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
+      ...> Elasticsearch.create_index_from_file("test2", "test/support/settings/index2.json")
       ...> Elasticsearch.latest_index_starting_with("test")
       {:ok, "test2"}
 
@@ -228,7 +228,7 @@ defmodule Elasticsearch do
 
   ## Example
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.refresh_index("test1")
       :ok
   """
@@ -244,7 +244,7 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.refresh_index!("test1")
       :ok
 
@@ -270,7 +270,7 @@ defmodule Elasticsearch do
 
   If there is only one index, and `num_to_keep` is >= 1, the index is not deleted.
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.clean_indexes_starting_with("test", 1)
       ...> Elasticsearch.indexes_starting_with("test")
       {:ok, ["test1"]}
@@ -278,7 +278,7 @@ defmodule Elasticsearch do
   If `num_to_keep` is less than the number of indexes, the older indexes are
   deleted.
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.clean_indexes_starting_with("test", 0)
       ...> Elasticsearch.indexes_starting_with("test")
       {:ok, []}
@@ -363,7 +363,7 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.put("/test1/type1/id", %{"name" => "name", "author" => "author"})
       {:ok,
         %{"_id" => "id", "_index" => "test1",
@@ -388,7 +388,7 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.put!("/test1/type1/id", %{"name" => "name", "author" => "author"})
       %{"_id" => "id", "_index" => "test1",
         "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
@@ -411,7 +411,7 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
       ...> {:ok, resp} = Elasticsearch.post("/test1/_search", query)
       ...> resp["hits"]["hits"]
@@ -427,11 +427,11 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
       ...> resp = Elasticsearch.post!("/test1/_search", query)
-      ...> resp["hits"]["hits"]
-      []
+      ...> is_map(resp)
+      true
 
   Raises an error if the path is invalid or another error occurs:
 
@@ -451,7 +451,7 @@ defmodule Elasticsearch do
 
   ## Examples
 
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.delete("/test1")
       {:ok, %{"acknowledged" => true}}
 
@@ -483,7 +483,7 @@ defmodule Elasticsearch do
 
   ## Examples
   
-      iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
+      iex> Elasticsearch.create_index_from_file("test1", "test/support/settings/index1.json")
       ...> Elasticsearch.delete!("/test1")
       %{"acknowledged" => true}
 

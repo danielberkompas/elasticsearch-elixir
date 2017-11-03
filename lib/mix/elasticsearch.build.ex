@@ -5,7 +5,10 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
   require Logger
 
-  alias Elasticsearch.Config
+  alias Elasticsearch.{
+    Builder,
+    Config
+  }
 
   @doc false
   def run(args) do
@@ -30,32 +33,26 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     end
   end
 
-  defp build(config, :rebuild) do
-    index_name = Config.build_index_name(config[:alias])
-
-    with :ok <- Elasticsearch.create_index_from_file(index_name, config[:schema]),
-         :ok <- Elasticsearch.Bulk.upload(index_name, config[:sources]),
-         :ok <- Elasticsearch.alias_index(index_name, config[:alias]),
-         :ok <- Elasticsearch.clean_indexes_starting_with(config[:alias], 2),
-         :ok <- Elasticsearch.refresh_index(index_name) do
-           :ok
+  defp build(%{alias: alias, schema: schema, loader: loader, sources: sources}, :rebuild) do
+    with :ok <- Builder.hot_swap_index(alias, schema, loader, sources) do
+      :ok
     else
       {:error, errors} when is_list(errors) ->
         errors = for error <- errors, do: "#{inspect(error)}\n"
 
         Mix.raise """
-        Index created, but not aliased: #{index_name}
+        Index created, but not aliased: #{alias}
         The following errors occurred:
 
         #{errors}
         """
       {:error, :enoent} ->
         Mix.raise """
-        Schema file not found at #{config[:schema]}.
+        Schema file not found at #{schema}.
         """
       {:error, exception} ->
         Mix.raise """
-        Index #{index_name} could not be created.
+        Index #{alias} could not be created.
 
             #{inspect exception}
         """
