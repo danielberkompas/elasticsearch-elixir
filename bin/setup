@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Setup Script
+#
+# Runs all the needed commands to set up a developer's system to run this app.
+
+# Ensure Elixir is installed
+command -v elixir >/dev/null 2>&1 || {
+  echo "This app requires Elixir, but it was not found on your system."
+  echo "Install it using the instructions at http://elixir-lang.org"
+  exit 1
+}
+
+echo "----------------------------------------------------------"
+echo "Ensuring Hex is installed..."
+echo "----------------------------------------------------------"
+mix local.hex --force
+mix local.rebar --force
+echo "Done!"
+
+echo "----------------------------------------------------------"
+echo "Installing Mix dependencies..."
+echo "----------------------------------------------------------"
+
+mix deps.get || { echo "Mix dependencies could not be installed!"; exit 1; }
+
+echo "----------------------------------------------------------"
+echo "Compiling..."
+echo "----------------------------------------------------------"
+
+mix compile || { echo "Could not compile Elixir code!"; exit 1; }
+
+if [ ! $CI ]; then
+  echo "----------------------------------------------------------"
+  echo "Installing Elasticsearch for Development..."
+  echo "----------------------------------------------------------"
+
+  rm -rf vendor/;
+  mkdir vendor/;
+  mix elasticsearch.install vendor --version 5.1.1 || { echo "Elasticsearch could not be installed!"; exit 1; }
+fi
+
+echo "----------------------------------------------------------"
+echo "Running tests..."
+echo "----------------------------------------------------------"
+
+bin/ci || { exit 1; }
+
+echo "----------------------------------------------------------"
+echo "Setup complete!"
+echo "----------------------------------------------------------"

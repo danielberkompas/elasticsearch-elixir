@@ -30,8 +30,8 @@ defmodule Elasticsearch.Mixfile do
     [
       {:poison, ">= 0.0.0"},
       {:httpoison, ">= 0.0.0"},
-      {:dialyze, ">= 0.0.0", only: :dev},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:dialyze, ">= 0.0.0", only: [:dev, :test]},
+      {:ex_doc, ">= 0.0.0", only: [:dev, :test]}
     ]
   end
 
