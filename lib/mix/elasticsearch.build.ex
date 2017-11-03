@@ -1,6 +1,24 @@
 defmodule Mix.Tasks.Elasticsearch.Build do
   @moduledoc """
   Builds Elasticsearch indexes using a zero-downtime, hot-swap technique.
+
+  1. Build an index for the given `alias`, with a timestamp: `alias-12323123`
+  2. Bulk upload data to that index using `loader` and `sources`.
+  3. Alias the `alias` to `alias-12323123`.
+  4. Remove old indexes beginning with `alias`.
+  5. Refresh `alias-12323123`.
+
+  For a functional version of this approach, see 
+  `Elasticsearch.Builder.hot_swap_index/4`.
+
+  ## Example
+
+      $ mix elasticsearch.build posts {index2} {index3}
+
+  To build an index only if it does not exist, use the `--existing` option:
+      
+      $ mix elasticsearch.build posts --existing
+      Index posts already exists.
   """
 
   require Logger
