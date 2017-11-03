@@ -11,6 +11,11 @@ command -v elixir >/dev/null 2>&1 || {
   exit 1
 }
 
+if [ $CI ]; then
+  # Setup steps to ensure fast builds on Semaphore CI
+  export MIX_HOME=$SEMAPHORE_CACHE_DIR
+fi
+
 echo "----------------------------------------------------------"
 echo "Ensuring Hex is installed..."
 echo "----------------------------------------------------------"
