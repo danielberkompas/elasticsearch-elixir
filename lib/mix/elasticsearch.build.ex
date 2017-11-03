@@ -16,25 +16,25 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
     {indexes, type} = parse_args!(args)
     
-    for index <- indexes do
-      config = Config.config_for_index(index)
-      build(config, type)
+    for alias <- indexes do
+      config = Config.config_for_index(alias)
+      build(alias, config, type)
     end
   end
 
-  defp build(config, :existing) do
-    case Elasticsearch.latest_index_starting_with(config[:alias]) do
+  defp build(alias, config, :existing) do
+    case Elasticsearch.latest_index_starting_with(alias) do
       {:ok, index_name} ->
         IO.puts("Index already exists: #{index_name}")
       {:error, :not_found} ->
-        build(config, :rebuild)
+        build(alias, config, :rebuild)
       {:error, exception} ->
         Mix.raise(exception)
     end
   end
 
-  defp build(%{alias: alias, schema: schema, loader: loader, sources: sources}, :rebuild) do
-    with :ok <- Builder.hot_swap_index(alias, schema, loader, sources) do
+  defp build(alias, %{settings: settings, loader: loader, sources: sources}, :rebuild) do
+    with :ok <- Builder.hot_swap_index(alias, settings, loader, sources) do
       :ok
     else
       {:error, errors} when is_list(errors) ->
@@ -48,7 +48,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
         """
       {:error, :enoent} ->
         Mix.raise """
-        Schema file not found at #{schema}.
+        Schema file not found at #{settings}.
         """
       {:error, exception} ->
         Mix.raise """

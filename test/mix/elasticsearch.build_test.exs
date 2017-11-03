@@ -8,9 +8,10 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
   setup do
     on_exit fn ->
-      for index <- ["index1_alias"] do
-        Elasticsearch.delete("/#{index}")
-      end
+      "posts"
+      |> Elasticsearch.indexes_starting_with()
+      |> elem(1)
+      |> Enum.map(&Elasticsearch.delete("/#{&1}"))
     end
   end
 
@@ -34,35 +35,35 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     end
 
     test "builds configured index" do
-      rerun("elasticsearch.build", ["index1"])
+      rerun("elasticsearch.build", ["posts"])
 
-      resp = Elasticsearch.get!("/index1_alias/_search")
+      resp = Elasticsearch.get!("/posts/_search")
       assert resp["hits"]["total"] == 10_000
     end
 
     test "only keeps two index versions" do
       for _ <- 1..3 do
-        rerun("elasticsearch.build", ["index1"])
+        rerun("elasticsearch.build", ["posts"])
         :timer.sleep(1000)
       end
 
-      {:ok, indexes} = Elasticsearch.indexes_starting_with("index1")
+      {:ok, indexes} = Elasticsearch.indexes_starting_with("posts")
       assert length(indexes) == 2
       [_previous, current] = Enum.sort(indexes)
 
       # assert that the most recent index is the one that is aliased
-      assert {:ok, %{^current => _}} = Elasticsearch.get("/index1_alias/_alias")
+      assert {:ok, %{^current => _}} = Elasticsearch.get("/posts/_alias")
     end
 
     test "--existing checks if index exists" do
-      rerun("elasticsearch.build", ["index1"])
+      rerun("elasticsearch.build", ["posts"])
 
       io =
         capture_io fn ->
-          rerun("elasticsearch.build", ["index1", "--existing"])
+          rerun("elasticsearch.build", ["posts", "--existing"])
         end
 
-      assert io =~ "Index already exists: index1_alias-"
+      assert io =~ "Index already exists: posts-"
     end
   end
 end

@@ -1,8 +1,8 @@
 {
   "mappings": {
-    "type2": {
+    "post": {
       "properties": {
-        "name": {
+        "title": {
           "type": "string"
         },
         "author": {
