@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Wraps executables which do not respect EOF signals,
+# ensuring that they shut down when EOF is received.
+#
+#     bin/wrap your-executable
+#
+# This allows us to supervise any executable and plug
+# them into an Erlang/Elixir supervision tree using
+# ports.
+#
+# See this discussion on the Erlang mailing list for
+# more context:
+#
+# http://erlang.2086793.n4.nabble.com/closing-a-port-doesn-t-kill-the-connected-process-td2119170.html
+
+$1 > /dev/null 2>&1 &
+last_pid=$!
+while read line ; do
+  :
+done < /dev/stdin
+kill -KILL $last_pid > /dev/null 2>&1

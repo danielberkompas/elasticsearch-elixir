@@ -1,9 +1,20 @@
 defmodule Mix.Tasks.Elasticsearch.Install do
   @moduledoc """
-  Downloads a version of Elasticsearch with `curl` to a directory of your
-  choosing.
+  FOR DEVELOPMENT USE ONLY.
+
+  This task is provided as a convenient way to install a particular version
+  of Elasticsearch for your project on a development machine.
+
+  Use `Elasticsearch.Executable` to add the executables to your app's
+  supervision tree in the Mix `:dev` environment.
+
+  ## Example
+  
+      # Installs Elasticsearch and Kibana 5.1.1 to vendor/
+      mix elasticsearch.install vendor --version 5.1.1
   """
 
+  @doc false
   def run(args) do
     with {[{:version, version}], [location], _} <- OptionParser.parse(args, switches: [ version: :string ]) do
       download_elasticsearch(version, location)

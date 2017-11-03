@@ -141,6 +141,34 @@ defmodule Elasticsearch do
   end
 
   @doc """
+  Waits for Elasticsearch to be available at the configured url.
+
+  It will try a given number of times, with 1sec delay between tries.
+
+  ## Example
+
+      iex> {:ok, resp} = Elasticsearch.wait_for_boot(15)
+      ...> is_list(resp)
+      true
+  """
+  @spec wait_for_boot(integer) ::
+    {:ok, map} |
+    {:error, RuntimeError.t} |
+    {:error, Elasticsearch.Exception.t}
+  def wait_for_boot(tries, count \\ 0)
+  def wait_for_boot(tries, count) when count == tries do
+    {:error, RuntimeError.exception("""
+    Elasticsearch could not be found after #{count} tries. Make sure it's running?
+    """)}
+  end
+  def wait_for_boot(tries, count) do
+    with {:error, _} <- get("/_cat/health?format=json") do
+      :timer.sleep(1000)
+      wait_for_boot(tries, count + 1)
+    end
+  end
+
+  @doc """
   Returns all indexes which start with a given string.
 
   ## Example
@@ -385,11 +413,9 @@ defmodule Elasticsearch do
 
       iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
-      ...> Elasticsearch.post("/test1/_search", query)
-      {:ok,
-       %{"_shards" => %{"failed" => 0, "successful" => 5, "total" => 5},
-         "hits" => %{"hits" => [], "max_score" => nil, "total" => 0},
-         "timed_out" => false, "took" => 1}}
+      ...> {:ok, resp} = Elasticsearch.post("/test1/_search", query)
+      ...> resp["hits"]["hits"]
+      []
   """
   @spec post(String.t, map) :: response
   def post(url, data) do
@@ -403,10 +429,9 @@ defmodule Elasticsearch do
 
       iex> Elasticsearch.create_index_from_file("test1", "priv/elasticsearch/index1.json")
       ...> query = %{"query" => %{"match_all" => %{}}}
-      ...> Elasticsearch.post!("/test1/_search", query)
-      %{"_shards" => %{"failed" => 0, "successful" => 5, "total" => 5},
-        "hits" => %{"hits" => [], "max_score" => nil, "total" => 0},
-        "timed_out" => false, "took" => 1}
+      ...> resp = Elasticsearch.post!("/test1/_search", query)
+      ...> resp["hits"]["hits"]
+      []
 
   Raises an error if the path is invalid or another error occurs:
 
