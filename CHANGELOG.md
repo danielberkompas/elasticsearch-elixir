@@ -1,7 +1,6 @@
 # Change Log
 
-## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
-
+## [v0.1.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.1.0) (2018-01-02)
 **Merged pull requests:**
 
 - Code coverage with Coveralls [\#2](https://github.com/infinitered/elasticsearch-elixir/pull/2) ([danielberkompas](https://github.com/danielberkompas))
