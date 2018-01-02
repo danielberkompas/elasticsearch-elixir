@@ -238,18 +238,6 @@ To contribute code to this project, you'll need to:
 5. Commit your changes
 6. Open a PR
 
-## Todos
-
-- [x] Write tests
-- [x] Update documentation in `Elasticsearch` module
-- [x] Update documentation in `mix elasticsearch.build` task
-- [x] Document how to mock Elasticsearch for testing
-- [x] Push to IR owned repo
-- [x] Prepare for publishing as hex package
-- [x] Update README
-- [ ] Increase test coverage to >90%
-- [ ] Spec for `--append` option
-
 ## Premium Support
 
 [Infinite Red](https://infinite.red) offers premium support for this library and general web &
