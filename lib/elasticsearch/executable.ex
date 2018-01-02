@@ -19,10 +19,12 @@ defmodule Elasticsearch.Executable do
 
   use GenServer
 
+  @doc false
   def start_link(name, executable, port_number) do
     GenServer.start_link(__MODULE__, [name, executable, port_number])
   end
 
+  @doc false
   def init([name, executable, port_number]) do
     case System.cmd("lsof", ["-i", ":#{port_number}"]) do
       {"", _} ->

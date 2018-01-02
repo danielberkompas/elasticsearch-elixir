@@ -1,11 +1,7 @@
 defmodule Elasticsearch.DataStream do
   @moduledoc """
-  Functions for building `Stream`s using the configured 
-  `Elasticsearch.Store`.
-
-      config :elasticsearch,
-        # A module that implements the Elasticsearch.Store behaviour
-        store: MyApp.ElasticsearchStore
+  Functions for building `Stream`s using the configured `Elasticsearch.Store`.
+  See `stream/2`.
   """
 
   @type source :: any

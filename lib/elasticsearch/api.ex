@@ -1,6 +1,7 @@
 defmodule Elasticsearch.API do
   @moduledoc """
-  A behaviour that an Elasticsearch API must adhere to.
+  Defines the necessary callbacks for integrating with the Elasticsearch
+  JSON API.
   """
 
   @type url :: String.t()

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#
+# Generate Documentation
+#
+# Creates HTML documentation and opens it in your local browser.
+
+mix docs || { echo 'Docs did not generate!'; exit 1; }
+open doc/index.html || { echo 'Could not open docs in local browser!'; exit 1; }

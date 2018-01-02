@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
   ## Example
 
-      $ mix elasticsearch.build posts {index2} {index3}
+      $ mix elasticsearch.build posts [index2] [index3]
 
   To build an index only if it does not exist, use the `--existing` option:
       

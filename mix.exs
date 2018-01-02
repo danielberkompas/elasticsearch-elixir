@@ -6,8 +6,8 @@ defmodule Elasticsearch.Mixfile do
       app: :elasticsearch,
       version: "0.1.0",
       elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
-      elixirc_paths: elixirc_paths(Mix.env),
+      start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       docs: docs(),
       deps: deps()
     ]
@@ -23,7 +23,7 @@ defmodule Elasticsearch.Mixfile do
 
   # Specifies which paths to compile per environment
   defp elixirc_paths(env) when env in ~w(test dev)a, do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
@@ -38,7 +38,29 @@ defmodule Elasticsearch.Mixfile do
   defp docs do
     [
       main: "README",
-      extras: ["README.md"]
+      extras: ["README.md"],
+      groups_for_modules: [
+        API: [
+          Elasticsearch,
+          Elasticsearch.API,
+          Elasticsearch.API.HTTP
+        ],
+        Config: [
+          Elasticsearch.Config
+        ],
+        Indexing: [
+          Elasticsearch.Builder,
+          Elasticsearch.Bulk
+        ],
+        Storage: [
+          Elasticsearch.DataStream,
+          Elasticsearch.Document,
+          Elasticsearch.Store
+        ],
+        Development: [
+          Elasticsearch.Executable
+        ]
+      ]
     ]
   end
 end

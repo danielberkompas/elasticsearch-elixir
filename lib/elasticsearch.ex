@@ -1,6 +1,14 @@
 defmodule Elasticsearch do
   @moduledoc """
-  An Elixir interface to the Elasticsearch API.
+  An Elixir interface to the Elasticsearch JSON API.
+
+  ## Configuration
+
+  You can customize the API module used by this module to make requests to
+  the Elasticsearch API. (Default: `Elasticsearch.API.HTTP`)
+
+      config :elasticsearch,
+        api_module: MyApp.CustomAPI
   """
 
   alias Elasticsearch.Document

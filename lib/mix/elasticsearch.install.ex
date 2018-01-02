@@ -3,10 +3,9 @@ defmodule Mix.Tasks.Elasticsearch.Install do
   FOR DEVELOPMENT USE ONLY.
 
   This task is provided as a convenient way to install a particular version
-  of Elasticsearch for your project on a development machine.
-
-  Use `Elasticsearch.Executable` to add the executables to your app's
-  supervision tree in the Mix `:dev` environment.
+  of Elasticsearch for your project on a development machine. Use
+  `Elasticsearch.Executable` to add the executables to your app's supervision
+  tree in the Mix `:dev` environment.
 
   ## Example
 

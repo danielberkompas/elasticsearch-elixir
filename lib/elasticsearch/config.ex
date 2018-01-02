@@ -1,6 +1,6 @@
 defmodule Elasticsearch.Config do
   @moduledoc """
-  Conveniences for fetching configuration values for `Elasticsearch`.
+  Convenience functions for fetching configuration values for `Elasticsearch`.
   """
 
   alias Elasticsearch.Store
@@ -93,6 +93,10 @@ defmodule Elasticsearch.Config do
     all()[:indexes][index]
   end
 
+  @doc """
+  Returns all configuration values for `Elasticsearch`.
+  """
+  @spec all :: Keyword.t()
   def all do
     Application.get_all_env(:elasticsearch)
   end
