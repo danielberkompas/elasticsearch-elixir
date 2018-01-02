@@ -1,0 +1,24 @@
+#!/usr/bin/env elixir
+
+IO.puts("What version number do you want to release?")
+version = 
+  "> "
+  |> IO.gets()
+  |> String.replace("\n", "")
+
+with {_, 0} <- System.cmd("github_changelog_generator", []),
+     {_, 0} <- System.cmd("git", ["add", "."]),
+     {_, 0} <- System.cmd("git", ["commit", "-am", "'Release version #{version}'"]),
+     {_, 0} <- System.cmd("git", ["tag", "v#{version}"]),
+     {_, 0} <- System.cmd("git", ["push"]),
+     {_, 0} <- System.cmd("git", ["push", "-f", "origin", "v#{version}"]),
+     {_, 0} <- System.cmd("mix", ["hex.publish"]),
+     {_, 0} <- System.cmd("github_changelog_generator", []),
+     {_, 0} <- System.cmd("git", ["add", "."]),
+     {_, 0} <- System.cmd("git", ["commit", "-am", "'Update changelog for version #{version}'"]),
+     {_, 0} <- System.cmd("git", ["push"]) do
+  IO.puts("Version #{version} was successfully released!")
+else
+  _ ->
+    IO.puts("Failed to release version #{version}!")
+endd
