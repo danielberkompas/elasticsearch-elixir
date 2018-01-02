@@ -66,7 +66,7 @@ defmodule Elasticsearch.Mixfile do
 
   defp docs do
     [
-      main: "README",
+      main: "readme",
       extras: ["README.md"],
       groups_for_modules: [
         API: [
