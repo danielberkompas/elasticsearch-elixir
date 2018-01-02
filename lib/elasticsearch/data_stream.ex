@@ -23,13 +23,13 @@ defmodule Elasticsearch.DataStream do
         bulk_page_size: 5000
 
   ## Example
-  
+
       iex> stream = DataStream.stream(MyApp.Schema, Elasticsearch.Test.DataLoader)
       ...> is_function(stream)
       true
       
   """
-  @spec stream(source, Elasticsearch.DataLoader.t) :: Stream.t
+  @spec stream(source, Elasticsearch.DataLoader.t()) :: Stream.t()
   def stream(source, loader) do
     Stream.resource(&init/0, &next(&1, source, loader), &finish/1)
   end
@@ -59,7 +59,7 @@ defmodule Elasticsearch.DataStream do
     case loader.load(source, offset, limit) do
       # If the load returns no more items (i.e., we've iterated through them
       # all) then halt the stream and leave offset and limit unchanged.
-      [] -> 
+      [] ->
         {:halt, {[], offset, limit}}
 
       # If the load returns items, then return the first item, and put the

@@ -3,14 +3,14 @@ defmodule Elasticsearch.API do
   A behaviour that an Elasticsearch API must adhere to.
   """
 
-  @type url :: String.t
-  @type data :: map | Keyword.t
-  @type opts :: Keyword.t
-  @type headers :: Keyword.t
+  @type url :: String.t()
+  @type data :: map | Keyword.t()
+  @type opts :: Keyword.t()
+  @type headers :: Keyword.t()
 
-  @type response :: 
-    {:ok, HTTPoison.Response.t | HTTPoison.AsyncResponse.t} | 
-    {:error, HTTPoison.Error.t}
+  @type response ::
+          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
+          | {:error, HTTPoison.Error.t()}
 
   @callback get(url, headers, opts) :: response
   @callback put(url, data, headers, opts) :: response

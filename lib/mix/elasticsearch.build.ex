@@ -33,7 +33,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     Mix.Task.run("app.start", [])
 
     {indexes, type} = parse_args!(args)
-    
+
     for alias <- indexes do
       config = Config.config_for_index(alias)
       build(alias, config, type)
@@ -44,8 +44,10 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     case Elasticsearch.latest_index_starting_with(alias) do
       {:ok, index_name} ->
         IO.puts("Index already exists: #{index_name}")
+
       {:error, :not_found} ->
         build(alias, config, :rebuild)
+
       {:error, exception} ->
         Mix.raise(exception)
     end
@@ -58,22 +60,25 @@ defmodule Mix.Tasks.Elasticsearch.Build do
       {:error, errors} when is_list(errors) ->
         errors = for error <- errors, do: "#{inspect(error)}\n"
 
-        Mix.raise """
+        Mix.raise("""
         Index created, but not aliased: #{alias}
         The following errors occurred:
 
         #{errors}
-        """
+        """)
+
       {:error, :enoent} ->
-        Mix.raise """
+        Mix.raise("""
         Schema file not found at #{settings}.
-        """
+        """)
+
       {:error, exception} ->
-        Mix.raise """
+        Mix.raise("""
         Index #{alias} could not be created.
 
-            #{inspect exception}
-        """
+            #{inspect(exception)}
+        """)
+
       error ->
         Mix.raise(error)
     end
@@ -81,19 +86,23 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
   defp parse_args!(args) do
     {options, indexes} =
-      OptionParser.parse!(args, switches: [
-        existing: :boolean
-      ])
+      OptionParser.parse!(
+        args,
+        switches: [
+          existing: :boolean
+        ]
+      )
 
     indexes =
       indexes
       |> Enum.map(&String.to_atom/1)
-      |> MapSet.new
+      |> MapSet.new()
 
     type =
       cond do
         options[:existing] ->
           :existing
+
         true ->
           :rebuild
       end
@@ -108,18 +117,19 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
     cond do
       MapSet.size(indexes) == 0 ->
-        Mix.raise """
+        Mix.raise("""
         No indexes specified. The following indexes are configured:
 
-            #{inspect Enum.to_list(configured)}
-        """
+            #{inspect(Enum.to_list(configured))}
+        """)
 
       MapSet.subset?(indexes, configured) == false ->
-        Mix.raise """
+        Mix.raise("""
         The following indexes are not configured:
 
-            #{inspect Enum.to_list(MapSet.difference(indexes, configured))}
-        """
+            #{inspect(Enum.to_list(MapSet.difference(indexes, configured)))}
+        """)
+
       true ->
         :ok
     end
@@ -129,7 +139,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     config()
     |> Keyword.get(:indexes)
     |> Enum.map(fn {key, _val} -> key end)
-    |> MapSet.new
+    |> MapSet.new()
   end
 
   defp config do

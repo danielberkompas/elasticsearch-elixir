@@ -7,12 +7,12 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   alias Elasticsearch
 
   setup do
-    on_exit fn ->
+    on_exit(fn ->
       "posts"
       |> Elasticsearch.indexes_starting_with()
       |> elem(1)
       |> Enum.map(&Elasticsearch.delete("/#{&1}"))
-    end
+    end)
   end
 
   describe ".run" do
@@ -59,9 +59,9 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       rerun("elasticsearch.build", ["posts"])
 
       io =
-        capture_io fn ->
+        capture_io(fn ->
           rerun("elasticsearch.build", ["posts", "--existing"])
-        end
+        end)
 
       assert io =~ "Index already exists: posts-"
     end

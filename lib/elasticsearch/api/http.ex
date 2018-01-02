@@ -1,6 +1,6 @@
 defmodule Elasticsearch.API.HTTP do
   @moduledoc """
-  An HTTP implementation of `Elasticsearch.API`.
+  An HTTP implementation of `Elasticsearch.API`, using `HTTPoison`.
   """
 
   @behaviour Elasticsearch.API
@@ -15,7 +15,7 @@ defmodule Elasticsearch.API.HTTP do
 
   @doc false
   def process_url(url) do
-    Config.url <> url
+    Config.url() <> url
   end
 
   def process_request_headers(_headers) do
@@ -32,6 +32,7 @@ defmodule Elasticsearch.API.HTTP do
 
   @doc false
   def process_request_body(string) when is_binary(string), do: string
+
   def process_request_body(map) when is_map(map) do
     Poison.encode!(map)
   end

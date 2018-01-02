@@ -7,12 +7,13 @@ config :elasticsearch,
   username: "username",
   password: "password",
   bulk_page_size: 5000,
-  bulk_wait_interval: 15_000, # 15 seconds
+  # 15 seconds
+  bulk_wait_interval: 15_000,
   api_module: Elasticsearch.API.HTTP,
   indexes: %{
     posts: %{
       settings: "test/support/settings/posts.json",
       loader: Elasticsearch.Test.DataLoader,
       sources: [Post]
-    },
+    }
   }

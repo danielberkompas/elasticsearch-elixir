@@ -15,7 +15,7 @@ defmodule Elasticsearch.Bulk do
   must implement `Elasticsearch.Document`.
 
   ## Examples
-  
+
       iex> Bulk.encode(%Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
       {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
@@ -27,9 +27,9 @@ defmodule Elasticsearch.Bulk do
         %Protocol.UndefinedError{description: "",
         protocol: Elasticsearch.Document, value: 123}}
   """
-  @spec encode(struct, String.t) ::
-    {:ok, String.t} |
-    {:error, Error.t}
+  @spec encode(struct, String.t()) ::
+          {:ok, String.t()}
+          | {:error, Error.t()}
   def encode(struct, index) do
     {:ok, encode!(struct, index)}
   rescue
@@ -41,7 +41,7 @@ defmodule Elasticsearch.Bulk do
   Same as `encode/1`, but returns the request and raises errors.
 
   ## Example
-  
+
       iex> Bulk.encode!(%Post{id: "my-id"}, "my-index")
       \"\"\"
       {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
@@ -56,8 +56,8 @@ defmodule Elasticsearch.Bulk do
 
     document =
       struct
-      |> Document.encode
-      |> Poison.encode!
+      |> Document.encode()
+      |> Poison.encode!()
 
     "#{header}\n#{document}\n"
   end
@@ -66,10 +66,11 @@ defmodule Elasticsearch.Bulk do
   Uploads all the data from the list of `sources` to the given index.
   Data for each `source` will be fetched using the configured `:loader`.
   """
-  @spec upload(String.t, Elasticsearch.DataLoader.t, list) :: :ok | {:error, [map]}
+  @spec upload(String.t(), Elasticsearch.DataLoader.t(), list) :: :ok | {:error, [map]}
   def upload(index_name, loader, sources, errors \\ [])
   def upload(_index_name, _loader, [], []), do: :ok
   def upload(_index_name, _loader, [], errors), do: {:error, errors}
+
   def upload(index_name, loader, [source | tail] = _sources, errors) do
     errors =
       source
@@ -83,17 +84,19 @@ defmodule Elasticsearch.Bulk do
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do
-    new_errors = 
+    new_errors =
       response["items"]
       |> Enum.filter(&(&1["create"]["error"] != nil))
-      |> Enum.map(&(&1["create"]))
+      |> Enum.map(& &1["create"])
       |> Enum.map(&Elasticsearch.Exception.exception(response: &1))
 
     new_errors ++ errors
   end
+
   defp collect_errors({:error, error}, errors) do
     [error | errors]
   end
+
   defp collect_errors(_response, errors) do
     errors
   end
@@ -105,7 +108,7 @@ defmodule Elasticsearch.Bulk do
       "_id" => Document.id(struct)
     }
 
-    header = 
+    header =
       %{}
       |> Map.put(type, attrs)
       |> put_parent(type, struct)

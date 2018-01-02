@@ -58,6 +58,7 @@ defmodule Elasticsearch.Exception do
   defp type(%{"error" => %{"root_cause" => causes}}) do
     get_in(causes, [Access.at(0), "type"])
   end
+
   defp type(%{"error" => %{"type" => type}}) do
     type
   end

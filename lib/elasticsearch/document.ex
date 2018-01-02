@@ -34,14 +34,14 @@ defprotocol Elasticsearch.Document do
 
       def type(_item), do: "item"
   """
-  @spec type(any) :: String.t
+  @spec type(any) :: String.t()
   def type(item)
 
   @doc """
   Returns the parent ID of the document, or `false` if there is no parent.
 
   ## Examples
-  
+
       # For structs that have parents
       def parent(%{parent_id: id}) when id != nil, do: id
 

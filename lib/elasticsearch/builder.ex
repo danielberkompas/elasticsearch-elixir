@@ -21,9 +21,9 @@ defmodule Elasticsearch.Builder do
       ...> Builder.hot_swap_index("posts", file, loader, [Post])
       :ok
   """
-  @spec hot_swap_index(String.t | atom, String.t, Elasticsearch.DataLoader.t, list) ::
-    :ok |
-    {:error, Elasticsearch.Exception.t}
+  @spec hot_swap_index(String.t() | atom, String.t(), Elasticsearch.DataLoader.t(), list) ::
+          :ok
+          | {:error, Elasticsearch.Exception.t()}
   def hot_swap_index(alias, settings_file, loader, sources) do
     index_name = build_index_name(alias)
 
@@ -32,8 +32,8 @@ defmodule Elasticsearch.Builder do
          :ok <- Elasticsearch.alias_index(index_name, alias),
          :ok <- Elasticsearch.clean_indexes_starting_with(alias, 2),
          :ok <- Elasticsearch.refresh_index(index_name) do
-           :ok
-         end
+      :ok
+    end
   end
 
   @doc """
@@ -45,12 +45,12 @@ defmodule Elasticsearch.Builder do
       Config.build_index_name("main")
       # => "main-1509581256"
   """
-  @spec build_index_name(String.t | atom) :: String.t
+  @spec build_index_name(String.t() | atom) :: String.t()
   def build_index_name(alias) do
     "#{alias}-#{system_timestamp()}"
   end
 
   defp system_timestamp do
-    DateTime.to_unix(DateTime.utc_now)
+    DateTime.to_unix(DateTime.utc_now())
   end
 end

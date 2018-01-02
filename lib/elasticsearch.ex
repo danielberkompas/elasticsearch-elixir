@@ -6,8 +6,8 @@ defmodule Elasticsearch do
   alias Elasticsearch.Document
 
   @type response ::
-    {:ok, map} |
-    {:error, Elasticsearch.Exception.t}
+          {:ok, map}
+          | {:error, Elasticsearch.Exception.t()}
 
   @doc """
   Creates an index with the given name from either a JSON string or Elixir map.
@@ -17,9 +17,9 @@ defmodule Elasticsearch do
       iex> Elasticsearch.create_index("posts-1", "{}")
       :ok
   """
-  @spec create_index(String.t, map | String.t) :: 
-    :ok | 
-    {:error, Elasticsearch.Exception.t}
+  @spec create_index(String.t(), map | String.t()) ::
+          :ok
+          | {:error, Elasticsearch.Exception.t()}
   def create_index(name, settings) do
     with {:ok, _response} <- put("/#{name}", settings), do: :ok
   end
@@ -28,17 +28,17 @@ defmodule Elasticsearch do
   Creates an index with the given name, with settings loaded from a JSON file.
 
   ## Example
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       :ok
 
       iex> Elasticsearch.create_index_from_file("posts-1", "nonexistent.json")
       {:error, :enoent}
   """
-  @spec create_index_from_file(String.t, Path.t) ::
-    :ok |
-    {:error, File.posix} |
-    {:error, Elasticsearch.Exception.t}
+  @spec create_index_from_file(String.t(), Path.t()) ::
+          :ok
+          | {:error, File.posix()}
+          | {:error, Elasticsearch.Exception.t()}
   def create_index_from_file(name, file) do
     with {:ok, settings} <- File.read(file) do
       create_index(name, settings)
@@ -61,7 +61,7 @@ defmodule Elasticsearch do
          "_type" => "post", "_version" => 1, "created" => true,
          "result" => "created"}}
   """
-  @spec put_document(Document.t, String.t) :: response
+  @spec put_document(Document.t(), String.t()) :: response
   def put_document(document, index) do
     document
     |> document_url(index)
@@ -71,7 +71,7 @@ defmodule Elasticsearch do
   @doc """
   Same as `put_document/2`, but raises on errors.
   """
-  @spec put_document!(Document.t, String.t) :: map
+  @spec put_document!(Document.t(), String.t()) :: map
   def put_document!(document, index) do
     document
     |> put_document(index)
@@ -83,7 +83,7 @@ defmodule Elasticsearch do
 
   The document must implement the `Elasticsearch.Document` protocol.
   """
-  @spec delete_document(Document.t, String.t) :: response
+  @spec delete_document(Document.t(), String.t()) :: response
   def delete_document(document, index) do
     document
     |> document_url(index)
@@ -93,7 +93,7 @@ defmodule Elasticsearch do
   @doc """
   Same as `delete_document/2`, but raises on errors.
   """
-  @spec delete_document!(Document.t, String.t) :: map
+  @spec delete_document!(Document.t(), String.t()) :: map
   def delete_document!(document, index) do
     document
     |> delete_document(index)
@@ -109,28 +109,25 @@ defmodule Elasticsearch do
   indexes, with zero downtime.
 
   ## Example
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       ...> Elasticsearch.alias_index("posts-1", "posts")
       :ok
   """
-  @spec alias_index(String.t, String.t) ::
-    :ok |
-    {:error, Elasticsearch.Exception.t}
+  @spec alias_index(String.t(), String.t()) ::
+          :ok
+          | {:error, Elasticsearch.Exception.t()}
   def alias_index(index_name, index_alias) do
     with {:ok, indexes} <- indexes_starting_with(index_alias),
          indexes = Enum.reject(indexes, &(&1 == index_name)) do
-
-      remove_actions = 
-        Enum.map indexes, fn(index) ->
+      remove_actions =
+        Enum.map(indexes, fn index ->
           %{"remove" => %{"index" => index, "alias" => index_alias}}
-        end
+        end)
 
       actions = %{
         "actions" =>
-          remove_actions ++
-          [%{"add" => %{"index" => index_name, "alias" => index_alias}}
-        ]
+          remove_actions ++ [%{"add" => %{"index" => index_name, "alias" => index_alias}}]
       }
 
       with {:ok, _response} <- post("/_aliases", actions), do: :ok
@@ -149,15 +146,20 @@ defmodule Elasticsearch do
       true
   """
   @spec wait_for_boot(integer) ::
-    {:ok, map} |
-    {:error, RuntimeError.t} |
-    {:error, Elasticsearch.Exception.t}
+          {:ok, map}
+          | {:error, RuntimeError.t()}
+          | {:error, Elasticsearch.Exception.t()}
   def wait_for_boot(tries, count \\ 0)
+
   def wait_for_boot(tries, count) when count == tries do
-    {:error, RuntimeError.exception("""
-    Elasticsearch could not be found after #{count} tries. Make sure it's running?
-    """)}
+    {
+      :error,
+      RuntimeError.exception("""
+      Elasticsearch could not be found after #{count} tries. Make sure it's running?
+      """)
+    }
   end
+
   def wait_for_boot(tries, count) do
     with {:error, _} <- get("/_cat/health?format=json") do
       :timer.sleep(1000)
@@ -169,21 +171,21 @@ defmodule Elasticsearch do
   Returns all indexes which start with a given string.
 
   ## Example
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       ...> Elasticsearch.indexes_starting_with("posts")
       {:ok, ["posts-1"]}
   """
-  @spec indexes_starting_with(String.t | atom) ::
-    {:ok, [String.t]} |
-    {:error, Elasticsearch.Exception.t}
+  @spec indexes_starting_with(String.t() | atom) ::
+          {:ok, [String.t()]}
+          | {:error, Elasticsearch.Exception.t()}
   def indexes_starting_with(prefix) do
     with {:ok, indexes} <- get("/_cat/indices?format=json") do
       prefix = to_string(prefix)
 
       indexes =
         indexes
-        |> Enum.map(&(&1["index"]))
+        |> Enum.map(& &1["index"])
         |> Enum.filter(&String.starts_with?(&1, prefix))
         |> Enum.sort()
 
@@ -206,10 +208,10 @@ defmodule Elasticsearch do
       iex> Elasticsearch.latest_index_starting_with("nonexistent")
       {:error, :not_found}
   """
-  @spec latest_index_starting_with(String.t | atom) ::
-    {:ok, String.t} |
-    {:error, :not_found} |
-    {:error, Elasticsearch.Exception.t}
+  @spec latest_index_starting_with(String.t() | atom) ::
+          {:ok, String.t()}
+          | {:error, :not_found}
+          | {:error, Elasticsearch.Exception.t()}
   def latest_index_starting_with(prefix) do
     with {:ok, indexes} <- indexes_starting_with(prefix) do
       index =
@@ -228,12 +230,12 @@ defmodule Elasticsearch do
   Refreshes a given index with recently added data.
 
   ## Example
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       ...> Elasticsearch.refresh_index("posts-1")
       :ok
   """
-  @spec refresh_index(String.t) :: :ok | {:error, Elasticsearch.Exception.t}
+  @spec refresh_index(String.t()) :: :ok | {:error, Elasticsearch.Exception.t()}
   def refresh_index(index_name) do
     with {:ok, _} <- post("/#{index_name}/_forcemerge?max_num_segments=5", %{}),
          {:ok, _} <- post("/#{index_name}/_refresh", %{}),
@@ -244,7 +246,7 @@ defmodule Elasticsearch do
   Same as `refresh_index/1`, but raises an error on failure.
 
   ## Examples
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       ...> Elasticsearch.refresh_index!("posts-1")
       :ok
@@ -252,11 +254,12 @@ defmodule Elasticsearch do
       iex> Elasticsearch.refresh_index!("nonexistent")
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
-  @spec refresh_index!(String.t) :: :ok
+  @spec refresh_index!(String.t()) :: :ok
   def refresh_index!(index_name) do
     case refresh_index(index_name) do
-      :ok -> 
+      :ok ->
         :ok
+
       {:error, error} ->
         raise error
     end
@@ -284,21 +287,21 @@ defmodule Elasticsearch do
       ...> Elasticsearch.indexes_starting_with("posts")
       {:ok, []}
   """
-  @spec clean_indexes_starting_with(String.t, integer) ::
-    :ok |
-    {:error, [Elasticsearch.Exception.t]}
+  @spec clean_indexes_starting_with(String.t(), integer) ::
+          :ok
+          | {:error, [Elasticsearch.Exception.t()]}
   def clean_indexes_starting_with(prefix, num_to_keep) when is_integer(num_to_keep) do
     with {:ok, indexes} <- indexes_starting_with(prefix) do
       total = length(indexes)
       num_to_delete = total - num_to_keep
       num_to_delete = if num_to_delete >= 0, do: num_to_delete, else: 0
 
-      errors = 
+      errors =
         indexes
         |> Enum.sort()
         |> Enum.take(num_to_delete)
         |> Enum.map(&delete("/#{&1}"))
-        |> Enum.filter(&elem(&1, 0) == :error)
+        |> Enum.filter(&(elem(&1, 0) == :error))
         |> Enum.map(&elem(&1, 1))
 
       if length(errors) > 0 do
@@ -334,7 +337,7 @@ defmodule Elasticsearch do
             "type" => "index_not_found_exception"}, "status" => 404},
         status: 404, type: "index_not_found_exception"}}
   """
-  @spec get(String.t) :: response
+  @spec get(String.t()) :: response
   def get(url) do
     format(api_module().get(url))
   end
@@ -352,7 +355,7 @@ defmodule Elasticsearch do
       iex> Elasticsearch.get!("/nonexistent")
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
-  @spec get!(String.t) :: map
+  @spec get!(String.t()) :: map
   def get!(url) do
     url
     |> get()
@@ -363,7 +366,7 @@ defmodule Elasticsearch do
   Puts data to a given Elasticsearch API path.
 
   ## Examples
-  
+
       iex> Elasticsearch.create_index_from_file("posts-1", "test/support/settings/posts.json")
       ...> Elasticsearch.put("/posts-1/post/id", %{"title" => "title", "author" => "author"})
       {:ok,
@@ -378,7 +381,7 @@ defmodule Elasticsearch do
         message: "No handler found for uri [/bad/url] and method [PUT]",
         query: nil, raw: nil, status: nil, type: nil}}
   """
-  @spec put(String.t, map | binary) :: response
+  @spec put(String.t(), map | binary) :: response
   def put(url, data) do
     format(api_module().put(url, data))
   end
@@ -388,7 +391,7 @@ defmodule Elasticsearch do
   errors.
 
   ## Examples
-  
+
       iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
       ...> Elasticsearch.put!("/posts/post/id", %{"name" => "name", "author" => "author"})
       %{"_id" => "id", "_index" => "posts",
@@ -399,7 +402,7 @@ defmodule Elasticsearch do
       iex> Elasticsearch.put!("/bad/url", %{"data" => "here"})
       ** (Elasticsearch.Exception) No handler found for uri [/bad/url] and method [PUT]
   """
-  @spec put!(String.t, map) :: map
+  @spec put!(String.t(), map) :: map
   def put!(url, data) do
     url
     |> put(data)
@@ -418,7 +421,7 @@ defmodule Elasticsearch do
       ...> resp["hits"]["hits"]
       []
   """
-  @spec post(String.t, map) :: response
+  @spec post(String.t(), map) :: response
   def post(url, data) do
     format(api_module().post(url, data))
   end
@@ -440,7 +443,7 @@ defmodule Elasticsearch do
       ...> Elasticsearch.post!("/nonexistent/_search", query)
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
-  @spec post!(String.t, map) :: map
+  @spec post!(String.t(), map) :: map
   def post!(url, data) do
     url
     |> post(data)
@@ -474,7 +477,7 @@ defmodule Elasticsearch do
             "type" => "index_not_found_exception"}, "status" => 404},
         status: 404, type: "index_not_found_exception"}}
   """
-  @spec delete(String.t) :: response
+  @spec delete(String.t()) :: response
   def delete(url) do
     format(api_module().delete(url))
   end
@@ -483,7 +486,7 @@ defmodule Elasticsearch do
   Same as `delete/1`, but returns the response and raises errors.
 
   ## Examples
-  
+
       iex> Elasticsearch.create_index_from_file("posts", "test/support/settings/posts.json")
       ...> Elasticsearch.delete!("/posts")
       %{"acknowledged" => true}
@@ -493,7 +496,7 @@ defmodule Elasticsearch do
       iex> Elasticsearch.delete!("/nonexistent")
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
-  @spec delete!(String.t) :: map
+  @spec delete!(String.t()) :: map
   def delete!(url) do
     url
     |> delete()
@@ -501,7 +504,7 @@ defmodule Elasticsearch do
   end
 
   defp format({:ok, %{status_code: code, body: body}})
-  when code >= 200 and code < 300 do
+       when code >= 200 and code < 300 do
     {:ok, body}
   end
 
@@ -513,7 +516,7 @@ defmodule Elasticsearch do
   defp format(error), do: error
 
   defp unwrap!({:ok, value}), do: value
-  defp unwrap!({:error, exception}), do: raise exception
+  defp unwrap!({:error, exception}), do: raise(exception)
 
   defp api_module do
     config()[:api_module] || Elasticsearch.API.HTTP

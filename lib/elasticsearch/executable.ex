@@ -29,11 +29,11 @@ defmodule Elasticsearch.Executable do
         wrap = Application.app_dir(:elasticsearch) <> "/priv/bin/wrap"
         port = Port.open({:spawn, "#{wrap} #{executable} --port #{port_number}"}, [])
         {:os_pid, os_pid} = Port.info(port, :os_pid)
-        IO.puts "[info] Running #{name} with PID #{os_pid} on port #{port_number}"
+        IO.puts("[info] Running #{name} with PID #{os_pid} on port #{port_number}")
         {:ok, port}
 
       _other ->
-        IO.puts "[info] Detected #{name} already running on port #{port_number}"
+        IO.puts("[info] Detected #{name} already running on port #{port_number}")
         {:ok, nil}
     end
   end

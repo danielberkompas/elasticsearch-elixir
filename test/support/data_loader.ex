@@ -2,7 +2,7 @@ defmodule Elasticsearch.Test.DataLoader do
   @moduledoc false
   @behaviour Elasticsearch.DataLoader
 
-  def load(Post, _offset, limit) when limit <= 10_000 do 
+  def load(Post, _offset, limit) when limit <= 10_000 do
     [%Post{title: "Name", author: "Author"}]
     |> Stream.cycle()
     |> Stream.map(&Map.put(&1, :id, random_str()))

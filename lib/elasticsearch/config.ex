@@ -23,7 +23,7 @@ defmodule Elasticsearch.Config do
       iex> Config.url()
       "http://localhost:9200"
   """
-  @spec url :: String.t
+  @spec url :: String.t()
   def url do
     from_env(:elasticsearch, :url)
   end
@@ -33,7 +33,7 @@ defmodule Elasticsearch.Config do
   `:username` and `:password`.
 
   ## Configuration
-  
+
       config :elasticsearch,
         username: "username",
         password: "password"
@@ -49,7 +49,7 @@ defmodule Elasticsearch.Config do
       iex> Config.http_basic_credentials()
       "dXNlcm5hbWU6cGFzc3dvcmQ="
   """
-  @spec http_basic_credentials :: String.t | nil
+  @spec http_basic_credentials :: String.t() | nil
   def http_basic_credentials do
     username = from_env(:elasticsearch, :username)
     password = from_env(:elasticsearch, :password)
@@ -74,7 +74,7 @@ defmodule Elasticsearch.Config do
         }
 
   ## Example
-  
+
       iex> Config.config_for_index(:posts)
       %{
          settings: "test/support/settings/posts.json",
@@ -82,11 +82,13 @@ defmodule Elasticsearch.Config do
          sources: [Post]
        }
   """
-  @spec config_for_index(atom) :: %{
-    settings: String.t, 
-    loader: DataLoader.t, 
-    sources: [DataLoader.source]
-  } | nil
+  @spec config_for_index(atom) ::
+          %{
+            settings: String.t(),
+            loader: DataLoader.t(),
+            sources: [DataLoader.source()]
+          }
+          | nil
   def config_for_index(index) do
     all()[:indexes][index]
   end
@@ -101,6 +103,7 @@ defmodule Elasticsearch.Config do
   """
   @spec from_env(atom, atom, any) :: any
   def from_env(otp_app, key, default \\ nil)
+
   def from_env(otp_app, key, default) do
     otp_app
     |> Application.get_env(key, default)
