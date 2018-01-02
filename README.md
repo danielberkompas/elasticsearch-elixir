@@ -1,5 +1,8 @@
 # Elasticsearch
 
+[![Hex.pm](https://img.shields.io/hexpm/v/authority.svg)](https://hex.pm/packages/authority)
+[![Build Status](https://semaphoreci.com/api/v1/projects/655f53d5-f7b8-4e59-9635-193647022895/1607375/badge.svg)](https://semaphoreci.com/ir/elasticsearch-elixir)
+
 A simple, no-nonsense Elasticsearch library for Elixir. Highlights include:
 
 - **No DSLs.** Interact directly with the `Elasticsearch` JSON API.
