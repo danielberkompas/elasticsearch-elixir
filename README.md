@@ -48,6 +48,9 @@ config :elasticsearch,
   # here. It must implement the Elasticsearch.API behaviour.
   api_module: Elasticsearch.API.HTTP,
 
+  # Customize the library used for JSON encoding/decoding.
+  json_library: Poison, # or Jason
+
   # You should configure each index which you maintain in Elasticsearch here.
   # This configuration will be read by the `mix elasticsearch.build` task,
   # described below.

@@ -102,6 +102,19 @@ defmodule Elasticsearch.Config do
   end
 
   @doc """
+  Returns the JSON library to use for encoding/decoding.
+  Default: `Poison`
+
+  ## Configuration
+
+      config :elasticsearch, json_library: Jason
+  """
+  @spec json_library :: module
+  def json_library do
+    Application.get_env(:elasticsearch, :json_library) || Poison
+  end
+
+  @doc """
   A light wrapper around `Application.get_env/2`, providing automatic support for
   `{:system, "VAR"}` tuples.
   """

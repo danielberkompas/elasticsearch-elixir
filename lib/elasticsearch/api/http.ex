@@ -34,13 +34,13 @@ defmodule Elasticsearch.API.HTTP do
   def process_request_body(string) when is_binary(string), do: string
 
   def process_request_body(map) when is_map(map) do
-    Poison.encode!(map)
+    Config.json_library().encode!(map)
   end
 
   @doc false
   def process_response_body(body) do
     if json?(body) do
-      Poison.decode!(body)
+      Config.json_library().decode!(body)
     else
       body
     end

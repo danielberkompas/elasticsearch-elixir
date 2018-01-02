@@ -10,6 +10,7 @@ config :elasticsearch,
   # 15 seconds
   bulk_wait_interval: 15_000,
   api_module: Elasticsearch.API.HTTP,
+  json_library: Jason,
   indexes: %{
     posts: %{
       settings: "test/support/settings/posts.json",

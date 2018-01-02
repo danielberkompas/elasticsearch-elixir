@@ -28,7 +28,7 @@ defmodule Elasticsearch.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:poison, ">= 0.0.0"},
+      {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
       {:dialyze, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]}
