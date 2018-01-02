@@ -234,10 +234,10 @@ To contribute code to this project, you'll need to:
 ## Todos
 
 - [x] Write tests
-- [ ] Update documentation in `Elasticsearch` module
-- [ ] Update documentation in `mix elasticsearch.build` task
-- [ ] Document how to mock Elasticsearch for testing
-- [ ] Push to IR owned repo
+- [x] Update documentation in `Elasticsearch` module
+- [x] Update documentation in `mix elasticsearch.build` task
+- [x] Document how to mock Elasticsearch for testing
+- [x] Push to IR owned repo
 - [ ] Prepare for publishing as hex package
 - [ ] Update README
 - [ ] Spec for `--append` option
