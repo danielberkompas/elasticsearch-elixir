@@ -8,4 +8,9 @@
 MIX_ENV=test mix compile --warnings-as-errors --force || { echo 'Please fix all compiler warnings.'; exit 1; }
 MIX_ENV=test mix docs || { echo 'Elixir HTML docs were not generated!'; exit 1; }
 MIX_ENV=test mix dialyze || { echo 'Dialyzer checks failed.'; exit 1; }
-mix test || { echo 'Elixir tests failed!'; exit 1; }
+
+if [ $CI ]; then
+  mix coveralls.semaphore || { echo 'Elixir tests failed!'; exit 1; }
+else
+  mix test || { echo 'Elixir tests failed!'; exit 1; }
+fi
