@@ -19,7 +19,8 @@ defmodule Elasticsearch.Mixfile do
         "coveralls.semaphore": :test
       ],
       docs: docs(),
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -28,6 +29,23 @@ defmodule Elasticsearch.Mixfile do
     [
       extra_applications: [:logger],
       mod: {Elasticsearch.Application, []}
+    ]
+  end
+
+  def package do
+    [
+      files: ~w(
+        lib
+        CHANGELOG.md
+        LICENSE
+        README.md
+        mix.exs
+      ),
+      maintainers: ["Daniel Berkompas"],
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => "https://github.com/infinitered/elasticsearch-elixir"
+      }
     ]
   end
 
