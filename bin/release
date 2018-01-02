@@ -1,24 +1,19 @@
-#!/usr/bin/env elixir
+#!/usr/bin/env ruby
 
-IO.puts("What version number do you want to release?")
-version = 
-  "> "
-  |> IO.gets()
-  |> String.replace("\n", "")
+puts "What version number do you want to release?"
+print "> "
+version = gets.gsub(/\n/, "")
 
-with {_, 0} <- System.cmd("github_changelog_generator", []),
-     {_, 0} <- System.cmd("git", ["add", "."]),
-     {_, 0} <- System.cmd("git", ["commit", "-am", "\"Release version #{version}\""]),
-     {_, 0} <- System.cmd("git", ["tag", "v#{version}"]),
-     {_, 0} <- System.cmd("git", ["push"]),
-     {_, 0} <- System.cmd("git", ["push", "-f", "origin", "v#{version}"]),
-     {_, 0} <- System.cmd("mix", ["hex.publish"]),
-     {_, 0} <- System.cmd("github_changelog_generator", []),
-     {_, 0} <- System.cmd("git", ["add", "."]),
-     {_, 0} <- System.cmd("git", ["commit", "-am", "\"Update changelog for version #{version}\""]),
-     {_, 0} <- System.cmd("git", ["push"]) do
-  IO.puts("Version #{version} was successfully released!")
-else
-  _ ->
-    IO.puts("Failed to release version #{version}!")
-end
+continue = system "github_changelog_generator"
+continue = system "git add ."
+continue = system "git commit -am \"Release version #{version}\"" if continue
+continue = system "git tag v#{version}" if continue
+continue = system "git push" if continue
+continue = system "git push -f origin v#{version}" if continue
+continue = system "mix hex.publish" if continue
+continue = system "github_changelog_generator" if continue
+continue = system "git add ." if continue
+continue = system "git commit -am \"Update changelog for version #{version}\"" if continue
+continue = system "git push" if continue
+
+puts "Version #{version} was successfully released!"
