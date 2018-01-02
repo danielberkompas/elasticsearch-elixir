@@ -245,7 +245,8 @@ To contribute code to this project, you'll need to:
 - [x] Update documentation in `mix elasticsearch.build` task
 - [x] Document how to mock Elasticsearch for testing
 - [x] Push to IR owned repo
-- [ ] Prepare for publishing as hex package
-- [ ] Update README
+- [x] Prepare for publishing as hex package
+- [x] Update README
+- [ ] Increase test coverage to >90%
 - [ ] Spec for `--append` option
 
