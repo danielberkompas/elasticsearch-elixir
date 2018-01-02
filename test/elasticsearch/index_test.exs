@@ -1,9 +1,9 @@
-defmodule Elasticsearch.BuilderTest do
+defmodule Elasticsearch.IndexTest do
   use ExUnit.Case
 
-  alias Elasticsearch.Builder
+  alias Elasticsearch.Index
 
-  doctest Elasticsearch.Builder
+  doctest Elasticsearch.Index
 
   setup do
     for index <- ["posts"] do

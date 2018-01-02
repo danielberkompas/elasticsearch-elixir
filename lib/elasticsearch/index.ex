@@ -1,4 +1,4 @@
-defmodule Elasticsearch.Builder do
+defmodule Elasticsearch.Index do
   @moduledoc """
   Wrapper functions that make it easier to build indexes from scratch.
   """
@@ -18,14 +18,14 @@ defmodule Elasticsearch.Builder do
 
       iex> file = "test/support/settings/posts.json"
       ...> store = Elasticsearch.Test.Store
-      ...> Builder.hot_swap_index("posts", file, store, [Post])
+      ...> Index.hot_swap("posts", file, store, [Post])
       :ok
   """
-  @spec hot_swap_index(String.t() | atom, String.t(), Elasticsearch.Store.t(), list) ::
+  @spec hot_swap(String.t() | atom, String.t(), Elasticsearch.Store.t(), list) ::
           :ok
           | {:error, Elasticsearch.Exception.t()}
-  def hot_swap_index(alias, settings_file, store, sources) do
-    index_name = build_index_name(alias)
+  def hot_swap(alias, settings_file, store, sources) do
+    index_name = build_name(alias)
 
     with :ok <- Elasticsearch.create_index_from_file(index_name, settings_file),
          :ok <- Elasticsearch.Bulk.upload(index_name, store, sources),
@@ -42,11 +42,11 @@ defmodule Elasticsearch.Builder do
 
   ## Example
 
-      Config.build_index_name("main")
+      Index.build_name("main")
       # => "main-1509581256"
   """
-  @spec build_index_name(String.t() | atom) :: String.t()
-  def build_index_name(alias) do
+  @spec build_name(String.t() | atom) :: String.t()
+  def build_name(alias) do
     "#{alias}-#{system_timestamp()}"
   end
 

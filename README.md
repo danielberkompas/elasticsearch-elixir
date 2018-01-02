@@ -158,7 +158,7 @@ hot-swap technique with Elasticsearch aliases.
 $ mix elasticsearch.build posts
 ```
 
-See the docs on `Mix.Tasks.Elasticsearch.Build` and `Elasticsearch.Builder`
+See the docs on `Mix.Tasks.Elasticsearch.Build` and `Elasticsearch.Index`
 for more details.
 
 #### Individual Documents

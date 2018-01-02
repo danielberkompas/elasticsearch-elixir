@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   5. Refresh `alias-12323123`.
 
   For a functional version of this approach, see 
-  `Elasticsearch.Builder.hot_swap_index/4`.
+  `Elasticsearch.Index.hot_swap/4`.
 
   ## Example
 
@@ -24,7 +24,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   require Logger
 
   alias Elasticsearch.{
-    Builder,
+    Index,
     Config
   }
 
@@ -54,7 +54,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   end
 
   defp build(alias, %{settings: settings, store: store, sources: sources}, :rebuild) do
-    with :ok <- Builder.hot_swap_index(alias, settings, store, sources) do
+    with :ok <- Index.hot_swap(alias, settings, store, sources) do
       :ok
     else
       {:error, errors} when is_list(errors) ->
