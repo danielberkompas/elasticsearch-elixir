@@ -6,7 +6,7 @@ defmodule ElasticsearchTest do
   setup do
     on_exit(fn ->
       "posts"
-      |> Elasticsearch.indexes_starting_with()
+      |> Elasticsearch.Index.starting_with()
       |> elem(1)
       |> Enum.map(&Elasticsearch.delete!("/#{&1}"))
 

@@ -1,7 +1,7 @@
-defmodule Elasticsearch.BulkTest do
+defmodule Elasticsearch.Index.BulkTest do
   use ExUnit.Case
 
-  alias Elasticsearch.Bulk
+  alias Elasticsearch.Index.Bulk
 
-  doctest Elasticsearch.Bulk
+  doctest Elasticsearch.Index.Bulk
 end

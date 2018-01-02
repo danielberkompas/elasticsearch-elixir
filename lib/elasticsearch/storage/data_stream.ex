@@ -6,6 +6,8 @@ defmodule Elasticsearch.DataStream do
 
   @type source :: any
 
+  alias Elasticsearch.Config
+
   @doc """
   Creates a `Stream` from a given source.
 
@@ -34,7 +36,7 @@ defmodule Elasticsearch.DataStream do
   #
   # {items, offset, limit}
   defp init do
-    {[], 0, config()[:bulk_page_size]}
+    {[], 0, Config.all()[:bulk_page_size]}
   end
 
   # If no items, load another page of items
@@ -50,7 +52,7 @@ defmodule Elasticsearch.DataStream do
 
   # Fetch a new page of items
   defp load_page(source, store, offset, limit) do
-    page_size = config()[:bulk_page_size]
+    page_size = Config.all()[:bulk_page_size]
 
     case store.load(source, offset, limit) do
       # If the load returns no more items (i.e., we've iterated through them
@@ -69,9 +71,5 @@ defmodule Elasticsearch.DataStream do
   # We don't need to do anything to clean up this Stream
   defp finish(_state) do
     nil
-  end
-
-  defp config do
-    Application.get_all_env(:elasticsearch)
   end
 end

@@ -1,4 +1,4 @@
-defmodule Elasticsearch.Bulk do
+defmodule Elasticsearch.Index.Bulk do
   @moduledoc """
   Functions for creating bulk indexing requests.
   """

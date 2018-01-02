@@ -41,9 +41,9 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   end
 
   defp build(alias, config, :existing) do
-    case Elasticsearch.latest_index_starting_with(alias) do
-      {:ok, index_name} ->
-        IO.puts("Index already exists: #{index_name}")
+    case Index.latest_starting_with(alias) do
+      {:ok, name} ->
+        IO.puts("Index already exists: #{name}")
 
       {:error, :not_found} ->
         build(alias, config, :rebuild)
@@ -113,7 +113,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   end
 
   defp validate_indexes!(indexes) do
-    configured = configured_index_names()
+    configured = configured_names()
 
     cond do
       MapSet.size(indexes) == 0 ->
@@ -135,7 +135,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     end
   end
 
-  defp configured_index_names do
+  defp configured_names do
     config()
     |> Keyword.get(:indexes)
     |> Enum.map(fn {key, _val} -> key end)

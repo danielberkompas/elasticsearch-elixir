@@ -49,8 +49,8 @@ defmodule Elasticsearch.Mixfile do
           Elasticsearch.Config
         ],
         Indexing: [
-          Elasticsearch.Bulk,
-          Elasticsearch.Index
+          Elasticsearch.Index,
+          Elasticsearch.Index.Bulk
         ],
         Storage: [
           Elasticsearch.DataStream,

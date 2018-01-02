@@ -7,7 +7,7 @@ defmodule Elasticsearch.IndexTest do
 
   setup do
     for index <- ["posts"] do
-      Elasticsearch.delete("/#{index}")
+      Elasticsearch.delete("/#{index}*")
     end
   end
 end

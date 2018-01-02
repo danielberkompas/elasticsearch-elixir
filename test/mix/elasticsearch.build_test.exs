@@ -5,11 +5,12 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   import ExUnit.CaptureIO
 
   alias Elasticsearch
+  alias Elasticsearch.Index
 
   setup do
     on_exit(fn ->
       "posts"
-      |> Elasticsearch.indexes_starting_with()
+      |> Index.starting_with()
       |> elem(1)
       |> Enum.map(&Elasticsearch.delete("/#{&1}"))
     end)
@@ -47,7 +48,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
         :timer.sleep(1000)
       end
 
-      {:ok, indexes} = Elasticsearch.indexes_starting_with("posts")
+      {:ok, indexes} = Index.starting_with("posts")
       assert length(indexes) == 2
       [_previous, current] = Enum.sort(indexes)
 
