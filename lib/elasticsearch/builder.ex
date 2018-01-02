@@ -7,7 +7,7 @@ defmodule Elasticsearch.Builder do
   Creates an index using a zero-downtime hot-swap technique.
 
   1. Build an index for the given `alias`, with a timestamp: `alias-12323123`
-  2. Bulk upload data to that index using `loader` and `sources`.
+  2. Bulk upload data to that index using `store` and `sources`.
   3. Alias the `alias` to `alias-12323123`.
   4. Remove old indexes beginning with `alias`.
   5. Refresh `alias-12323123`.
@@ -17,18 +17,18 @@ defmodule Elasticsearch.Builder do
   ## Example
 
       iex> file = "test/support/settings/posts.json"
-      ...> loader = Elasticsearch.Test.DataLoader
-      ...> Builder.hot_swap_index("posts", file, loader, [Post])
+      ...> store = Elasticsearch.Test.Store
+      ...> Builder.hot_swap_index("posts", file, store, [Post])
       :ok
   """
-  @spec hot_swap_index(String.t() | atom, String.t(), Elasticsearch.DataLoader.t(), list) ::
+  @spec hot_swap_index(String.t() | atom, String.t(), Elasticsearch.Store.t(), list) ::
           :ok
           | {:error, Elasticsearch.Exception.t()}
-  def hot_swap_index(alias, settings_file, loader, sources) do
+  def hot_swap_index(alias, settings_file, store, sources) do
     index_name = build_index_name(alias)
 
     with :ok <- Elasticsearch.create_index_from_file(index_name, settings_file),
-         :ok <- Elasticsearch.Bulk.upload(index_name, loader, sources),
+         :ok <- Elasticsearch.Bulk.upload(index_name, store, sources),
          :ok <- Elasticsearch.alias_index(index_name, alias),
          :ok <- Elasticsearch.clean_indexes_starting_with(alias, 2),
          :ok <- Elasticsearch.refresh_index(index_name) do

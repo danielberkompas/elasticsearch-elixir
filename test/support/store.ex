@@ -1,6 +1,6 @@
-defmodule Elasticsearch.Test.DataLoader do
+defmodule Elasticsearch.Test.Store do
   @moduledoc false
-  @behaviour Elasticsearch.DataLoader
+  @behaviour Elasticsearch.Store
 
   def load(Post, _offset, limit) when limit <= 10_000 do
     [%Post{title: "Name", author: "Author"}]

@@ -61,16 +61,16 @@ config :elasticsearch,
       # therefore allows all the settings you could post directly.
       settings: "priv/elasticsearch/posts.json",
 
-      # This loader module must implement the Elasticsearch.DataLoader
+      # This store module must implement the Elasticsearch.Store
       # behaviour. It will be used to fetch data for each source in each
       # indexes' `sources` list, below:
-      loader: MyApp.ElasticsearchLoader,
+      store: MyApp.ElasticsearchStore,
 
       # This is the list of data sources that should be used to populate this
-      # index. The `:loader` module above will be passed each one of these
+      # index. The `:store` module above will be passed each one of these
       # sources for fetching.
       #
-      # Each piece of data that is returned by the loader must implement the
+      # Each piece of data that is returned by the store must implement the
       # Elasticsearch.Document protocol.
       sources: [Post]
     }
@@ -79,17 +79,17 @@ config :elasticsearch,
 
 ## Protocols & Behaviours
 
-#### Elasticsearch.DataLoader
+#### Elasticsearch.Store
 
-Your app must provide a `Loader` module, which will fetch data to upload to
-Elasticsearch. This module must implement the `Elasticsearch.DataLoader`
+Your app must provide a `Store` module, which will fetch data to upload to
+Elasticsearch. This module must implement the `Elasticsearch.Store`
 behaviour.
 
 ```elixir
-defmodule MyApp.ElasticsearchLoader do
-  @behaviour Elasticsearch.DataLoader
+defmodule MyApp.ElasticsearchStore do
+  @behaviour Elasticsearch.Store
 
-  @impl Elasticsearch.DataLoader
+  @impl Elasticsearch.Store
   def load(MyApp.Post, offset, limit) do
     # Return MyApp.Posts, restricted by offset and limit
   end
@@ -98,7 +98,7 @@ end
 
 #### Elasticsearch.Document
 
-Each result returned by your loader must implement the `Elasticsearch.Document`
+Each result returned by your store must implement the `Elasticsearch.Document`
 protocol.
 
 ```elixir

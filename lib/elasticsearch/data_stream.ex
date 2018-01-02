@@ -1,11 +1,11 @@
 defmodule Elasticsearch.DataStream do
   @moduledoc """
   Functions for building `Stream`s using the configured 
-  `Elasticsearch.DataLoader`.
+  `Elasticsearch.Store`.
 
       config :elasticsearch,
-        # A module that implements the Elasticsearch.DataLoader behaviour
-        loader: MyApp.ElasticsearchLoader
+        # A module that implements the Elasticsearch.Store behaviour
+        store: MyApp.ElasticsearchStore
   """
 
   @type source :: any
@@ -15,7 +15,7 @@ defmodule Elasticsearch.DataStream do
 
   ## Configuration
 
-  Your configured `:loader` module must handle the given data source.
+  Your configured `:store` module must handle the given data source.
   The stream will be paginated based on the `:bulk_page_size` in the 
   configuration.
 
@@ -24,14 +24,14 @@ defmodule Elasticsearch.DataStream do
 
   ## Example
 
-      iex> stream = DataStream.stream(MyApp.Schema, Elasticsearch.Test.DataLoader)
+      iex> stream = DataStream.stream(MyApp.Schema, Elasticsearch.Test.Store)
       ...> is_function(stream)
       true
       
   """
-  @spec stream(source, Elasticsearch.DataLoader.t()) :: Stream.t()
-  def stream(source, loader) do
-    Stream.resource(&init/0, &next(&1, source, loader), &finish/1)
+  @spec stream(source, Elasticsearch.Store.t()) :: Stream.t()
+  def stream(source, store) do
+    Stream.resource(&init/0, &next(&1, source, store), &finish/1)
   end
 
   # Store state in the following format:
@@ -42,21 +42,21 @@ defmodule Elasticsearch.DataStream do
   end
 
   # If no items, load another page of items
-  defp next({[], offset, limit}, source, loader) do
-    load_page(source, loader, offset, limit)
+  defp next({[], offset, limit}, source, store) do
+    load_page(source, store, offset, limit)
   end
 
   # If there are items, return the next item, and set the new state equal to
   # {tail, offset, limit}
-  defp next({[h | t], offset, limit}, _source, _loader) do
+  defp next({[h | t], offset, limit}, _source, _store) do
     {[h], {t, offset, limit}}
   end
 
   # Fetch a new page of items
-  defp load_page(source, loader, offset, limit) do
+  defp load_page(source, store, offset, limit) do
     page_size = config()[:bulk_page_size]
 
-    case loader.load(source, offset, limit) do
+    case store.load(source, offset, limit) do
       # If the load returns no more items (i.e., we've iterated through them
       # all) then halt the stream and leave offset and limit unchanged.
       [] ->

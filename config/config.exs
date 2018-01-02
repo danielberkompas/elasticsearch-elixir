@@ -13,7 +13,7 @@ config :elasticsearch,
   indexes: %{
     posts: %{
       settings: "test/support/settings/posts.json",
-      loader: Elasticsearch.Test.DataLoader,
+      store: Elasticsearch.Test.Store,
       sources: [Post]
     }
   }

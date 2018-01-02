@@ -3,7 +3,7 @@ defmodule Elasticsearch.Config do
   Conveniences for fetching configuration values for `Elasticsearch`.
   """
 
-  alias Elasticsearch.DataLoader
+  alias Elasticsearch.Store
 
   @doc """
   Returns the configured Elasticsearch URL.
@@ -68,7 +68,7 @@ defmodule Elasticsearch.Config do
         indexes: %{
           posts: %{
             settings: "test/support/settings/posts.json",
-            loader: Elasticsearch.Test.DataLoader,
+            store: Elasticsearch.Test.Store,
             sources: [Post]
           }
         }
@@ -78,15 +78,15 @@ defmodule Elasticsearch.Config do
       iex> Config.config_for_index(:posts)
       %{
          settings: "test/support/settings/posts.json",
-         loader: Elasticsearch.Test.DataLoader,
+         store: Elasticsearch.Test.Store,
          sources: [Post]
        }
   """
   @spec config_for_index(atom) ::
           %{
             settings: String.t(),
-            loader: DataLoader.t(),
-            sources: [DataLoader.source()]
+            store: Store.t(),
+            sources: [Store.source()]
           }
           | nil
   def config_for_index(index) do

@@ -1,4 +1,4 @@
-defmodule Elasticsearch.DataLoader do
+defmodule Elasticsearch.Store do
   @type source :: any
   @type data :: any
   @type offset :: integer

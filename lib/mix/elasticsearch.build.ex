@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   Builds Elasticsearch indexes using a zero-downtime, hot-swap technique.
 
   1. Build an index for the given `alias`, with a timestamp: `alias-12323123`
-  2. Bulk upload data to that index using `loader` and `sources`.
+  2. Bulk upload data to that index using `store` and `sources`.
   3. Alias the `alias` to `alias-12323123`.
   4. Remove old indexes beginning with `alias`.
   5. Refresh `alias-12323123`.
@@ -53,8 +53,8 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     end
   end
 
-  defp build(alias, %{settings: settings, loader: loader, sources: sources}, :rebuild) do
-    with :ok <- Builder.hot_swap_index(alias, settings, loader, sources) do
+  defp build(alias, %{settings: settings, store: store, sources: sources}, :rebuild) do
+    with :ok <- Builder.hot_swap_index(alias, settings, store, sources) do
       :ok
     else
       {:error, errors} when is_list(errors) ->

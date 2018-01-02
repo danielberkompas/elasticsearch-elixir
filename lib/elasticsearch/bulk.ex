@@ -64,17 +64,17 @@ defmodule Elasticsearch.Bulk do
 
   @doc """
   Uploads all the data from the list of `sources` to the given index.
-  Data for each `source` will be fetched using the configured `:loader`.
+  Data for each `source` will be fetched using the configured `:store`.
   """
-  @spec upload(String.t(), Elasticsearch.DataLoader.t(), list) :: :ok | {:error, [map]}
-  def upload(index_name, loader, sources, errors \\ [])
-  def upload(_index_name, _loader, [], []), do: :ok
-  def upload(_index_name, _loader, [], errors), do: {:error, errors}
+  @spec upload(String.t(), Elasticsearch.Store.t(), list) :: :ok | {:error, [map]}
+  def upload(index_name, store, sources, errors \\ [])
+  def upload(_index_name, _store, [], []), do: :ok
+  def upload(_index_name, _store, [], errors), do: {:error, errors}
 
-  def upload(index_name, loader, [source | tail] = _sources, errors) do
+  def upload(index_name, store, [source | tail] = _sources, errors) do
     errors =
       source
-      |> DataStream.stream(loader)
+      |> DataStream.stream(store)
       |> Stream.map(&encode!(&1, index_name))
       |> Stream.chunk_every(config()[:bulk_page_size])
       |> Stream.map(&Elasticsearch.put("/#{index_name}/_bulk", Enum.join(&1)))
