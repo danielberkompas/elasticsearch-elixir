@@ -5,13 +5,13 @@ defprotocol Elasticsearch.Document do
   ## Example
 
       defimpl Elasticsearch.Document, for: MyStruct do
-        def id(model), do: model.id
-        def type(_model), do: "model"
-        def parent(_model), do: false
-        def encode(model) do
+        def id(struct), do: struct.id
+        def type(_struct), do: "struct"
+        def parent(_struct), do: false
+        def encode(struct) do
           %{
-            id: model.id,
-            name: model.name
+            id: struct.id,
+            name: struct.name
           }
         end
       end
