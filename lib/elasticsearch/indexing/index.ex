@@ -236,6 +236,24 @@ defmodule Elasticsearch.Index do
 
       iex> Index.create_from_file("posts-1", "nonexistent.json")
       {:error, :enoent}
+
+  The `posts.json` file contains regular index settings as described in the
+  Elasticsearch [documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_example_mapping):
+
+      {
+        "mappings": {
+          "post": {
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
   """
   @spec create_from_file(String.t(), Path.t()) ::
           :ok
