@@ -4,10 +4,20 @@ defmodule Elasticsearch.Mixfile do
   def project do
     [
       app: :elasticsearch,
+      description: "Elasticsearch without DSLs",
+      source_url: "https://github.com/infinitered/elasticsearch-elixir",
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.semaphore": :test
+      ],
       docs: docs(),
       deps: deps()
     ]
@@ -31,7 +41,8 @@ defmodule Elasticsearch.Mixfile do
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
       {:dialyze, ">= 0.0.0", only: [:dev, :test]},
-      {:ex_doc, ">= 0.0.0", only: [:dev, :test]}
+      {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
+      {:excoveralls, ">= 0.0.0", only: :test}
     ]
   end
 
