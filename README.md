@@ -8,7 +8,7 @@ A simple, no-nonsense Elasticsearch library for Elixir. Highlights include:
 
 - **No DSLs.** Interact directly with the `Elasticsearch` JSON API.
 - **Zero-downtime index (re)building.** Via `Mix.Tasks.Elasticsearch.Build` task.
-- **Dev Tools**. Helpers for runnig Elasticsearch as part of your supervision
+- **Dev Tools**. Helpers for running Elasticsearch as part of your supervision
   tree during development.
 
 ## Installation
