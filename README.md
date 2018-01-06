@@ -224,6 +224,8 @@ This package provides two utilities for developing with Elasticsearch:
 
 ## Documentation
 
+[Hex Documentation](https://hexdocs.pm/elasticsearch)
+
 Run `mix docs` to generate local documentation.
 
 ## Contributing
