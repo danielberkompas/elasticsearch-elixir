@@ -9,6 +9,13 @@ defmodule Elasticsearch do
 
       config :elasticsearch,
         api_module: MyApp.CustomAPI
+
+  You can also specify default headers or default options to pass to
+  `HTTPoison`.
+
+      config :elasticsearch,
+        default_headers: [{"authorization", "custom-value"}],
+        default_options: [ssl: [{:versions, [:'tlsv1.2']}]]
   """
 
   alias Elasticsearch.Document
@@ -135,8 +142,11 @@ defmodule Elasticsearch do
         status: 404, type: "index_not_found_exception"}}
   """
   @spec get(String.t()) :: response
-  def get(url) do
-    format(api_module().get(url))
+  @spec get(String.t(), Keyword.t()) :: response
+  def get(url, opts \\ []) do
+    url
+    |> api_module().get(default_headers(), Keyword.merge(default_opts(), opts))
+    |> format()
   end
 
   @doc """
@@ -153,9 +163,10 @@ defmodule Elasticsearch do
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
   @spec get!(String.t()) :: map
-  def get!(url) do
+  @spec get!(String.t(), Keyword.t()) :: map
+  def get!(url, opts \\ []) do
     url
-    |> get()
+    |> get(opts)
     |> unwrap!()
   end
 
@@ -179,8 +190,11 @@ defmodule Elasticsearch do
         query: nil, raw: nil, status: nil, type: nil}}
   """
   @spec put(String.t(), map | binary) :: response
-  def put(url, data) do
-    format(api_module().put(url, data))
+  @spec put(String.t(), map | binary, Keyword.t()) :: response
+  def put(url, data, opts \\ []) do
+    url
+    |> api_module().put(data, default_headers(), Keyword.merge(default_opts(), opts))
+    |> format()
   end
 
   @doc """
@@ -200,9 +214,10 @@ defmodule Elasticsearch do
       ** (Elasticsearch.Exception) No handler found for uri [/bad/url] and method [PUT]
   """
   @spec put!(String.t(), map) :: map
-  def put!(url, data) do
+  @spec put!(String.t(), map, Keyword.t()) :: map
+  def put!(url, data, opts \\ []) do
     url
-    |> put(data)
+    |> put(data, opts)
     |> unwrap!()
   end
 
@@ -219,8 +234,11 @@ defmodule Elasticsearch do
       []
   """
   @spec post(String.t(), map) :: response
-  def post(url, data) do
-    format(api_module().post(url, data))
+  @spec post(String.t(), map, Keyword.t()) :: response
+  def post(url, data, opts \\ []) do
+    url
+    |> api_module().post(data, default_headers(), Keyword.merge(default_opts(), opts))
+    |> format()
   end
 
   @doc """
@@ -241,9 +259,10 @@ defmodule Elasticsearch do
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
   @spec post!(String.t(), map) :: map
-  def post!(url, data) do
+  @spec post!(String.t(), map, Keyword.t()) :: map
+  def post!(url, data, opts \\ []) do
     url
-    |> post(data)
+    |> post(data, opts)
     |> unwrap!()
   end
 
@@ -275,8 +294,9 @@ defmodule Elasticsearch do
         status: 404, type: "index_not_found_exception"}}
   """
   @spec delete(String.t()) :: response
-  def delete(url) do
-    format(api_module().delete(url))
+  @spec delete(String.t(), Keyword.t()) :: response
+  def delete(url, opts \\ []) do
+    format(api_module().delete(url, default_headers(), Keyword.merge(default_opts(), opts)))
   end
 
   @doc """
@@ -294,9 +314,10 @@ defmodule Elasticsearch do
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
   @spec delete!(String.t()) :: map
-  def delete!(url) do
+  @spec delete!(String.t(), Keyword.t()) :: map
+  def delete!(url, opts \\ []) do
     url
-    |> delete()
+    |> delete(opts)
     |> unwrap!()
   end
 
@@ -317,6 +338,14 @@ defmodule Elasticsearch do
 
   defp api_module do
     config()[:api_module] || Elasticsearch.API.HTTP
+  end
+
+  defp default_opts do
+    Application.get_env(:elasticsearch, :default_opts, [])
+  end
+
+  defp default_headers do
+    Application.get_env(:elasticsearch, :default_headers, [])
   end
 
   defp config do
