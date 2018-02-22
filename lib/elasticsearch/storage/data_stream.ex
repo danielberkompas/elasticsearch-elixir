@@ -60,11 +60,10 @@ defmodule Elasticsearch.DataStream do
       [] ->
         {:halt, {[], offset, limit}}
 
-      # If the load returns items, then return the first item, and put the
-      # tail into the state. Also, increment offset and limit by the
-      # configured `:bulk_page_size`.
+      # If the load returns items, then return the first item, and put the tail
+      # into the state. Also, increment offset by the configured `:bulk_page_size`.
       [h | t] ->
-        {[h], {t, offset + page_size, limit + page_size}}
+        {[h], {t, offset + page_size, limit}}
     end
   end
 
