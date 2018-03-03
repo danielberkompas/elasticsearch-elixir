@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.1.0...HEAD)
+
+**Closed issues:**
+
+- SSL Errors with HTTPoison [\#5](https://github.com/infinitered/elasticsearch-elixir/issues/5)
+
+**Merged pull requests:**
+
+- \[\#5\] Allow configuring ':default\_options' [\#6](https://github.com/infinitered/elasticsearch-elixir/pull/6) ([danielberkompas](https://github.com/danielberkompas))
+
 ## [v0.1.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.1.0) (2018-01-02)
 **Merged pull requests:**
 
