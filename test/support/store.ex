@@ -2,7 +2,7 @@ defmodule Elasticsearch.Test.Store do
   @moduledoc false
   @behaviour Elasticsearch.Store
 
-  def load(Post, _offset, limit) when limit <= 10_000 do
+  def load(Post, offset, _limit) when offset <= 5_000 do
     [%Post{title: "Name", author: "Author"}]
     |> Stream.cycle()
     |> Stream.map(&Map.put(&1, :id, random_str()))

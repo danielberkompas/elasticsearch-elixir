@@ -64,7 +64,7 @@ defmodule Elasticsearch.DataStream do
       # tail into the state. Also, increment offset and limit by the
       # configured `:bulk_page_size`.
       [h | t] ->
-        {[h], {t, offset + page_size, limit + page_size}}
+        {[h], {t, offset + page_size, limit}}
     end
   end
 
