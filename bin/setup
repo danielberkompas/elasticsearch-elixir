@@ -24,12 +24,6 @@ echo "----------------------------------------------------------"
 
 mix deps.get || { echo "Mix dependencies could not be installed!"; exit 1; }
 
-echo "----------------------------------------------------------"
-echo "Compiling..."
-echo "----------------------------------------------------------"
-
-mix compile || { echo "Could not compile Elixir code!"; exit 1; }
-
 if [ ! $CI ]; then
   echo "----------------------------------------------------------"
   echo "Installing Elasticsearch for Development..."
