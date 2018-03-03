@@ -1,7 +1,7 @@
 # Elasticsearch
 
 [![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch.svg)](https://hex.pm/packages/elasticsearch)
-[![Build Status](https://semaphoreci.com/api/v1/projects/655f53d5-f7b8-4e59-9635-193647022895/1607375/badge.svg)](https://semaphoreci.com/ir/elasticsearch-elixir)
+[![Build Status](https://travis-ci.org/infinitered/elasticsearch-elixir.svg?branch=master)](https://travis-ci.org/infinitered/elasticsearch-elixir)
 [![Coverage Status](https://coveralls.io/repos/github/infinitered/elasticsearch-elixir/badge.svg?branch=master)](https://coveralls.io/github/infinitered/elasticsearch-elixir?branch=master)
 
 A simple, no-nonsense Elasticsearch library for Elixir. Highlights include:
