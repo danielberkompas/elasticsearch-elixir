@@ -1,0 +1,14 @@
+language: elixir
+cache:
+  directories:
+    - $HOME/.mix
+elixir:
+  - 1.6.2
+otp_release:
+  - 20.1
+services:
+  - elasticsearch
+before_script:
+  - sleep 10
+script:
+  - bin/setup

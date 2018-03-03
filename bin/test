@@ -5,12 +5,13 @@
 # This script contains all the test commands for this app, which will be run
 # on the continuous integration server.
 
+MIX_ENV=test mix format --check-formatted || { echo 'Please format code using `mix format`.'; exit 1; }
 MIX_ENV=test mix compile --warnings-as-errors --force || { echo 'Please fix all compiler warnings.'; exit 1; }
 MIX_ENV=test mix docs || { echo 'Elixir HTML docs were not generated!'; exit 1; }
 MIX_ENV=test mix dialyze || { echo 'Dialyzer checks failed.'; exit 1; }
 
 if [ $CI ]; then
-  mix coveralls.semaphore || { echo 'Elixir tests failed!'; exit 1; }
+  mix coveralls.travis || { echo 'Elixir tests failed!'; exit 1; }
 else
   mix test || { echo 'Elixir tests failed!'; exit 1; }
 fi

@@ -16,7 +16,7 @@ defmodule Elasticsearch.Mixfile do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.semaphore": :test
+        "coveralls.travis": :test
       ],
       docs: docs(),
       deps: deps(),
