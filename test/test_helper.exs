@@ -8,4 +8,5 @@ unless System.get_env("CI") do
   )
 end
 
-{:ok, _} = Elasticsearch.wait_for_boot(15)
+{:ok, _} = Elasticsearch.Test.Cluster.start_link()
+{:ok, _} = Elasticsearch.wait_for_boot(Elasticsearch.Test.Cluster, 15)

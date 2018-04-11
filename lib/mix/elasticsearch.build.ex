@@ -8,53 +8,55 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   4. Remove old indexes beginning with `alias`.
   5. Refresh `alias-12323123`.
 
-  For a functional version of this approach, see 
+  For a functional version of this approach, see
   `Elasticsearch.Index.hot_swap/4`.
 
   ## Example
 
-      $ mix elasticsearch.build posts [index2] [index3]
+      $ mix elasticsearch.build posts [index2] [index3] --cluster MyApp.Cluster
 
   To build an index only if it does not exist, use the `--existing` option:
-      
-      $ mix elasticsearch.build posts --existing
+
+      $ mix elasticsearch.build posts --existing --cluster MyApp.Cluster
       Index posts already exists.
   """
 
   require Logger
 
   alias Elasticsearch.{
-    Index,
-    Config
+    Cluster.Config,
+    Index
   }
 
   @doc false
   def run(args) do
     Mix.Task.run("app.start", [])
 
-    {indexes, type} = parse_args!(args)
+    {cluster, indexes, type} = parse_args!(args)
+    config = Config.get(cluster)
 
     for alias <- indexes do
-      config = Config.config_for_index(alias)
-      build(alias, config, type)
+      build(config, alias, type)
     end
   end
 
-  defp build(alias, config, :existing) do
-    case Index.latest_starting_with(alias) do
+  defp build(config, alias, :existing) do
+    case Index.latest_starting_with(config, alias) do
       {:ok, name} ->
         IO.puts("Index already exists: #{name}")
 
       {:error, :not_found} ->
-        build(alias, config, :rebuild)
+        build(config, alias, :rebuild)
 
       {:error, exception} ->
         Mix.raise(exception)
     end
   end
 
-  defp build(alias, %{settings: settings, store: store, sources: sources}, :rebuild) do
-    with :ok <- Index.hot_swap(alias, settings, store, sources) do
+  defp build(config, alias, :rebuild) do
+    %{settings: settings, store: store, sources: sources} = config.indexes[alias]
+
+    with :ok <- Index.hot_swap(config, alias, settings, store, sources) do
       :ok
     else
       {:error, errors} when is_list(errors) ->
@@ -85,35 +87,32 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   end
 
   defp parse_args!(args) do
-    {options, indexes} =
-      OptionParser.parse!(
-        args,
-        switches: [
-          existing: :boolean
-        ]
-      )
+    {options, indexes} = OptionParser.parse!(args, strict: [cluster: :string, existing: :boolean])
+
+    cluster =
+      if options[:cluster] do
+        :"Elixir.#{options[:cluster]}"
+      else
+        Mix.raise("""
+        Please specify a cluster:
+
+            --cluster MyApp.ClusterName
+        """)
+      end
 
     indexes =
       indexes
       |> Enum.map(&String.to_atom/1)
       |> MapSet.new()
+      |> validate_indexes!(cluster)
 
-    type =
-      cond do
-        options[:existing] ->
-          :existing
+    type = if options[:existing], do: :existing, else: :rebuild
 
-        true ->
-          :rebuild
-      end
-
-    validate_indexes!(indexes)
-
-    {indexes, type}
+    {cluster, indexes, type}
   end
 
-  defp validate_indexes!(indexes) do
-    configured = configured_names()
+  defp validate_indexes!(indexes, cluster) do
+    configured = configured_index_names(cluster)
 
     cond do
       MapSet.size(indexes) == 0 ->
@@ -131,18 +130,15 @@ defmodule Mix.Tasks.Elasticsearch.Build do
         """)
 
       true ->
-        :ok
+        indexes
     end
   end
 
-  defp configured_names do
-    config()
-    |> Keyword.get(:indexes)
+  defp configured_index_names(cluster) do
+    cluster
+    |> Config.get()
+    |> Map.get(:indexes)
     |> Enum.map(fn {key, _val} -> key end)
     |> MapSet.new()
-  end
-
-  defp config do
-    Application.get_all_env(:elasticsearch)
   end
 end

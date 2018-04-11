@@ -4,6 +4,7 @@ defmodule Elasticsearch.Index.Bulk do
   """
 
   alias Elasticsearch.{
+    Cluster,
     DataStream,
     Document
   }
@@ -47,7 +48,7 @@ defmodule Elasticsearch.Index.Bulk do
       {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"
-      
+
       iex> Bulk.encode!(123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Post
   """
@@ -66,21 +67,24 @@ defmodule Elasticsearch.Index.Bulk do
   Uploads all the data from the list of `sources` to the given index.
   Data for each `source` will be fetched using the configured `:store`.
   """
-  @spec upload(String.t(), Elasticsearch.Store.t(), list) :: :ok | {:error, [map]}
-  def upload(index_name, store, sources, errors \\ [])
-  def upload(_index_name, _store, [], []), do: :ok
-  def upload(_index_name, _store, [], errors), do: {:error, errors}
+  @spec upload(Cluster.t(), index_name :: String.t(), Elasticsearch.Store.t(), list) ::
+          :ok | {:error, [map]}
+  def upload(cluster, index_name, store, sources, errors \\ [])
+  def upload(_cluster, _index_name, _store, [], []), do: :ok
+  def upload(_cluster, _index_name, _store, [], errors), do: {:error, errors}
 
-  def upload(index_name, store, [source | tail] = _sources, errors) do
+  def upload(cluster, index_name, store, [source | tail] = _sources, errors) do
+    config = Cluster.Config.get(cluster)
+
     errors =
-      source
-      |> DataStream.stream(store)
+      config
+      |> DataStream.stream(source, store)
       |> Stream.map(&encode!(&1, index_name))
-      |> Stream.chunk_every(config()[:bulk_page_size])
-      |> Stream.map(&Elasticsearch.put("/#{index_name}/_bulk", Enum.join(&1)))
+      |> Stream.chunk_every(config.bulk_page_size)
+      |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_bulk", Enum.join(&1)))
       |> Enum.reduce(errors, &collect_errors/2)
 
-    upload(index_name, tail, errors)
+    upload(cluster, index_name, tail, errors)
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do
@@ -124,9 +128,5 @@ defmodule Elasticsearch.Index.Bulk do
     else
       header
     end
-  end
-
-  defp config do
-    Application.get_all_env(:elasticsearch)
   end
 end

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#
+# Coverage Report
+#
+# Generates and opens a code coverage report for the entire project.
+
+mix coveralls.html || { echo 'Tests failed!'; exit 1; }
+open cover/excoveralls.html

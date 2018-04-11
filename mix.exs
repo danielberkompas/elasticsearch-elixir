@@ -58,6 +58,8 @@ defmodule Elasticsearch.Mixfile do
     [
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
+      {:vex, "~> 0.6.0"},
+      {:stream_data, ">= 0.0.0", only: [:dev, :test]},
       {:dialyze, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.0.0", only: :test}
@@ -75,7 +77,7 @@ defmodule Elasticsearch.Mixfile do
           Elasticsearch.API.HTTP
         ],
         Config: [
-          Elasticsearch.Config
+          Elasticsearch.Cluster
         ],
         Indexing: [
           Elasticsearch.Index,
