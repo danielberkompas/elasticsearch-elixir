@@ -95,11 +95,25 @@ behaviour.
 defmodule MyApp.ElasticsearchStore do
   @behaviour Elasticsearch.Store
 
-  @impl Elasticsearch.Store
-  def load(MyApp.Post, offset, limit) do
+  def load(MyApp.Post, offset, limit) when offset <= 1_000 do
     # Return MyApp.Posts, restricted by offset and limit
+    # a sample implementation to get you started:
+
+    [%MyApp.Post{title: "Name", author: "Author"}]
+    |> Stream.cycle()
+    |> Stream.map(&Map.put(&1, :id, random_str()))
+    |> Enum.take(5_000)
+  end
+
+  def load(_module, _offset, _limit) do
+    []
+  end
+
+  defp random_str do
+    :crypto.strong_rand_bytes(32) |> Base.encode64()
   end
 end
+
 ```
 
 #### Elasticsearch.Document
