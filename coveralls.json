@@ -1,6 +1,7 @@
 {
   "skip_files": [
     "lib/elasticsearch/api/api.ex",
+    "lib/mix/elasticsearch.install.ex",
     "test/support/*"
   ],
   "coverage_options": {

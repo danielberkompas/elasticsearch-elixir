@@ -15,8 +15,8 @@ defmodule Mix.Tasks.Elasticsearch.Install do
 
   @doc false
   def run(args) do
-    with {[{:version, version}], [location], _} <-
-           OptionParser.parse(args, switches: [version: :string]) do
+    with {[{:version, version}], [location]} <-
+           OptionParser.parse!(args, strict: [version: :string]) do
       download_elasticsearch(version, location)
       download_kibana(version, location)
     else
