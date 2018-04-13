@@ -59,7 +59,6 @@ defmodule Elasticsearch.Mixfile do
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
       {:vex, "~> 0.6.0"},
-      {:stream_data, ">= 0.0.0", only: [:dev, :test]},
       {:dialyze, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.0.0", only: :test}
@@ -69,7 +68,11 @@ defmodule Elasticsearch.Mixfile do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md"],
+      extras: ["README.md", "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"]],
+      extra_section: "GUIDES",
+      groups_for_extras: [
+        Upgrading: ~r/upgrading/
+      ],
       groups_for_modules: [
         API: [
           Elasticsearch,
