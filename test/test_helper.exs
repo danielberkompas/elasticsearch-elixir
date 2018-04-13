@@ -1,4 +1,5 @@
 ExUnit.start()
+Elasticsearch.Test.Repo.start_link()
 
 unless System.get_env("CI") do
   Elasticsearch.Executable.start_link(

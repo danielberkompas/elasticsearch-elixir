@@ -1,5 +1,5 @@
 defmodule Elasticsearch.Cluster.IndexTest do
-  use ExUnit.Case
+  use Elasticsearch.DataCase, async: false
 
   alias Elasticsearch.{
     Index,

@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Elasticsearch.BuildTest do
-  use ExUnit.Case
+  use Elasticsearch.DataCase, async: false
 
   import Mix.Task, only: [rerun: 2]
   import ExUnit.CaptureIO
@@ -17,6 +17,15 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   end
 
   @cluster_opts ["--cluster", "Elasticsearch.Test.Cluster"]
+
+  def populate_posts_table do
+    posts =
+      [%{title: "Example Post", author: "John Smith"}]
+      |> Stream.cycle()
+      |> Enum.take(10_000)
+
+    Repo.insert_all("posts", posts)
+  end
 
   describe ".run" do
     test "raises error on invalid options" do
@@ -44,6 +53,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     end
 
     test "builds configured index" do
+      populate_posts_table()
       rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
 
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")

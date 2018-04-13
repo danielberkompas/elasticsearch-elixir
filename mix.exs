@@ -20,7 +20,8 @@ defmodule Elasticsearch.Mixfile do
       ],
       docs: docs(),
       deps: deps(),
-      package: package()
+      package: package(),
+      aliases: aliases()
     ]
   end
 
@@ -59,7 +60,9 @@ defmodule Elasticsearch.Mixfile do
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
       {:vex, "~> 0.6.0"},
+      {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
+      {:ecto, ">= 0.0.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.0.0", only: :test}
     ]
   end
@@ -94,6 +97,12 @@ defmodule Elasticsearch.Mixfile do
           Elasticsearch.Executable
         ]
       ]
+    ]
+  end
+
+  defp aliases do
+    [
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
 end
