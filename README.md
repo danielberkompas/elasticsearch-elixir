@@ -78,7 +78,7 @@ config :elasticsearch,
       #
       # Each piece of data that is returned by the store must implement the
       # Elasticsearch.Document protocol.
-      sources: [Post]
+      sources: [MyApp.Post]
     }
   }
 ```
