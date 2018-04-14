@@ -3,10 +3,10 @@
     "post": {
       "properties": {
         "title": {
-          "type": "string"
+          "type": "text"
         },
         "author": {
-          "type": "string"
+          "type": "text"
         }
       }
     }
