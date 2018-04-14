@@ -6,7 +6,7 @@ defmodule Elasticsearch.Mixfile do
       app: :elasticsearch,
       description: "Elasticsearch without DSLs",
       source_url: "https://github.com/infinitered/elasticsearch-elixir",
-      version: "0.1.1",
+      version: "0.2.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -20,7 +20,8 @@ defmodule Elasticsearch.Mixfile do
       ],
       docs: docs(),
       deps: deps(),
-      package: package()
+      package: package(),
+      aliases: aliases()
     ]
   end
 
@@ -58,8 +59,10 @@ defmodule Elasticsearch.Mixfile do
     [
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
-      {:dialyze, ">= 0.0.0", only: [:dev, :test]},
+      {:vex, "~> 0.6.0"},
+      {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
+      {:ecto, ">= 0.0.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.0.0", only: :test}
     ]
   end
@@ -67,7 +70,11 @@ defmodule Elasticsearch.Mixfile do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md"],
+      extras: ["README.md", "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"]],
+      extra_section: "GUIDES",
+      groups_for_extras: [
+        Upgrading: ~r/upgrading/
+      ],
       groups_for_modules: [
         API: [
           Elasticsearch,
@@ -75,7 +82,7 @@ defmodule Elasticsearch.Mixfile do
           Elasticsearch.API.HTTP
         ],
         Config: [
-          Elasticsearch.Config
+          Elasticsearch.Cluster
         ],
         Indexing: [
           Elasticsearch.Index,
@@ -90,6 +97,12 @@ defmodule Elasticsearch.Mixfile do
           Elasticsearch.Executable
         ]
       ]
+    ]
+  end
+
+  defp aliases do
+    [
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
 end

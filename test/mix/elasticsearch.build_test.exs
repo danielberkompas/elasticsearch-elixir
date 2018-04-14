@@ -1,19 +1,30 @@
 defmodule Mix.Tasks.Elasticsearch.BuildTest do
-  use ExUnit.Case
+  use Elasticsearch.DataCase, async: false
 
   import Mix.Task, only: [rerun: 2]
   import ExUnit.CaptureIO
 
-  alias Elasticsearch
   alias Elasticsearch.Index
+  alias Elasticsearch.Test.Cluster, as: TestCluster
 
   setup do
     on_exit(fn ->
-      "posts"
-      |> Index.starting_with()
+      TestCluster
+      |> Index.starting_with("posts")
       |> elem(1)
-      |> Enum.map(&Elasticsearch.delete("/#{&1}"))
+      |> Enum.map(&Elasticsearch.delete(TestCluster, "/#{&1}"))
     end)
+  end
+
+  @cluster_opts ["--cluster", "Elasticsearch.Test.Cluster"]
+
+  def populate_posts_table do
+    posts =
+      [%{title: "Example Post", author: "John Smith"}]
+      |> Stream.cycle()
+      |> Enum.take(10_000)
+
+    Repo.insert_all("posts", posts)
   end
 
   describe ".run" do
@@ -23,45 +34,52 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       end
     end
 
+    test "raises error if cluster not specified" do
+      assert_raise Mix.Error, fn ->
+        rerun("elasticsearch.build", ["posts"])
+      end
+    end
+
     test "raises error on unconfigured indexes" do
       assert_raise Mix.Error, fn ->
-        rerun("elasticsearch.build", ["nonexistent"])
+        rerun("elasticsearch.build", ["nonexistent"] ++ @cluster_opts)
       end
     end
 
     test "raises error if no index specified" do
       assert_raise Mix.Error, fn ->
-        rerun("elasticsearch.build", [])
+        rerun("elasticsearch.build", [] ++ @cluster_opts)
       end
     end
 
     test "builds configured index" do
-      rerun("elasticsearch.build", ["posts"])
+      populate_posts_table()
+      rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
 
-      resp = Elasticsearch.get!("/posts/_search")
+      resp = Elasticsearch.get!(TestCluster, "/posts/_search")
       assert resp["hits"]["total"] == 10_000
     end
 
     test "only keeps two index versions" do
       for _ <- 1..3 do
-        rerun("elasticsearch.build", ["posts"])
+        rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
         :timer.sleep(1000)
       end
 
-      {:ok, indexes} = Index.starting_with("posts")
+      {:ok, indexes} = Index.starting_with(TestCluster, "posts")
       assert length(indexes) == 2
       [_previous, current] = Enum.sort(indexes)
 
       # assert that the most recent index is the one that is aliased
-      assert {:ok, %{^current => _}} = Elasticsearch.get("/posts/_alias")
+      assert {:ok, %{^current => _}} = Elasticsearch.get(TestCluster, "/posts/_alias")
     end
 
     test "--existing checks if index exists" do
-      rerun("elasticsearch.build", ["posts"])
+      rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
 
       io =
         capture_io(fn ->
-          rerun("elasticsearch.build", ["posts", "--existing"])
+          rerun("elasticsearch.build", ["posts", "--existing"] ++ @cluster_opts)
         end)
 
       assert io =~ "Index already exists: posts-"

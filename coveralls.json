@@ -1,0 +1,11 @@
+{
+  "skip_files": [
+    "lib/elasticsearch/api/api.ex",
+    "lib/elasticsearch/storage/store.ex",
+    "lib/mix/elasticsearch.install.ex",
+    "test/support/*"
+  ],
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": true
+  }
+}

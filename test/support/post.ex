@@ -1,17 +1,21 @@
 defmodule Post do
-  @moduledoc false
-  defstruct id: nil, title: nil, author: nil
+  use Ecto.Schema
+
+  schema "posts" do
+    field(:title, :string)
+    field(:author, :string)
+  end
 end
 
 defimpl Elasticsearch.Document, for: Post do
-  def id(item), do: item.id
+  def id(post), do: post.id
   def type(_item), do: "post"
   def parent(_item), do: false
 
-  def encode(item) do
+  def encode(post) do
     %{
-      title: item.title,
-      author: item.author
+      title: post.title,
+      author: post.author
     }
   end
 end

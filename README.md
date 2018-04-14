@@ -18,8 +18,16 @@ Add `elasticsearch` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:elasticsearch, "~> 0.1.1"}
+    {:elasticsearch, "~> 0.2.0"}
   ]
+end
+```
+
+Then, create an `Elasticsearch.Cluster` in your application:
+
+```elixir
+defmodule MyApp.ElasticsearchCluster do
+  use Elasticsearch.Cluster, otp_app: :my_app
 end
 ```
 
@@ -28,14 +36,14 @@ end
 See the annotated example configuration below.
 
 ```elixir
-config :elasticsearch,
+config :my_app, MyApp.ElasticsearchCluster,
   # The URL where Elasticsearch is hosted on your system
-  url: "http://localhost:9200", # or {:system, "ELASTICSEARCH_URL"}
+  url: "http://localhost:9200",
 
   # If your Elasticsearch cluster uses HTTP basic authentication,
   # specify the username and password here:
-  username: "username", # or {:system, "ELASTICSEARCH_USERNAME"}
-  password: "password", # or {:system, "ELASTICSEARCH_PASSWORD"}
+  username: "username",
+  password: "password",
 
   # When indexing data using the `mix elasticsearch.build` task,
   # control the data ingestion rate by raising or lowering the number
@@ -49,7 +57,7 @@ config :elasticsearch,
   # If you want to mock the responses of the Elasticsearch JSON API
   # for testing or other purposes, you can inject a different module
   # here. It must implement the Elasticsearch.API behaviour.
-  api_module: Elasticsearch.API.HTTP,
+  api: Elasticsearch.API.HTTP,
 
   # Customize the library used for JSON encoding/decoding.
   json_library: Poison, # or Jason
@@ -83,7 +91,7 @@ config :elasticsearch,
   }
 ```
 
-## Protocols & Behaviours
+## Protocols and Behaviours
 
 #### Elasticsearch.Store
 
@@ -130,8 +138,8 @@ This can be used in test mode, for example:
 
 ```elixir
 # config/test.exs
-config :elasticsearch,
-  api_module: MyApp.ElasticsearchMock
+config :my_app, MyApp.ElasticsearchCluster,
+  api: MyApp.ElasticsearchMock
 ```
 
 Your mock can then stub requests and responses from Elasticsearch.
@@ -140,7 +148,8 @@ Your mock can then stub requests and responses from Elasticsearch.
 defmodule MyApp.ElasticsearchMock do
   @behaviour Elasticsearch.API
 
-  def get("/posts/1", _headers, _opts) do
+  @impl true
+  def request(_config, :get, "/posts/1", _data, _opts) do
     {:ok, %HTTPoison.Response{
       status_code: 404,
       body: %{
@@ -161,7 +170,7 @@ hot-swap technique with Elasticsearch aliases.
 ```bash
 # This will read the `indexes[posts]` configuration seen above, to build
 # an index, `posts-123123123`, which will then be aliased to `posts`.
-$ mix elasticsearch.build posts
+$ mix elasticsearch.build posts --cluster MyApp.ElasticsearchCluster
 ```
 
 See the docs on `Mix.Tasks.Elasticsearch.Build` and `Elasticsearch.Index`
@@ -169,29 +178,29 @@ for more details.
 
 #### Individual Documents
 
-Use `Elasticsearch.put_document/2` to upload a document to a particular index.
+Use `Elasticsearch.put_document/3` to upload a document to a particular index.
 
 ```elixir
 # MyApp.Post must implement Elasticsearch.Document
-Elasticsearch.put_document(%MyApp.Post{}, "index-name")
+Elasticsearch.put_document(MyApp.ElasticsearchCluster, %MyApp.Post{}, "index-name")
 ```
 
-To remove documents, use `Elasticsearch.delete_document/2`:
+To remove documents, use `Elasticsearch.delete_document/3`:
 
 ```elixir
-Elasticsearch.delete_document(%MyApp.Post{}, "index-name")
+Elasticsearch.delete_document(MyApp.ElasticsearchCluster, %MyApp.Post{}, "index-name")
 ```
 
 ## Querying
 
-You can query Elasticsearch the `post/2` function:
+You can query Elasticsearch the `post/3` function:
 
 ```elixir
 # Raw query
-Elasticsearch.post("/posts/post/_search", '{"query": {"match_all": {}}}')
+Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/post/_search", '{"query": {"match_all": {}}}')
 
 # Using a map
-Elasticsearch.post("/posts/post/_search", %{"query" => %{"match_all" => %{}}})
+Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/post/_search", %{"query" => %{"match_all" => %{}}})
 ```
 
 See the official Elasticsearch [documentation](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/index.html)

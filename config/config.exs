@@ -18,3 +18,16 @@ config :elasticsearch,
       sources: [Post]
     }
   }
+
+config :elasticsearch, Elasticsearch.Test.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "elasticsearch_test",
+  hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  priv: "test/support/"
+
+config :elasticsearch, ecto_repos: [Elasticsearch.Test.Repo]
+
+config :logger, level: :warn

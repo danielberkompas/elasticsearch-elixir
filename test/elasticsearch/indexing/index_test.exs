@@ -1,13 +1,16 @@
-defmodule Elasticsearch.IndexTest do
-  use ExUnit.Case
+defmodule Elasticsearch.Cluster.IndexTest do
+  use Elasticsearch.DataCase, async: false
 
-  alias Elasticsearch.Index
+  alias Elasticsearch.{
+    Index,
+    Test.Cluster
+  }
 
   doctest Elasticsearch.Index
 
   setup do
     for index <- ["posts"] do
-      Elasticsearch.delete("/#{index}*")
+      Elasticsearch.delete(Cluster, "/#{index}*")
     end
   end
 end
