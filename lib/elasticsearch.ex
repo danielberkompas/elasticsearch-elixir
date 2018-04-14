@@ -207,8 +207,7 @@ defmodule Elasticsearch do
   end
 
   @doc """
-  Posts data or queries to a given Elasticsearch path. If you want to execute
-  an `Elasticsearch.Query`, see `execute/1` instead.
+  Posts data or queries to a given Elasticsearch path.
 
   ## Examples
 
