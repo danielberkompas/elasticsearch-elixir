@@ -1,5 +1,19 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.1.1...HEAD)
+
+**Closed issues:**
+
+- elasticsearch deprecated type=string  [\#14](https://github.com/infinitered/elasticsearch-elixir/issues/14)
+- Documentation references execute/1 which doesn't seem to exist [\#11](https://github.com/infinitered/elasticsearch-elixir/issues/11)
+
+**Merged pull requests:**
+
+- Version 0.2 [\#15](https://github.com/infinitered/elasticsearch-elixir/pull/15) ([danielberkompas](https://github.com/danielberkompas))
+- correct index source in README [\#12](https://github.com/infinitered/elasticsearch-elixir/pull/12) ([steffkes](https://github.com/steffkes))
+
 ## [v0.1.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.1.1) (2018-03-03)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.1.0...v0.1.1)
 
