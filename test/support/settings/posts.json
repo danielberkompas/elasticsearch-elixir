@@ -1,6 +1,6 @@
 {
   "mappings": {
-    "post": {
+    "_doc": {
       "properties": {
         "title": {
           "type": "text"

@@ -32,7 +32,7 @@ defmodule Elasticsearch.Exception do
     |> Enum.join(" ")
   end
 
-  defp build(response, query) when is_map(response) do
+  defp build(%{"error" => error} = response, query) when is_map(error) do
     [
       status: response["status"],
       line: get_in(response, ["error", "line"]),
@@ -44,12 +44,20 @@ defmodule Elasticsearch.Exception do
     ]
   end
 
-  defp build(response, query) when is_binary(response) do
+  defp build(%{"error" => error}, query) when is_binary(error) do
+    binary_error(error, query)
+  end
+
+  defp build(error, query) when is_binary(error) do
+    binary_error(error, query)
+  end
+
+  defp binary_error(error, query) do
     [
       status: nil,
       line: nil,
       col: nil,
-      message: response,
+      message: error,
       type: nil,
       query: query
     ]

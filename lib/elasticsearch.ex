@@ -30,10 +30,16 @@ defmodule Elasticsearch do
       ...> struct = %Post{id: 123, title: "Post", author: "Author"}
       ...> Elasticsearch.put_document(Cluster, struct, "posts-1")
       {:ok,
-       %{"_id" => "123", "_index" => "posts-1",
-         "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-         "_type" => "post", "_version" => 1, "created" => true,
-         "result" => "created"}}
+        %{
+          "_id" => "123",
+          "_index" => "posts-1",
+          "_primary_term" => 1,
+          "_seq_no" => 0,
+          "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+          "_type" => "_doc",
+          "_version" => 1,
+          "result" => "created"
+        }}
   """
   @spec put_document(Cluster.t(), Document.t(), index_name) :: response
   def put_document(cluster, document, index) do
@@ -67,7 +73,7 @@ defmodule Elasticsearch do
   end
 
   defp document_url(document, index) do
-    "/#{index}/#{Document.type(document)}/#{Document.id(document)}"
+    "/#{index}/_doc/#{Document.id(document)}"
   end
 
   @doc """
@@ -159,17 +165,23 @@ defmodule Elasticsearch do
   ## Examples
 
       iex> Index.create_from_file(Cluster, "posts-1", "test/support/settings/posts.json")
-      ...> Elasticsearch.put(Cluster, "/posts-1/post/id", %{"title" => "title", "author" => "author"})
+      ...> Elasticsearch.put(Cluster, "/posts-1/_doc/id", %{"title" => "title", "author" => "author"})
       {:ok,
-        %{"_id" => "id", "_index" => "posts-1",
+        %{
+          "_id" => "id",
+          "_index" => "posts-1",
+          "_primary_term" => 1,
+          "_seq_no" => 0,
           "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-          "_type" => "post", "_version" => 1, "created" => true,
-          "result" => "created"}}
+          "_type" => "_doc",
+          "_version" => 1,
+          "result" => "created"
+        }}
 
       iex> Elasticsearch.put(Cluster, "/bad/url", %{"title" => "title", "author" => "author"})
       {:error,
        %Elasticsearch.Exception{col: nil, line: nil,
-        message: "No handler found for uri [/bad/url] and method [PUT]",
+        message: "Incorrect HTTP method for uri [/bad/url] and method [PUT], allowed: [POST]",
         query: nil, raw: nil, status: nil, type: nil}}
   """
   @spec put(Cluster.t(), url, data) :: response
@@ -189,14 +201,20 @@ defmodule Elasticsearch do
   ## Examples
 
       iex> Index.create_from_file(Cluster, "posts", "test/support/settings/posts.json")
-      ...> Elasticsearch.put!(Cluster, "/posts/post/id", %{"name" => "name", "author" => "author"})
-      %{"_id" => "id", "_index" => "posts",
+      ...> Elasticsearch.put!(Cluster, "/posts/_doc/id", %{"name" => "name", "author" => "author"})
+      %{
+        "_id" => "id",
+        "_index" => "posts",
+        "_primary_term" => 1,
+        "_seq_no" => 0,
         "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
-        "_type" => "post", "_version" => 1, "created" => true,
-        "result" => "created"}
+        "_type" => "_doc",
+        "_version" => 1,
+        "result" => "created"
+      }
 
       iex> Elasticsearch.put!(Cluster, "/bad/url", %{"data" => "here"})
-      ** (Elasticsearch.Exception) No handler found for uri [/bad/url] and method [PUT]
+      ** (Elasticsearch.Exception) Incorrect HTTP method for uri [/bad/url] and method [PUT], allowed: [POST]
   """
   @spec put!(Cluster.t(), url, data) :: map | no_return
   @spec put!(Cluster.t(), url, data, opts) :: map | no_return

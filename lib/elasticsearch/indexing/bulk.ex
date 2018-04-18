@@ -19,7 +19,7 @@ defmodule Elasticsearch.Index.Bulk do
 
       iex> Bulk.encode(%Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
-      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"}
 
@@ -45,7 +45,7 @@ defmodule Elasticsearch.Index.Bulk do
 
       iex> Bulk.encode!(%Post{id: "my-id"}, "my-index")
       \"\"\"
-      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"
 
@@ -81,10 +81,10 @@ defmodule Elasticsearch.Index.Bulk do
       |> DataStream.stream(source, store)
       |> Stream.map(&encode!(&1, index_name))
       |> Stream.chunk_every(config.bulk_page_size)
-      |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_bulk", Enum.join(&1)))
+      |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_doc/_bulk", Enum.join(&1)))
       |> Enum.reduce(errors, &collect_errors/2)
 
-    upload(cluster, index_name, tail, errors)
+    upload(cluster, index_name, store, tail, errors)
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do
@@ -108,25 +108,9 @@ defmodule Elasticsearch.Index.Bulk do
   defp header(type, index, struct) do
     attrs = %{
       "_index" => index,
-      "_type" => Document.type(struct),
       "_id" => Document.id(struct)
     }
 
-    header =
-      %{}
-      |> Map.put(type, attrs)
-      |> put_parent(type, struct)
-
-    Poison.encode!(header)
-  end
-
-  defp put_parent(header, type, struct) do
-    parent = Document.parent(struct)
-
-    if parent do
-      put_in(header[type]["_parent"], parent)
-    else
-      header
-    end
+    Poison.encode!(%{type => attrs})
   end
 end

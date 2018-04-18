@@ -197,10 +197,10 @@ You can query Elasticsearch the `post/3` function:
 
 ```elixir
 # Raw query
-Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/post/_search", '{"query": {"match_all": {}}}')
+Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/_doc/_search", '{"query": {"match_all": {}}}')
 
 # Using a map
-Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/post/_search", %{"query" => %{"match_all" => %{}}})
+Elasticsearch.post(MyApp.ElasticsearchCluster, "/posts/_doc/_search", %{"query" => %{"match_all" => %{}}})
 ```
 
 See the official Elasticsearch [documentation](https://www.elastic.co/guide/en/elasticsearch/reference/6.x/index.html)
