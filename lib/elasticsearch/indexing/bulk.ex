@@ -83,7 +83,8 @@ defmodule Elasticsearch.Index.Bulk do
   def upload(_cluster, _index_name, _store, [], []), do: :ok
   def upload(_cluster, _index_name, _store, [], errors), do: {:error, errors}
 
-  def upload(cluster, index_name, store, [source | tail] = _sources, errors) do
+  def upload(cluster, index_name, store, [source | tail] = _sources, errors)
+      when is_atom(store) do
     config = Cluster.Config.get(cluster)
 
     errors =
