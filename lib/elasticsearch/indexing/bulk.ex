@@ -80,7 +80,7 @@ defmodule Elasticsearch.Index.Bulk do
       |> Stream.map(&Elasticsearch.put("/#{index_name}/_bulk", Enum.join(&1)))
       |> Enum.reduce(errors, &collect_errors/2)
 
-    upload(index_name, tail, errors)
+    upload(index_name, store, tail, errors)
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do
