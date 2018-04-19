@@ -231,6 +231,16 @@ This package provides two utilities for developing with Elasticsearch:
   ]
   ```
 
+## Elasticsearch 5.x Support
+
+As of version `0.3.0` of this client library, multiple document types are not
+supported, because support for these was removed in Elasticsearch 6.x. You
+can still use this library with Elasticsearch 5.x, but you must design your
+indexes in the Elasticsearch 6.x style.
+
+Read more about this in Elasticsearch's guide, ["Removal of Mapping
+Types"](https://www.elastic.co/guide/en/elasticsearch/reference/6.2/removal-of-types.html).
+
 ## Documentation
 
 [Hex Documentation](https://hexdocs.pm/elasticsearch)
