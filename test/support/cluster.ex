@@ -8,7 +8,7 @@ defmodule Elasticsearch.Test.Cluster do
      %{
        api: Elasticsearch.API.HTTP,
        bulk_page_size: 5000,
-       bulk_wait_interval: 5000,
+       bulk_wait_interval: 0,
        json_library: Poison,
        url: "http://localhost:9200",
        username: "username",

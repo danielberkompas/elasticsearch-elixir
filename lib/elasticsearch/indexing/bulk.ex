@@ -91,10 +91,20 @@ defmodule Elasticsearch.Index.Bulk do
       |> DataStream.stream(source, store)
       |> Stream.map(&encode!(config, &1, index_name))
       |> Stream.chunk_every(config.bulk_page_size)
-      |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_doc/_bulk", Enum.join(&1)))
+      |> Stream.intersperse(config.bulk_wait_interval)
+      |> Stream.map(&put_bulk_page(config, index_name, &1))
       |> Enum.reduce(errors, &collect_errors/2)
 
     upload(cluster, index_name, store, tail, errors)
+  end
+
+  defp put_bulk_page(_config, _index_name, wait_interval) when is_integer(wait_interval) do
+    IO.puts("Pausing #{wait_interval}ms between bulk pages")
+    :timer.sleep(wait_interval)
+  end
+
+  defp put_bulk_page(config, index_name, items) when is_list(items) do
+    Elasticsearch.put(config, "/#{index_name}/_doc/_bulk", Enum.join(items))
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do

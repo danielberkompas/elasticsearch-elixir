@@ -1,4 +1,4 @@
-defmodule Elasticsearch.Cluster.IndexTest do
+defmodule Elasticsearch.IndexTest do
   use Elasticsearch.DataCase, async: false
 
   alias Elasticsearch.{

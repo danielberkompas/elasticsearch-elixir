@@ -18,15 +18,6 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
   @cluster_opts ["--cluster", "Elasticsearch.Test.Cluster"]
 
-  def populate_posts_table do
-    posts =
-      [%{title: "Example Post", author: "John Smith"}]
-      |> Stream.cycle()
-      |> Enum.take(10_000)
-
-    Repo.insert_all("posts", posts)
-  end
-
   describe ".run" do
     test "raises error on invalid options" do
       assert_raise Mix.Error, fn ->
@@ -54,8 +45,13 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
     test "builds configured index" do
       populate_posts_table()
-      rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
 
+      output =
+        capture_io(fn ->
+          rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
+        end)
+
+      assert output =~ "Pausing 0ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
       assert resp["hits"]["total"] == 10_000
     end

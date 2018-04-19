@@ -1,5 +1,5 @@
 defmodule Elasticsearch.Index.BulkTest do
-  use ExUnit.Case
+  use Elasticsearch.DataCase
 
   alias Elasticsearch.{
     Test.Cluster,
