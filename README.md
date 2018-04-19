@@ -127,8 +127,6 @@ protocol.
 ```elixir
 defimpl Elasticsearch.Document, for: MyApp.Post do
   def id(post), do: post.id
-  def type(_post), do: "post"
-  def parent(_post), do: false
   def encode(post) do
     %{
       title: post.title,
