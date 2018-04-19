@@ -99,13 +99,22 @@ Your app must provide a `Store` module, which will fetch data to upload to
 Elasticsearch. This module must implement the `Elasticsearch.Store`
 behaviour.
 
+The example below uses `Ecto`, but you can implement the behaviour on top
+of any persistence layer.
+
 ```elixir
 defmodule MyApp.ElasticsearchStore do
   @behaviour Elasticsearch.Store
 
-  @impl Elasticsearch.Store
-  def load(MyApp.Post, offset, limit) do
-    # Return MyApp.Posts, restricted by offset and limit
+  import Ecto.Query
+  
+  alias MyApp.Repo
+
+  def load(schema, offset, limit) do
+     schema
+     |> offset(^offset)
+     |> limit(^limit)
+     |> Repo.all()
   end
 end
 ```
