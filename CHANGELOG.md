@@ -1,5 +1,24 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.2.0...HEAD)
+
+**Implemented enhancements:**
+
+- Use Repo pattern for configuration [\#9](https://github.com/infinitered/elasticsearch-elixir/issues/9)
+- bulk\_wait\_interval is unused [\#7](https://github.com/infinitered/elasticsearch-elixir/issues/7)
+
+**Closed issues:**
+
+- Support Elasticsearch 6.x+ [\#16](https://github.com/infinitered/elasticsearch-elixir/issues/16)
+- Indexing fails on second Elasticsearch.Store load? [\#10](https://github.com/infinitered/elasticsearch-elixir/issues/10)
+- Increase test coverage to \>90% [\#3](https://github.com/infinitered/elasticsearch-elixir/issues/3)
+
+**Merged pull requests:**
+
+- Support Elasticsearch 6.x [\#19](https://github.com/infinitered/elasticsearch-elixir/pull/19) ([danielberkompas](https://github.com/danielberkompas))
+
 ## [v0.2.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.2.0) (2018-04-18)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.1.1...v0.2.0)
 
