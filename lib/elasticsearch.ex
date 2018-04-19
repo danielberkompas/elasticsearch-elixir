@@ -48,6 +48,22 @@ defmodule Elasticsearch do
 
   @doc """
   Same as `put_document/2`, but raises on errors.
+
+  ## Example
+
+      iex> Index.create_from_file(Cluster, "posts-1", "test/support/settings/posts.json")
+      ...> struct = %Post{id: 123, title: "Post", author: "Author"}
+      ...> Elasticsearch.put_document!(Cluster, struct, "posts-1")
+      %{
+        "_id" => "123",
+        "_index" => "posts-1",
+        "_primary_term" => 1,
+        "_seq_no" => 0,
+        "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+        "_type" => "_doc",
+        "_version" => 1,
+        "result" => "created"
+      }
   """
   @spec put_document(Cluster.t(), Document.t(), index_name) :: map | no_return
   def put_document!(cluster, document, index) do
@@ -58,6 +74,24 @@ defmodule Elasticsearch do
   Deletes a document from a given index.
 
   The document must implement the `Elasticsearch.Document` protocol.
+
+  ## Example
+
+      iex> Index.create_from_file(Cluster, "posts-1", "test/support/settings/posts.json")
+      ...> struct = %Post{id: 123, title: "Post", author: "Author"}
+      ...> Elasticsearch.put_document!(Cluster, struct, "posts-1")
+      ...> Elasticsearch.delete_document(Cluster, struct, "posts-1")
+      {:ok,
+        %{
+          "_id" => "123",
+          "_index" => "posts-1",
+          "_primary_term" => 1,
+          "_seq_no" => 1,
+          "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+          "_type" => "_doc",
+          "_version" => 2,
+          "result" => "deleted"
+        }}
   """
   @spec delete_document(Cluster.t(), Document.t(), index_name) :: response
   def delete_document(cluster, document, index) do
@@ -66,6 +100,23 @@ defmodule Elasticsearch do
 
   @doc """
   Same as `delete_document/2`, but raises on errors.
+
+  ## Example
+
+      iex> Index.create_from_file(Cluster, "posts-1", "test/support/settings/posts.json")
+      ...> struct = %Post{id: 123, title: "Post", author: "Author"}
+      ...> Elasticsearch.put_document!(Cluster, struct, "posts-1")
+      ...> Elasticsearch.delete_document!(Cluster, struct, "posts-1")
+      %{
+        "_id" => "123",
+        "_index" => "posts-1",
+        "_primary_term" => 1,
+        "_seq_no" => 1,
+        "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+        "_type" => "_doc",
+        "_version" => 2,
+        "result" => "deleted"
+      }
   """
   @spec delete_document!(Cluster.t(), Document.t(), index_name) :: map | no_return
   def delete_document!(cluster, document, index) do
