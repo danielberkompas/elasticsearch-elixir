@@ -17,50 +17,60 @@ defmodule Elasticsearch.Index.Bulk do
 
   ## Examples
 
-      iex> Bulk.encode(%Post{id: "my-id"}, "my-index")
+      iex> Bulk.encode(Cluster, %Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
       {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"}
 
-      iex> Bulk.encode(123, "my-index")
+      iex> Bulk.encode(Cluster, 123, "my-index")
       {:error,
         %Protocol.UndefinedError{description: "",
         protocol: Elasticsearch.Document, value: 123}}
   """
-  @spec encode(struct, String.t()) ::
+  @spec encode(Cluster.t(), struct, String.t()) ::
           {:ok, String.t()}
           | {:error, Error.t()}
-  def encode(struct, index) do
-    {:ok, encode!(struct, index)}
+  def encode(cluster, struct, index) do
+    {:ok, encode!(cluster, struct, index)}
   rescue
     exception ->
       {:error, exception}
   end
 
   @doc """
-  Same as `encode/1`, but returns the request and raises errors.
+  Same as `encode/3`, but returns the request and raises errors.
 
   ## Example
 
-      iex> Bulk.encode!(%Post{id: "my-id"}, "my-index")
+      iex> Bulk.encode!(Cluster, %Post{id: "my-id"}, "my-index")
       \"\"\"
       {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"
 
-      iex> Bulk.encode!(123, "my-index")
+      iex> Bulk.encode!(Cluster, 123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Post
   """
-  def encode!(struct, index) do
-    header = header("create", index, struct)
+  def encode!(cluster, struct, index) do
+    config = Cluster.Config.get(cluster)
+    header = header(config, "create", index, struct)
 
     document =
       struct
       |> Document.encode()
-      |> Poison.encode!()
+      |> config.json_library.encode!()
 
     "#{header}\n#{document}\n"
+  end
+
+  defp header(config, type, index, struct) do
+    attrs = %{
+      "_index" => index,
+      "_id" => Document.id(struct)
+    }
+
+    config.json_library.encode!(%{type => attrs})
   end
 
   @doc """
@@ -79,7 +89,7 @@ defmodule Elasticsearch.Index.Bulk do
     errors =
       config
       |> DataStream.stream(source, store)
-      |> Stream.map(&encode!(&1, index_name))
+      |> Stream.map(&encode!(config, &1, index_name))
       |> Stream.chunk_every(config.bulk_page_size)
       |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_doc/_bulk", Enum.join(&1)))
       |> Enum.reduce(errors, &collect_errors/2)
@@ -103,14 +113,5 @@ defmodule Elasticsearch.Index.Bulk do
 
   defp collect_errors(_response, errors) do
     errors
-  end
-
-  defp header(type, index, struct) do
-    attrs = %{
-      "_index" => index,
-      "_id" => Document.id(struct)
-    }
-
-    Poison.encode!(%{type => attrs})
   end
 end
