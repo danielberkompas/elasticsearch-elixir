@@ -70,7 +70,11 @@ defmodule Elasticsearch.Mixfile do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md", "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"]],
+      extras: [
+        "README.md",
+        "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"],
+        "guides/upgrading/0.2.x_to_0.3.x.md": [title: "0.2.x to 0.3.x"]
+      ],
       extra_section: "GUIDES",
       groups_for_extras: [
         Upgrading: ~r/upgrading/
