@@ -17,50 +17,60 @@ defmodule Elasticsearch.Index.Bulk do
 
   ## Examples
 
-      iex> Bulk.encode(%Post{id: "my-id"}, "my-index")
+      iex> Bulk.encode(Cluster, %Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
-      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"}
 
-      iex> Bulk.encode(123, "my-index")
+      iex> Bulk.encode(Cluster, 123, "my-index")
       {:error,
         %Protocol.UndefinedError{description: "",
         protocol: Elasticsearch.Document, value: 123}}
   """
-  @spec encode(struct, String.t()) ::
+  @spec encode(Cluster.t(), struct, String.t()) ::
           {:ok, String.t()}
           | {:error, Error.t()}
-  def encode(struct, index) do
-    {:ok, encode!(struct, index)}
+  def encode(cluster, struct, index) do
+    {:ok, encode!(cluster, struct, index)}
   rescue
     exception ->
       {:error, exception}
   end
 
   @doc """
-  Same as `encode/1`, but returns the request and raises errors.
+  Same as `encode/3`, but returns the request and raises errors.
 
   ## Example
 
-      iex> Bulk.encode!(%Post{id: "my-id"}, "my-index")
+      iex> Bulk.encode!(Cluster, %Post{id: "my-id"}, "my-index")
       \"\"\"
-      {"create":{"_type":"post","_index":"my-index","_id":"my-id"}}
+      {"create":{"_index":"my-index","_id":"my-id"}}
       {"title":null,"author":null}
       \"\"\"
 
-      iex> Bulk.encode!(123, "my-index")
+      iex> Bulk.encode!(Cluster, 123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Post
   """
-  def encode!(struct, index) do
-    header = header("create", index, struct)
+  def encode!(cluster, struct, index) do
+    config = Cluster.Config.get(cluster)
+    header = header(config, "create", index, struct)
 
     document =
       struct
       |> Document.encode()
-      |> Poison.encode!()
+      |> config.json_library.encode!()
 
     "#{header}\n#{document}\n"
+  end
+
+  defp header(config, type, index, struct) do
+    attrs = %{
+      "_index" => index,
+      "_id" => Document.id(struct)
+    }
+
+    config.json_library.encode!(%{type => attrs})
   end
 
   @doc """
@@ -73,18 +83,29 @@ defmodule Elasticsearch.Index.Bulk do
   def upload(_cluster, _index_name, _store, [], []), do: :ok
   def upload(_cluster, _index_name, _store, [], errors), do: {:error, errors}
 
-  def upload(cluster, index_name, store, [source | tail] = _sources, errors) do
+  def upload(cluster, index_name, store, [source | tail] = _sources, errors)
+      when is_atom(store) do
     config = Cluster.Config.get(cluster)
 
     errors =
       config
       |> DataStream.stream(source, store)
-      |> Stream.map(&encode!(&1, index_name))
+      |> Stream.map(&encode!(config, &1, index_name))
       |> Stream.chunk_every(config.bulk_page_size)
-      |> Stream.map(&Elasticsearch.put(cluster, "/#{index_name}/_bulk", Enum.join(&1)))
+      |> Stream.intersperse(config.bulk_wait_interval)
+      |> Stream.map(&put_bulk_page(config, index_name, &1))
       |> Enum.reduce(errors, &collect_errors/2)
 
-    upload(cluster, index_name, tail, errors)
+    upload(cluster, index_name, store, tail, errors)
+  end
+
+  defp put_bulk_page(_config, _index_name, wait_interval) when is_integer(wait_interval) do
+    IO.puts("Pausing #{wait_interval}ms between bulk pages")
+    :timer.sleep(wait_interval)
+  end
+
+  defp put_bulk_page(config, index_name, items) when is_list(items) do
+    Elasticsearch.put(config, "/#{index_name}/_doc/_bulk", Enum.join(items))
   end
 
   defp collect_errors({:ok, %{"errors" => true} = response}, errors) do
@@ -103,30 +124,5 @@ defmodule Elasticsearch.Index.Bulk do
 
   defp collect_errors(_response, errors) do
     errors
-  end
-
-  defp header(type, index, struct) do
-    attrs = %{
-      "_index" => index,
-      "_type" => Document.type(struct),
-      "_id" => Document.id(struct)
-    }
-
-    header =
-      %{}
-      |> Map.put(type, attrs)
-      |> put_parent(type, struct)
-
-    Poison.encode!(header)
-  end
-
-  defp put_parent(header, type, struct) do
-    parent = Document.parent(struct)
-
-    if parent do
-      put_in(header[type]["_parent"], parent)
-    else
-      header
-    end
   end
 end

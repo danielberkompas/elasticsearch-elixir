@@ -34,4 +34,13 @@ defmodule Elasticsearch.DataCase do
 
     :ok
   end
+
+  def populate_posts_table(quantity \\ 10_000) do
+    posts =
+      [%{title: "Example Post", author: "John Smith"}]
+      |> Stream.cycle()
+      |> Enum.take(quantity)
+
+    Elasticsearch.Test.Repo.insert_all("posts", posts)
+  end
 end
