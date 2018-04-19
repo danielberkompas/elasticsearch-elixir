@@ -4,6 +4,7 @@ defmodule Elasticsearch.Index.Bulk do
   """
 
   alias Elasticsearch.{
+    Config,
     DataStream,
     Document
   }
@@ -57,7 +58,7 @@ defmodule Elasticsearch.Index.Bulk do
     document =
       struct
       |> Document.encode()
-      |> Poison.encode!()
+      |> Config.json_library().encode!()
 
     "#{header}\n#{document}\n"
   end
@@ -113,7 +114,7 @@ defmodule Elasticsearch.Index.Bulk do
       |> Map.put(type, attrs)
       |> put_parent(type, struct)
 
-    Poison.encode!(header)
+    Config.json_library().encode!(header)
   end
 
   defp put_parent(header, type, struct) do
