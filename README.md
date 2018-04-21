@@ -31,6 +31,16 @@ defmodule MyApp.ElasticsearchCluster do
 end
 ```
 
+Once you have created your cluster, add it to your application's supervision tree:
+
+    children = [
+      MyApp.ElasticsearchCluster
+    ]
+
+Finally, you can issue requests to Elasticsearch using it.
+
+    Elasticsearch.get(MyApp.ElasticsearchCluster, "/_cat/health")
+
 ## Configuration
 
 See the annotated example configuration below.
