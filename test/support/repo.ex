@@ -1,4 +1,6 @@
 defmodule Elasticsearch.Test.Repo do
+  @moduledoc false
+
   use Ecto.Repo, otp_app: :elasticsearch
 
   @doc """
