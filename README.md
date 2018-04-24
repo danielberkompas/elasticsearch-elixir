@@ -243,12 +243,12 @@ This package provides two utilities for developing with Elasticsearch:
       "Elasticsearch",
       "./vendor/elasticsearch/bin/elasticsearch", # assuming elasticsearch is in your vendor/ dir
       9200
-    ]),
+    ], id: :elasticsearch),
     worker(Elasticsearch.Executable, [
       "Kibana",
       "./vendor/kibana/bin/kibana", # assuming kibana is in your vendor/ dir
       5601
-    ])
+    ], id: :kibana)
   ]
   ```
 
