@@ -41,6 +41,7 @@ defmodule Elasticsearch.Mixfile do
         LICENSE
         README.md
         mix.exs
+        priv
       ),
       maintainers: ["Daniel Berkompas"],
       licenses: ["MIT"],
