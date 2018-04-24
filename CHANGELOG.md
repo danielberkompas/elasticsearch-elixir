@@ -1,5 +1,19 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.3.0...HEAD)
+
+**Closed issues:**
+
+- Using elasticsearch as an executable gives error [\#23](https://github.com/infinitered/elasticsearch-elixir/issues/23)
+
+**Merged pull requests:**
+
+- Add `priv` dir when packaging application [\#24](https://github.com/infinitered/elasticsearch-elixir/pull/24) ([rhnonose](https://github.com/rhnonose))
+- Fix executable example in README.md [\#22](https://github.com/infinitered/elasticsearch-elixir/pull/22) ([rhnonose](https://github.com/rhnonose))
+- Add missing step to README [\#21](https://github.com/infinitered/elasticsearch-elixir/pull/21) ([xfumihiro](https://github.com/xfumihiro))
+
 ## [v0.3.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.3.0) (2018-04-19)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.2.0...v0.3.0)
 
