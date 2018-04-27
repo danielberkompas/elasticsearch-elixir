@@ -1,5 +1,18 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.3.1...HEAD)
+
+**Closed issues:**
+
+- Allow bulk configs to be overridable via mix tasks [\#26](https://github.com/infinitered/elasticsearch-elixir/issues/26)
+- Make the mix task runnable through iex [\#25](https://github.com/infinitered/elasticsearch-elixir/issues/25)
+
+**Merged pull requests:**
+
+- \[\#26\] Configure bulk settings on indexes [\#27](https://github.com/infinitered/elasticsearch-elixir/pull/27) ([danielberkompas](https://github.com/danielberkompas))
+
 ## [v0.3.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.3.1) (2018-04-24)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.3.0...v0.3.1)
 
