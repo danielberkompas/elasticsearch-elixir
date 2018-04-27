@@ -31,6 +31,8 @@ defmodule Elasticsearch.DataCase do
       Ecto.Adapters.SQL.Sandbox.mode(Elasticsearch.Test.Repo, {:shared, self()})
     end
 
+    Logger.configure(level: :warn)
+
     :ok
   end
 

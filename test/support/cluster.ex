@@ -7,8 +7,6 @@ defmodule Elasticsearch.Test.Cluster do
     {:ok,
      %{
        api: Elasticsearch.API.HTTP,
-       bulk_page_size: 5000,
-       bulk_wait_interval: 0,
        json_library: Poison,
        url: "http://localhost:9200",
        username: "username",
@@ -17,7 +15,9 @@ defmodule Elasticsearch.Test.Cluster do
          posts: %{
            settings: "test/support/settings/posts.json",
            store: Elasticsearch.Test.Store,
-           sources: [Post]
+           sources: [Post],
+           bulk_page_size: 5000,
+           bulk_wait_interval: 0
          }
        }
      }}

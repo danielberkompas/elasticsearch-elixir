@@ -1,6 +1,8 @@
 defmodule Elasticsearch.Index.BulkTest do
   use Elasticsearch.DataCase
 
+  import ExUnit.CaptureLog
+
   alias Elasticsearch.{
     Test.Cluster,
     Test.Store,
@@ -31,12 +33,12 @@ defmodule Elasticsearch.Index.BulkTest do
 
   doctest Elasticsearch.Index.Bulk
 
-  describe ".upload/5" do
+  describe ".upload/4" do
     # Regression test for https://github.com/infinitered/elasticsearch-elixir/issues/10
     @tag :regression
     test "calls itself recursively properly" do
       assert {:error, [%TestException{}]} =
-               Bulk.upload(Cluster, :posts, Store, [Post], [%TestException{}])
+               Bulk.upload(Cluster, :posts, %{store: Store, sources: [Post]}, [%TestException{}])
     end
 
     test "collects errors properly" do
@@ -46,7 +48,33 @@ defmodule Elasticsearch.Index.BulkTest do
                Cluster
                |> Elasticsearch.Cluster.Config.get()
                |> Map.put(:api, ErrorAPI)
-               |> Bulk.upload(:posts, Store, [Post])
+               |> Bulk.upload(:posts, %{store: Store, sources: [Post]})
+    end
+
+    test "respects bulk_* settings" do
+      populate_posts_table(2)
+
+      Logger.configure(level: :debug)
+
+      output =
+        capture_log([level: :debug], fn ->
+          Elasticsearch.Index.create_from_file(
+            Cluster,
+            "posts-bulk-test",
+            "test/support/settings/posts.json"
+          )
+
+          Bulk.upload(Cluster, "posts-bulk-test", %{
+            store: Store,
+            sources: [Post],
+            bulk_page_size: 1,
+            bulk_wait_interval: 10
+          })
+
+          Elasticsearch.delete!(Cluster, "/posts-bulk-test")
+        end)
+
+      assert output =~ "Pausing 10ms between bulk pages"
     end
   end
 end

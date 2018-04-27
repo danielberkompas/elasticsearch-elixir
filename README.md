@@ -59,15 +59,6 @@ config :my_app, MyApp.ElasticsearchCluster,
   username: "username",
   password: "password",
 
-  # When indexing data using the `mix elasticsearch.build` task,
-  # control the data ingestion rate by raising or lowering the number
-  # of items to send in each bulk request.
-  bulk_page_size: 5000,
-
-  # Likewise, wait a given period between posting pages to give
-  # Elasticsearch time to catch up.
-  bulk_wait_interval: 15_000, # 15 seconds
-
   # If you want to mock the responses of the Elasticsearch JSON API
   # for testing or other purposes, you can inject a different module
   # here. It must implement the Elasticsearch.API behaviour.
@@ -100,7 +91,16 @@ config :my_app, MyApp.ElasticsearchCluster,
       #
       # Each piece of data that is returned by the store must implement the
       # Elasticsearch.Document protocol.
-      sources: [MyApp.Post]
+      sources: [MyApp.Post],
+
+      # When indexing data using the `mix elasticsearch.build` task,
+      # control the data ingestion rate by raising or lowering the number
+      # of items to send in each bulk request.
+      bulk_page_size: 5000,
+
+      # Likewise, wait a given period between posting pages to give
+      # Elasticsearch time to catch up.
+      bulk_wait_interval: 15_000 # 15 seconds
     }
   }
 ```

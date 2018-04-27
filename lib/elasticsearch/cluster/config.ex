@@ -34,9 +34,7 @@ defmodule Elasticsearch.Cluster.Config do
              username: [presence: [unless: &(&1[:password] == nil)]],
              password: [presence: [unless: &(&1[:username] == nil)]],
              api: [presence: true, by: &is_module/1],
-             json_library: [by: &(is_nil(&1) || is_module(&1))],
-             bulk_page_size: [presence: true, by: &is_integer/1],
-             bulk_wait_interval: [presence: true, by: &is_integer/1]
+             json_library: [by: &(is_nil(&1) || is_module(&1))]
            ),
          :ok <- validate_indexes(config[:indexes] || %{}) do
       {:ok, config}
@@ -80,7 +78,9 @@ defmodule Elasticsearch.Cluster.Config do
       sources: [
         presence: true,
         by: &(is_list(&1) && Enum.map(&1, fn source -> is_atom(source) end))
-      ]
+      ],
+      bulk_page_size: [presence: true, by: &is_integer/1],
+      bulk_wait_interval: [presence: true, by: &is_integer/1]
     )
   end
 end

@@ -2,17 +2,105 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   use Elasticsearch.DataCase, async: false
 
   import Mix.Task, only: [rerun: 2]
+  import ExUnit.CaptureLog
   import ExUnit.CaptureIO
 
   alias Elasticsearch.Index
   alias Elasticsearch.Test.Cluster, as: TestCluster
 
+  defmodule GatewayErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, :get, _url, _data, _opts) do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 504,
+         body: "Gateway Error"
+       }}
+    end
+  end
+
+  defmodule BulkErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 200,
+         body: []
+       }}
+    end
+
+    def request(_config, :put, url, _data, _opts) do
+      if url =~ "_bulk" do
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 201,
+           body: %{
+             "errors" => true,
+             "items" => [
+               %{"create" => %{"error" => %{"type" => "type", "reason" => "reason"}}}
+             ]
+           }
+         }}
+      else
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 201,
+           body: ""
+         }}
+      end
+    end
+  end
+
+  defmodule IndexErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 200,
+         body: []
+       }}
+    end
+
+    def request(_config, :put, _url, _data, _opts) do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 504,
+         body: "Gateway Error"
+       }}
+    end
+  end
+
+  defmodule ErrorCluster do
+    use Elasticsearch.Cluster
+
+    def init(config) do
+      base = %{
+        json_library: Poison,
+        url: "http://localhost:9200",
+        indexes: %{
+          posts: %{
+            store: Elasticsearch.Test.Store,
+            settings: "test/support/settings/posts.json",
+            sources: [Post],
+            bulk_page_size: 1000,
+            bulk_wait_interval: 0
+          }
+        }
+      }
+
+      {:ok, Map.merge(base, config)}
+    end
+  end
+
   setup do
     on_exit(fn ->
-      TestCluster
-      |> Index.starting_with("posts")
-      |> elem(1)
-      |> Enum.map(&Elasticsearch.delete(TestCluster, "/#{&1}"))
+      Index.clean_starting_with(TestCluster, "posts", 0)
     end)
   end
 
@@ -43,17 +131,98 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       end
     end
 
+    test "raises error if errors occur during indexing" do
+      populate_posts_table(1)
+
+      {:ok, pid} = ErrorCluster.start_link(api: BulkErrorAPI)
+
+      assert_raise Mix.Error,
+                   """
+                   Index created, but not aliased: posts
+                   The following errors occurred:
+
+                       %Elasticsearch.Exception{col: nil, line: nil, message: \"reason\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}, status: nil, type: \"type\"}\n
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(pid, :kill)
+    end
+
+    test "raises error if settings file not found" do
+      {:ok, cluster} =
+        ErrorCluster.start_link(
+          api: Elasticsearch.API.HTTP,
+          indexes: %{
+            posts: %{
+              settings: "priv/nonexistent.json",
+              store: Elasticsearch.Test.Store,
+              sources: [Post],
+              bulk_page_size: 1,
+              bulk_wait_interval: 0
+            }
+          }
+        )
+
+      assert_raise Mix.Error,
+                   """
+                   Settings file not found at priv/nonexistent.json.
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(cluster, :kill)
+    end
+
+    test "raises error if index could not be created" do
+      {:ok, cluster} = ErrorCluster.start_link(api: IndexErrorAPI)
+
+      assert_raise Mix.Error,
+                   """
+                   Index posts could not be created.
+
+                       %Elasticsearch.Exception{col: nil, line: nil, message: \"Gateway Error\", query: nil, raw: nil, status: nil, type: nil}
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(cluster, :kill)
+    end
+
     test "builds configured index" do
       populate_posts_table()
 
+      Logger.configure(level: :debug)
+
       output =
-        capture_io(fn ->
+        capture_log([level: :debug], fn ->
           rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
         end)
 
       assert output =~ "Pausing 0ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
       assert resp["hits"]["total"] == 10_000
+    end
+
+    test "respects --bulk options" do
+      populate_posts_table(2)
+
+      Logger.configure(level: :debug)
+
+      output =
+        capture_log([level: :debug], fn ->
+          rerun(
+            "elasticsearch.build",
+            ["posts"] ++ @cluster_opts ++ ["--bulk-page-size", "1", "--bulk-wait-interval", "10"]
+          )
+        end)
+
+      assert output =~ "Pausing 10ms between bulk pages"
+      resp = Elasticsearch.get!(TestCluster, "/posts/_search")
+      assert resp["hits"]["total"] == 2
     end
 
     test "only keeps two index versions" do
@@ -79,6 +248,33 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
         end)
 
       assert io =~ "Index already exists: posts-"
+    end
+
+    test "--existing rebuilds the index if it doesn't exist" do
+      Index.clean_starting_with(TestCluster, "posts", 0)
+
+      io =
+        capture_io(fn ->
+          rerun("elasticsearch.build", ["posts", "--existing"] ++ @cluster_opts)
+        end)
+
+      assert io == ""
+      assert {:ok, _} = Elasticsearch.get(TestCluster, "/posts")
+    end
+
+    test "--existing raises any error it encounters communicating with Elasticsearch" do
+      {:ok, cluster} = ErrorCluster.start_link(api: GatewayErrorAPI)
+
+      assert_raise Mix.Error, fn ->
+        rerun("elasticsearch.build", [
+          "posts",
+          "--existing",
+          "--cluster",
+          inspect(ErrorCluster)
+        ])
+      end
+
+      Process.exit(cluster, :kill)
     end
   end
 end
