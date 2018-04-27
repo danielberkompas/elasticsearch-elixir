@@ -6,7 +6,7 @@ defmodule Elasticsearch.Mixfile do
       app: :elasticsearch,
       description: "Elasticsearch without DSLs",
       source_url: "https://github.com/infinitered/elasticsearch-elixir",
-      version: "0.3.1",
+      version: "0.4.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -74,8 +74,9 @@ defmodule Elasticsearch.Mixfile do
       main: "readme",
       extras: [
         "README.md",
-        "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"],
-        "guides/upgrading/0.2.x_to_0.3.x.md": [title: "0.2.x to 0.3.x"]
+        "guides/upgrading/0.3.x_to_0.4.x.md": [title: "0.3.x to 0.4.x"],
+        "guides/upgrading/0.2.x_to_0.3.x.md": [title: "0.2.x to 0.3.x"],
+        "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"]
       ],
       extra_section: "GUIDES",
       groups_for_extras: [
