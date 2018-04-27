@@ -23,6 +23,8 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
   require Logger
 
+  import Maybe
+
   alias Elasticsearch.{
     Cluster.Config,
     Index
@@ -54,9 +56,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
   end
 
   defp build(config, alias, :rebuild) do
-    %{settings: settings, store: store, sources: sources} = config.indexes[alias]
-
-    with :ok <- Index.hot_swap(config, alias, settings, store, sources) do
+    with :ok <- Index.hot_swap(config, alias, config.indexes[alias]) do
       :ok
     else
       {:error, errors} when is_list(errors) ->
@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
       {:error, :enoent} ->
         Mix.raise("""
-        Schema file not found at #{settings}.
+        Settings file not found at #{maybe(config, [:indexes, alias, :settings])}.
         """)
 
       {:error, exception} ->

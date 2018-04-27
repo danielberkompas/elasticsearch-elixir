@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   use Elasticsearch.DataCase, async: false
 
   import Mix.Task, only: [rerun: 2]
+  import ExUnit.CaptureLog
   import ExUnit.CaptureIO
 
   alias Elasticsearch.Index
@@ -46,8 +47,10 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     test "builds configured index" do
       populate_posts_table()
 
+      Logger.configure(level: :debug)
+
       output =
-        capture_io(fn ->
+        capture_log([level: :debug], fn ->
           rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
         end)
 

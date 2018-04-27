@@ -13,4 +13,4 @@ config :elasticsearch, Elasticsearch.Test.Repo,
 
 config :elasticsearch, ecto_repos: [Elasticsearch.Test.Repo]
 
-config :logger, level: :warn
+config :logger, level: :debug

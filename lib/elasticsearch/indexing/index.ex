@@ -23,24 +23,20 @@ defmodule Elasticsearch.Index do
 
       iex> file = "test/support/settings/posts.json"
       ...> store = Elasticsearch.Test.Store
-      ...> Index.hot_swap(Cluster, "posts", file, store, [Post])
+      ...> Index.hot_swap(Cluster, "posts", %{settings: file, store: store, sources: [Post]})
       :ok
   """
-  @spec hot_swap(
-          Cluster.t(),
-          alias :: String.t() | atom,
-          settings_path :: String.t(),
-          Elasticsearch.Store.t(),
-          list
-        ) ::
-          :ok
-          | {:error, Elasticsearch.Exception.t()}
-  def hot_swap(cluster, alias, settings_file, store, sources) do
+  @spec hot_swap(Cluster.t(), alias :: String.t() | atom, %{
+          settings: Path.t(),
+          store: module,
+          sources: [any]
+        }) :: :ok | {:error, Elasticsearch.Exception.t()}
+  def hot_swap(cluster, alias, %{settings: settings_file} = index_config) do
     name = build_name(alias)
     config = Config.get(cluster)
 
     with :ok <- create_from_file(config, name, settings_file),
-         :ok <- Bulk.upload(config, name, store, sources),
+         :ok <- Bulk.upload(config, name, index_config),
          :ok <- __MODULE__.alias(config, name, alias),
          :ok <- clean_starting_with(config, alias, 2),
          :ok <- refresh(config, name) do
