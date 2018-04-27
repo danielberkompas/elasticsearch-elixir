@@ -8,6 +8,96 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
   alias Elasticsearch.Index
   alias Elasticsearch.Test.Cluster, as: TestCluster
 
+  defmodule GatewayErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, :get, _url, _data, _opts) do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 504,
+         body: "Gateway Error"
+       }}
+    end
+  end
+
+  defmodule BulkErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 200,
+         body: []
+       }}
+    end
+
+    def request(_config, :put, url, _data, _opts) do
+      if url =~ "_bulk" do
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 201,
+           body: %{
+             "errors" => true,
+             "items" => [
+               %{"create" => %{"error" => %{"type" => "type", "reason" => "reason"}}}
+             ]
+           }
+         }}
+      else
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 201,
+           body: ""
+         }}
+      end
+    end
+  end
+
+  defmodule IndexErrorAPI do
+    @behaviour Elasticsearch.API
+
+    @impl true
+    def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 200,
+         body: []
+       }}
+    end
+
+    def request(_config, :put, _url, _data, _opts) do
+      {:ok,
+       %HTTPoison.Response{
+         status_code: 504,
+         body: "Gateway Error"
+       }}
+    end
+  end
+
+  defmodule ErrorCluster do
+    use Elasticsearch.Cluster
+
+    def init(config) do
+      base = %{
+        json_library: Poison,
+        url: "http://localhost:9200",
+        indexes: %{
+          posts: %{
+            store: Elasticsearch.Test.Store,
+            settings: "test/support/settings/posts.json",
+            sources: [Post],
+            bulk_page_size: 1000,
+            bulk_wait_interval: 0
+          }
+        }
+      }
+
+      {:ok, Map.merge(base, config)}
+    end
+  end
+
   setup do
     on_exit(fn ->
       Index.clean_starting_with(TestCluster, "posts", 0)
@@ -39,6 +129,67 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       assert_raise Mix.Error, fn ->
         rerun("elasticsearch.build", [] ++ @cluster_opts)
       end
+    end
+
+    test "raises error if errors occur during indexing" do
+      populate_posts_table(1)
+
+      {:ok, pid} = ErrorCluster.start_link(api: BulkErrorAPI)
+
+      assert_raise Mix.Error,
+                   """
+                   Index created, but not aliased: posts
+                   The following errors occurred:
+
+                       %Elasticsearch.Exception{col: nil, line: nil, message: \"reason\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}, status: nil, type: \"type\"}\n
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(pid, :kill)
+    end
+
+    test "raises error if settings file not found" do
+      {:ok, cluster} =
+        ErrorCluster.start_link(
+          api: Elasticsearch.API.HTTP,
+          indexes: %{
+            posts: %{
+              settings: "priv/nonexistent.json",
+              store: Elasticsearch.Test.Store,
+              sources: [Post],
+              bulk_page_size: 1,
+              bulk_wait_interval: 0
+            }
+          }
+        )
+
+      assert_raise Mix.Error,
+                   """
+                   Settings file not found at priv/nonexistent.json.
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(cluster, :kill)
+    end
+
+    test "raises error if index could not be created" do
+      {:ok, cluster} = ErrorCluster.start_link(api: IndexErrorAPI)
+
+      assert_raise Mix.Error,
+                   """
+                   Index posts could not be created.
+
+                       %Elasticsearch.Exception{col: nil, line: nil, message: \"Gateway Error\", query: nil, raw: nil, status: nil, type: nil}
+                   """,
+                   fn ->
+                     rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
+                   end
+
+      Process.exit(cluster, :kill)
     end
 
     test "builds configured index" do
@@ -111,50 +262,15 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       assert {:ok, _} = Elasticsearch.get(TestCluster, "/posts")
     end
 
-    defmodule ExistingIndexErrorAPI do
-      @behaviour Elasticsearch.API
-
-      @impl true
-      def request(_config, :get, _url, _data, _opts) do
-        {:ok,
-         %HTTPoison.Response{
-           status_code: 504,
-           body: "Gateway Error"
-         }}
-      end
-    end
-
-    defmodule ExistingIndexErrorCluster do
-      use Elasticsearch.Cluster
-
-      def init(_config) do
-        {:ok,
-         %{
-           api: ExistingIndexErrorAPI,
-           json_library: Poison,
-           url: "http://localhost:9200",
-           indexes: %{
-             posts: %{
-               store: Elasticsearch.Test.Store,
-               settings: "test/support/settings/posts.json",
-               sources: [Post],
-               bulk_page_size: 1000,
-               bulk_wait_interval: 0
-             }
-           }
-         }}
-      end
-    end
-
     test "--existing raises any error it encounters communicating with Elasticsearch" do
-      {:ok, cluster} = ExistingIndexErrorCluster.start_link()
+      {:ok, cluster} = ErrorCluster.start_link(api: GatewayErrorAPI)
 
       assert_raise Mix.Error, fn ->
         rerun("elasticsearch.build", [
           "posts",
           "--existing",
           "--cluster",
-          inspect(ExistingIndexErrorCluster)
+          inspect(ErrorCluster)
         ])
       end
 

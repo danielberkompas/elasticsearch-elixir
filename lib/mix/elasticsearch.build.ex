@@ -84,7 +84,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
         Index created, but not aliased: #{alias}
         The following errors occurred:
 
-        #{errors}
+            #{errors}
         """)
 
       {:error, :enoent} ->
@@ -98,9 +98,6 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
             #{inspect(exception)}
         """)
-
-      error ->
-        Mix.raise(error)
     end
   end
 
