@@ -4,8 +4,6 @@ defmodule Elasticsearch.ClusterTest do
   def valid_config do
     %{
       api: Elasticsearch.API.HTTP,
-      bulk_page_size: 5000,
-      bulk_wait_interval: 5000,
       json_library: Poison,
       url: "http://localhost:9200",
       username: "username",
@@ -14,7 +12,9 @@ defmodule Elasticsearch.ClusterTest do
         posts: %{
           settings: "test/support/settings/posts.json",
           store: Elasticsearch.Test.Store,
-          sources: [Post]
+          sources: [Post],
+          bulk_page_size: 5000,
+          bulk_wait_interval: 5000
         }
       }
     }
@@ -92,26 +92,10 @@ defmodule Elasticsearch.ClusterTest do
       assert {"must be valid", validation: :by} in errors_on(json_library: Nonexistent.Module).json_library
     end
 
-    test "validates bulk_page_size" do
-      assert {"must be present", validation: :presence} in errors_on([]).bulk_page_size
-
-      for invalid <- [nil, "string", :atom] do
-        assert {"must be valid", validation: :by} in errors_on(bulk_page_size: invalid).bulk_page_size
-      end
-    end
-
-    test "validates bulk_wait_interval" do
-      assert {"must be present", validation: :presence} in errors_on([]).bulk_wait_interval
-
-      for invalid <- [nil, "string", :atom] do
-        assert {"must be valid", validation: :by} in errors_on(bulk_wait_interval: invalid).bulk_wait_interval
-      end
-    end
-
     test "validates indexes" do
       errors = errors_on(%{valid_config() | indexes: %{example: %{}}})
 
-      for field <- [:settings, :store, :sources] do
+      for field <- [:settings, :store, :sources, :bulk_page_size, :bulk_wait_interval] do
         assert {"must be present", validation: :presence} in errors[field]
       end
 

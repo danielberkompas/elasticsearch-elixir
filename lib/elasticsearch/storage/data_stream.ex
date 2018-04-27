@@ -13,22 +13,21 @@ defmodule Elasticsearch.DataStream do
 
   ## Example
 
-      iex> stream = DataStream.stream(Cluster, MyApp.Schema, Elasticsearch.Test.Store)
+      iex> stream = DataStream.stream(MyApp.Schema, Elasticsearch.Test.Store, 100)
       ...> is_function(stream)
       true
 
   """
   @spec stream(Cluster.t(), source, Elasticsearch.Store.t()) :: Stream.t()
-  def stream(cluster, source, store) do
-    config = Cluster.Config.get(cluster)
-    Stream.resource(fn -> init(config) end, &next(&1, source, store), &finish/1)
+  def stream(source, store, bulk_page_size) do
+    Stream.resource(fn -> init(bulk_page_size) end, &next(&1, source, store), &finish/1)
   end
 
   # Store state in the following format:
   #
   # {items, offset, limit}
-  defp init(config) do
-    {[], 0, config.bulk_page_size}
+  defp init(bulk_page_size) do
+    {[], 0, bulk_page_size}
   end
 
   # If no items, load another page of items

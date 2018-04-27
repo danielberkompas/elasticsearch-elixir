@@ -10,10 +10,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
   setup do
     on_exit(fn ->
-      TestCluster
-      |> Index.starting_with("posts")
-      |> elem(1)
-      |> Enum.map(&Elasticsearch.delete(TestCluster, "/#{&1}"))
+      Index.clean_starting_with(TestCluster, "posts", 0)
     end)
   end
 
@@ -100,6 +97,68 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
         end)
 
       assert io =~ "Index already exists: posts-"
+    end
+
+    test "--existing rebuilds the index if it doesn't exist" do
+      Index.clean_starting_with(TestCluster, "posts", 0)
+
+      io =
+        capture_io(fn ->
+          rerun("elasticsearch.build", ["posts", "--existing"] ++ @cluster_opts)
+        end)
+
+      assert io == ""
+      assert {:ok, _} = Elasticsearch.get(TestCluster, "/posts")
+    end
+
+    defmodule ExistingIndexErrorAPI do
+      @behaviour Elasticsearch.API
+
+      @impl true
+      def request(_config, :get, _url, _data, _opts) do
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 504,
+           body: "Gateway Error"
+         }}
+      end
+    end
+
+    defmodule ExistingIndexErrorCluster do
+      use Elasticsearch.Cluster
+
+      def init(_config) do
+        {:ok,
+         %{
+           api: ExistingIndexErrorAPI,
+           json_library: Poison,
+           url: "http://localhost:9200",
+           indexes: %{
+             posts: %{
+               store: Elasticsearch.Test.Store,
+               settings: "test/support/settings/posts.json",
+               sources: [Post],
+               bulk_page_size: 1000,
+               bulk_wait_interval: 0
+             }
+           }
+         }}
+      end
+    end
+
+    test "--existing raises any error it encounters communicating with Elasticsearch" do
+      {:ok, cluster} = ExistingIndexErrorCluster.start_link()
+
+      assert_raise Mix.Error, fn ->
+        rerun("elasticsearch.build", [
+          "posts",
+          "--existing",
+          "--cluster",
+          inspect(ExistingIndexErrorCluster)
+        ])
+      end
+
+      Process.exit(cluster, :kill)
     end
   end
 end

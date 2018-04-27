@@ -65,7 +65,11 @@ defmodule Mix.Tasks.Elasticsearch.Build do
         build(:rebuild, config, alias, settings)
 
       {:error, exception} ->
-        Mix.raise(exception)
+        Mix.raise("""
+        Index could not be built.
+
+            #{inspect(exception)}
+        """)
     end
   end
 

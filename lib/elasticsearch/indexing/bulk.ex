@@ -95,8 +95,8 @@ defmodule Elasticsearch.Index.Bulk do
     bulk_wait_interval = index_config[:bulk_wait_interval] || 0
 
     errors =
-      config
-      |> DataStream.stream(source, store)
+      source
+      |> DataStream.stream(store, bulk_page_size)
       |> Stream.map(&encode!(config, &1, index_name))
       |> Stream.chunk_every(bulk_page_size)
       |> Stream.intersperse(bulk_wait_interval)
