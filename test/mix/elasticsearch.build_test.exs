@@ -59,6 +59,24 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       assert resp["hits"]["total"] == 10_000
     end
 
+    test "respects --bulk options" do
+      populate_posts_table(2)
+
+      Logger.configure(level: :debug)
+
+      output =
+        capture_log([level: :debug], fn ->
+          rerun(
+            "elasticsearch.build",
+            ["posts"] ++ @cluster_opts ++ ["--bulk-page-size", "1", "--bulk-wait-interval", "10"]
+          )
+        end)
+
+      assert output =~ "Pausing 10ms between bulk pages"
+      resp = Elasticsearch.get!(TestCluster, "/posts/_search")
+      assert resp["hits"]["total"] == 2
+    end
+
     test "only keeps two index versions" do
       for _ <- 1..3 do
         rerun("elasticsearch.build", ["posts"] ++ @cluster_opts)
