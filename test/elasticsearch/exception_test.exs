@@ -25,5 +25,24 @@ defmodule Elasticsearch.ExceptionTest do
       assert %Exception{message: "message", query: "query"} =
                Exception.exception(response: "message", query: "query")
     end
+
+    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/28
+    @tag :regression
+    test "understands the not_found error" do
+      assert %Exception{type: "not_found", message: nil, query: nil} =
+               Exception.exception(
+                 response: %{
+                   "_id" => "54",
+                   "_index" => "listings-1525371175",
+                   "_primary_term" => 1,
+                   "_seq_no" => 42,
+                   "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+                   "_type" => "_doc",
+                   "_version" => 14,
+                   "result" => "not_found"
+                 },
+                 query: nil
+               )
+    end
   end
 end
