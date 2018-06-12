@@ -48,6 +48,17 @@ defmodule Elasticsearch.Exception do
     binary_error(error, query)
   end
 
+  defp build(%{"result" => type}, query) do
+    [
+      status: nil,
+      line: nil,
+      col: nil,
+      message: nil,
+      type: type,
+      query: query
+    ]
+  end
+
   defp build(error, query) when is_binary(error) do
     binary_error(error, query)
   end
