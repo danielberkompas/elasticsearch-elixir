@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
-
-[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.0...HEAD)
+## [v0.4.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.4.1) (2018-06-26)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.0...v0.4.1)
 
 **Closed issues:**
 
