@@ -44,5 +44,20 @@ defmodule Elasticsearch.ExceptionTest do
                  query: nil
                )
     end
+
+    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/33
+    @tag :regression
+    test "understands the document_not_found error" do
+      assert %Exception{type: "document_not_found", message: nil, query: nil} =
+               Exception.exception(
+                 response: %{
+                   "_id" => "123",
+                   "_index" => "index-name",
+                   "_type" => "_doc",
+                   "found" => false
+                 },
+                 query: nil
+               )
+    end
   end
 end
