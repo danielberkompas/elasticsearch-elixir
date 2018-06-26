@@ -1,5 +1,21 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.0...HEAD)
+
+**Closed issues:**
+
+- Handle Get API document not found error [\#33](https://github.com/infinitered/elasticsearch-elixir/issues/33)
+- Compilation error in file lib/mix/elasticsearch.build.ex [\#30](https://github.com/infinitered/elasticsearch-elixir/issues/30)
+- Deleting twice a document raises exception. [\#28](https://github.com/infinitered/elasticsearch-elixir/issues/28)
+
+**Merged pull requests:**
+
+- Support document-not-found error via Get API [\#34](https://github.com/infinitered/elasticsearch-elixir/pull/34) ([nitinstp23](https://github.com/nitinstp23))
+- \[\#28\] Support not\_found response in Exception [\#32](https://github.com/infinitered/elasticsearch-elixir/pull/32) ([danielberkompas](https://github.com/danielberkompas))
+- Add breaking change upgrade to documentation [\#29](https://github.com/infinitered/elasticsearch-elixir/pull/29) ([rhnonose](https://github.com/rhnonose))
+
 ## [v0.4.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.4.0) (2018-04-27)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.3.1...v0.4.0)
 
