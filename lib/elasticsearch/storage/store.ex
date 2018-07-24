@@ -1,40 +1,36 @@
 defmodule Elasticsearch.Store do
   @moduledoc """
-  A behaviour for fetching data to index. Used by `mix elasticsearch.build`.
+  A behaviour for fetching data to index using a streaming strategy.
   """
-
-  @typedoc """
-  A data source. For example, `Post`, where `Post` is an `Ecto.Schema`.
-  Each datum returned must implement `Elasticsearch.Document`.
-  """
-  @type source :: any
-
-  @typedoc """
-  Instances of the data source. For example, `%Post{}` structs.
-  """
-  @type data :: any
-
-  @typedoc """
-  The current offset for the query.
-  """
-  @type offset :: integer
-
-  @typedoc """
-  A limit on the number of elements to return.
-  """
-  @type limit :: integer
 
   @doc """
-  Loads data based on the given source, offset, and limit.
+  Returns a stream of the given datasource.
 
   ## Example
 
-      def load(Post, offset, limit) do
-        Post
-        |> offset(^offset)
-        |> limit(^limit)
-        |> Repo.all()
+      def stream(Post) do
+        Repo.stream(Post)
       end
   """
-  @callback load(source, offset, limit) :: [data]
+  @callback stream(any) :: Stream.t()
+
+  @doc """
+  Returns a transaction wrapper to execute the stream returned by `stream/1`
+  within. This is required when using Ecto.
+
+  ## Example
+
+      def transaction(fun) do
+        {:ok, result} = Repo.transaction(fun, timeout: :infinity)
+        result
+      end
+
+  If you are not using Ecto and do not require transactions, simply call the
+  function passed as a parameter.
+
+      def transaction(fun) do
+        fun.()
+      end
+  """
+  @callback transaction(fun) :: any
 end

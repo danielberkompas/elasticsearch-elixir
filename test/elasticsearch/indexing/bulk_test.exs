@@ -4,9 +4,9 @@ defmodule Elasticsearch.Index.BulkTest do
   import ExUnit.CaptureLog
 
   alias Elasticsearch.{
+    Index.Bulk,
     Test.Cluster,
-    Test.Store,
-    Index.Bulk
+    Test.Store
   }
 
   defmodule TestException do
@@ -38,7 +38,9 @@ defmodule Elasticsearch.Index.BulkTest do
     @tag :regression
     test "calls itself recursively properly" do
       assert {:error, [%TestException{}]} =
-               Bulk.upload(Cluster, :posts, %{store: Store, sources: [Post]}, [%TestException{}])
+               Bulk.upload(Cluster, :posts, %{store: Store, sources: [Post]}, [
+                 %TestException{}
+               ])
     end
 
     test "collects errors properly" do
@@ -68,13 +70,13 @@ defmodule Elasticsearch.Index.BulkTest do
             store: Store,
             sources: [Post],
             bulk_page_size: 1,
-            bulk_wait_interval: 10
+            bulk_wait_interval: 0
           })
 
           Elasticsearch.delete!(Cluster, "/posts-bulk-test")
         end)
 
-      assert output =~ "Pausing 10ms between bulk pages"
+      assert output =~ "Pausing 0ms between bulk pages"
     end
   end
 end
