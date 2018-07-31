@@ -129,7 +129,7 @@ defmodule Elasticsearch do
 
     case DocumentMeta.routing(document) do
       nil -> url
-      routing -> "#{url}?_routing=#{routing}"
+      routing -> "#{url}?routing=#{routing}"
     end
   end
 
