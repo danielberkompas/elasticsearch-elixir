@@ -12,4 +12,12 @@ defmodule Elasticsearch.Test.Store do
     |> limit(^limit)
     |> Repo.all()
   end
+
+  def load(Comment, offset, limit) do
+    Comment
+    |> offset(^offset)
+    |> limit(^limit)
+    |> preload([:post])
+    |> Repo.all()
+  end
 end

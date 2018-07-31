@@ -17,7 +17,10 @@ defimpl Elasticsearch.Document, for: Post do
   def encode(post) do
     %{
       title: post.title,
-      author: post.author
+      author: post.author,
+      doctype: %{
+        name: "post"
+      }
     }
   end
 end

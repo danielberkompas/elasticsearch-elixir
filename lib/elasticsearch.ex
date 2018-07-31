@@ -9,6 +9,7 @@ defmodule Elasticsearch do
 
   alias Elasticsearch.{
     Document,
+    DocumentMeta,
     Cluster,
     Cluster.Config
   }
@@ -124,7 +125,12 @@ defmodule Elasticsearch do
   end
 
   defp document_url(document, index) do
-    "/#{index}/_doc/#{Document.id(document)}"
+    url = "/#{index}/_doc/#{Document.id(document)}"
+
+    case DocumentMeta.routing(document) do
+      nil -> url
+      routing -> "#{url}?_routing=#{routing}"
+    end
   end
 
   @doc """
