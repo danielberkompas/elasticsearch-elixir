@@ -13,6 +13,7 @@ defimpl Elasticsearch.Document, for: Post do
   def id(post), do: post.id
   def type(_item), do: "post"
   def parent(_item), do: false
+  def routing(_item), do: false
 
   def encode(post) do
     %{

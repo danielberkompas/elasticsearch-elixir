@@ -1,5 +1,15 @@
 # Change Log
 
+## [v0.5.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.0) (2018-08-01)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.1...v0.5.0)
+
+**Closed issues:**
+
+**Merged pull requests:**
+
+- Add support for routing keys in Document protocol. Add breaking change
+documentation.
+
 ## [v0.4.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.4.1) (2018-06-26)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.0...v0.4.1)
 
