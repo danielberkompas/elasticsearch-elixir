@@ -14,6 +14,7 @@ defimpl Elasticsearch.Document, for: Comment do
   def id(comment), do: comment.id
   def type(_item), do: "comment"
   def parent(_item), do: false
+  def routing(comment), do: comment.post_id
 
   def encode(comment) do
     %{
@@ -25,8 +26,4 @@ defimpl Elasticsearch.Document, for: Comment do
       }
     }
   end
-end
-
-defimpl Elasticsearch.DocumentMeta, for: Comment do
-  def routing(comment), do: comment.post_id
 end

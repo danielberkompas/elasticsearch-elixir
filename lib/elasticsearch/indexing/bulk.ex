@@ -6,8 +6,7 @@ defmodule Elasticsearch.Index.Bulk do
   alias Elasticsearch.{
     Cluster,
     DataStream,
-    Document,
-    DocumentMeta
+    Document
   }
 
   require Logger
@@ -71,10 +70,12 @@ defmodule Elasticsearch.Index.Bulk do
       "_id" => Document.id(struct)
     }
 
-    attrs = case DocumentMeta.routing(struct) do
-      nil -> attrs
-      routing -> Map.put(attrs, "_routing", routing)
-    end
+    attrs =
+      if routing = Document.routing(struct) do
+        Map.put(attrs, "_routing", routing)
+      else
+        attrs
+      end
 
     config.json_library.encode!(%{type => attrs})
   end
