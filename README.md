@@ -141,6 +141,7 @@ protocol.
 ```elixir
 defimpl Elasticsearch.Document, for: MyApp.Post do
   def id(post), do: post.id
+  def routing(_), do: false
   def encode(post) do
     %{
       title: post.title,

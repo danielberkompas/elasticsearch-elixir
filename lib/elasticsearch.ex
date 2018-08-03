@@ -124,7 +124,22 @@ defmodule Elasticsearch do
   end
 
   defp document_url(document, index) do
-    "/#{index}/_doc/#{Document.id(document)}"
+    url = "/#{index}/_doc/#{Document.id(document)}"
+
+    if routing = Document.routing(document) do
+      document_url_with_routing(url, routing)
+    else
+      url
+    end
+  end
+
+  defp document_url_with_routing(url, routing) do
+    url <>
+      if url =~ ~r/\?/ do
+        "&"
+      else
+        "?"
+      end <> URI.encode_query(%{routing: routing})
   end
 
   @doc """

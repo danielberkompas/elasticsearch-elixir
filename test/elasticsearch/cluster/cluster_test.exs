@@ -12,7 +12,7 @@ defmodule Elasticsearch.ClusterTest do
         posts: %{
           settings: "test/support/settings/posts.json",
           store: Elasticsearch.Test.Store,
-          sources: [Post],
+          sources: [Post, Comment],
           bulk_page_size: 5000,
           bulk_wait_interval: 5000
         }

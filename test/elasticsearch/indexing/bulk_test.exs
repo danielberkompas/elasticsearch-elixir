@@ -53,6 +53,7 @@ defmodule Elasticsearch.Index.BulkTest do
 
     test "respects bulk_* settings" do
       populate_posts_table(2)
+      populate_comments_table(2)
 
       Logger.configure(level: :debug)
 
@@ -75,6 +76,13 @@ defmodule Elasticsearch.Index.BulkTest do
         end)
 
       assert output =~ "Pausing 10ms between bulk pages"
+    end
+  end
+
+  describe ".encode!/3" do
+    test "respects _routing meta-field" do
+      assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index") =~
+               "\"_routing\":\"123\""
     end
   end
 end

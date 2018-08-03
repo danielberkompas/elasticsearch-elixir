@@ -12,6 +12,7 @@ defmodule Elasticsearch.DataCase do
   # of the test unless the test case is marked as async.
 
   use ExUnit.CaseTemplate
+  import Ecto.Query
 
   using do
     quote do
@@ -43,5 +44,32 @@ defmodule Elasticsearch.DataCase do
       |> Enum.take(quantity)
 
     Elasticsearch.Test.Repo.insert_all("posts", posts)
+  end
+
+  def random_post_id do
+    case Elasticsearch.Test.Repo.one(
+           from(
+             p in Post,
+             order_by: fragment("RANDOM()"),
+             limit: 1
+           )
+         ) do
+      nil -> nil
+      post -> post.id
+    end
+  end
+
+  def populate_comments_table(quantity \\ 10) do
+    comments =
+      0..quantity
+      |> Enum.map(fn _ ->
+        %{
+          body: "Example Comment",
+          author: "Jane Doe",
+          post_id: random_post_id()
+        }
+      end)
+
+    Elasticsearch.Test.Repo.insert_all("comments", comments)
   end
 end

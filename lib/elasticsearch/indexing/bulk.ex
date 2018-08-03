@@ -20,7 +20,7 @@ defmodule Elasticsearch.Index.Bulk do
       iex> Bulk.encode(Cluster, %Post{id: "my-id"}, "my-index")
       {:ok, \"\"\"
       {"create":{"_index":"my-index","_id":"my-id"}}
-      {"title":null,"author":null}
+      {"title":null,"doctype":{"name":"post"},"author":null}
       \"\"\"}
 
       iex> Bulk.encode(Cluster, 123, "my-index")
@@ -46,11 +46,11 @@ defmodule Elasticsearch.Index.Bulk do
       iex> Bulk.encode!(Cluster, %Post{id: "my-id"}, "my-index")
       \"\"\"
       {"create":{"_index":"my-index","_id":"my-id"}}
-      {"title":null,"author":null}
+      {"title":null,"doctype":{"name":"post"},"author":null}
       \"\"\"
 
       iex> Bulk.encode!(Cluster, 123, "my-index")
-      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Post
+      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Comment, Post
   """
   def encode!(cluster, struct, index) do
     config = Cluster.Config.get(cluster)
@@ -69,6 +69,13 @@ defmodule Elasticsearch.Index.Bulk do
       "_index" => index,
       "_id" => Document.id(struct)
     }
+
+    attrs =
+      if routing = Document.routing(struct) do
+        Map.put(attrs, "_routing", routing)
+      else
+        attrs
+      end
 
     config.json_library.encode!(%{type => attrs})
   end
