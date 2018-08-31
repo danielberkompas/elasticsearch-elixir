@@ -5,7 +5,6 @@ defmodule Elasticsearch.Index.Bulk do
 
   alias Elasticsearch.{
     Cluster,
-    DataStream,
     Document
   }
 
@@ -102,13 +101,15 @@ defmodule Elasticsearch.Index.Bulk do
     bulk_wait_interval = index_config[:bulk_wait_interval] || 0
 
     errors =
-      source
-      |> DataStream.stream(store, bulk_page_size)
-      |> Stream.map(&encode!(config, &1, index_name))
-      |> Stream.chunk_every(bulk_page_size)
-      |> Stream.intersperse(bulk_wait_interval)
-      |> Stream.map(&put_bulk_page(config, index_name, &1))
-      |> Enum.reduce(errors, &collect_errors/2)
+      store.transaction(fn ->
+        source
+        |> store.stream()
+        |> Stream.map(&encode!(config, &1, index_name))
+        |> Stream.chunk_every(bulk_page_size)
+        |> Stream.intersperse(bulk_wait_interval)
+        |> Stream.map(&put_bulk_page(config, index_name, &1))
+        |> Enum.reduce(errors, &collect_errors/2)
+      end)
 
     upload(config, index_name, %{index_config | sources: tail}, errors)
   end

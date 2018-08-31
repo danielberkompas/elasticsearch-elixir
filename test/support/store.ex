@@ -1,16 +1,17 @@
 defmodule Elasticsearch.Test.Store do
-  @moduledoc false
   @behaviour Elasticsearch.Store
-
-  import Ecto.Query
 
   alias Elasticsearch.Test.Repo
 
-  def load(Post, offset, limit) do
-    Post
-    |> offset(^offset)
-    |> limit(^limit)
-    |> Repo.all()
+  @impl true
+  def stream(Post) do
+    Repo.stream(Post)
+  end
+
+  @impl true
+  def transaction(fun) do
+    {:ok, result} = Repo.transaction(fun, timeout: :infinity)
+    result
   end
 
   def load(Comment, offset, limit) do

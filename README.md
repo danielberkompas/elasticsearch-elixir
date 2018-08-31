@@ -80,9 +80,8 @@ config :my_app, MyApp.ElasticsearchCluster,
       # therefore allows all the settings you could post directly.
       settings: "priv/elasticsearch/posts.json",
 
-      # This store module must implement the Elasticsearch.Store
-      # behaviour. It will be used to fetch data for each source in each
-      # indexes' `sources` list, below:
+      # This store module must implement a store behaviour. It will be used to
+      # fetch data for each source in each indexes' `sources` list, below:
       store: MyApp.ElasticsearchStore,
 
       # This is the list of data sources that should be used to populate this
@@ -124,11 +123,15 @@ defmodule MyApp.ElasticsearchStore do
   
   alias MyApp.Repo
 
-  def load(schema, offset, limit) do
-     schema
-     |> offset(^offset)
-     |> limit(^limit)
-     |> Repo.all()
+  @impl true
+  def stream(schema) do
+    Repo.stream(schema)
+  end
+
+  @impl true
+  def transaction(fun) do
+    {:ok, result} = Repo.transaction(fun, timeout: :infinity)
+    result
   end
 end
 ```
