@@ -93,8 +93,6 @@ defmodule Elasticsearch.Cluster do
 
       %{
         api: Elasticsearch.API.HTTP,
-        bulk_page_size: 5000,
-        bulk_wait_interval: 5000,
         json_library: Poison,
         url: "http://localhost:9200",
         username: "username",
@@ -105,7 +103,9 @@ defmodule Elasticsearch.Cluster do
           posts: %{
             settings: "priv/elasticsearch/posts.json",
             store: MyApp.ElasticsearchStore,
-            sources: [MyApp.Post]
+            sources: [MyApp.Post],
+            bulk_page_size: 5000,
+            bulk_wait_interval: 5000
           }
         }
       }
@@ -129,8 +129,8 @@ defmodule Elasticsearch.Cluster do
               :settings => Path.t(),
               :store => module,
               :sources => [module],
-              optional(:bulk_page_size) => integer,
-              optional(:bulk_wait_interval) => integer
+              :bulk_page_size => integer,
+              :bulk_wait_interval => integer
             }
           }
         }
