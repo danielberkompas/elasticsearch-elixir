@@ -3,6 +3,8 @@ defmodule Elasticsearch.Test.Store do
 
   alias Elasticsearch.Test.Repo
 
+  import Ecto.Query
+
   @impl true
   def stream(Post) do
     Repo.stream(Post)
