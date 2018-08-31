@@ -33,12 +33,7 @@ defmodule Elasticsearch.Index do
     %{settings: settings_file} = index_config = config[:indexes][alias]
 
     with :ok <- create_from_file(config, name, settings_file),
-         :ok <-
-           Bulk.upload(
-             config,
-             name,
-             Map.merge(index_config, Map.take(config, [:bulk_wait_interval, :bulk_page_size]))
-           ),
+         :ok <- Bulk.upload(config, name, index_config),
          :ok <- __MODULE__.alias(config, name, alias),
          :ok <- clean_starting_with(config, alias, 2),
          :ok <- refresh(config, name) do

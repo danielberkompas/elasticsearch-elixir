@@ -53,7 +53,12 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     config =
       cluster
       |> Config.get()
-      |> Map.merge(settings)
+      |> Map.update(:indexes, %{}, fn indexes ->
+        indexes
+        |> Enum.to_list()
+        |> Enum.map(fn {index, local_settings} -> {index, Map.merge(local_settings, settings)} end)
+        |> Enum.into(%{})
+      end)
 
     for alias <- indexes do
       build(type, config, alias)

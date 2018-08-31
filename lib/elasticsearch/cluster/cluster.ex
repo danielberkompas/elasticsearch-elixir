@@ -119,8 +119,6 @@ defmodule Elasticsearch.Cluster do
   @type config :: %{
           :url => String.t(),
           :api => module,
-          :bulk_page_size => integer,
-          :bulk_wait_interval => integer,
           optional(:json_library) => module,
           optional(:username) => String.t(),
           optional(:password) => String.t(),
@@ -128,9 +126,11 @@ defmodule Elasticsearch.Cluster do
           optional(:default_options) => Keyword.t(),
           optional(:indexes) => %{
             optional(atom) => %{
-              settings: Path.t(),
-              store: module,
-              sources: [module]
+              :settings => Path.t(),
+              :store => module,
+              :sources => [module],
+              optional(:bulk_page_size) => integer,
+              optional(:bulk_wait_interval) => integer
             }
           }
         }
