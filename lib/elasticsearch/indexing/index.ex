@@ -21,19 +21,16 @@ defmodule Elasticsearch.Index do
 
   ## Example
 
-      iex> file = "test/support/settings/posts.json"
-      ...> store = Elasticsearch.Test.Store
-      ...> Index.hot_swap(Cluster, "posts", %{settings: file, store: store, sources: [Post]})
+      iex> Index.hot_swap(Cluster, "posts")
       :ok
   """
-  @spec hot_swap(Cluster.t(), alias :: String.t() | atom, %{
-          settings: Path.t(),
-          store: module,
-          sources: [any]
-        }) :: :ok | {:error, Elasticsearch.Exception.t()}
-  def hot_swap(cluster, alias, %{settings: settings_file} = index_config) do
+  @spec hot_swap(Cluster.t(), alias :: String.t() | atom) ::
+          :ok | {:error, Elasticsearch.Exception.t()}
+  def hot_swap(cluster, alias) do
+    alias = alias_to_atom(alias)
     name = build_name(alias)
     config = Config.get(cluster)
+    %{settings: settings_file} = index_config = config[:indexes][alias]
 
     with :ok <- create_from_file(config, name, settings_file),
          :ok <- Bulk.upload(config, name, index_config),
@@ -43,6 +40,9 @@ defmodule Elasticsearch.Index do
       :ok
     end
   end
+
+  defp alias_to_atom(atom) when is_atom(atom), do: atom
+  defp alias_to_atom(str) when is_binary(str), do: String.to_existing_atom(str)
 
   @doc """
   Returns all indexes which start with a given string.

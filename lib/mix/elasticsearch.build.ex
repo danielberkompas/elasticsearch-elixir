@@ -49,20 +49,29 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     Mix.Task.run("app.start", [])
 
     {type, cluster, indexes, settings} = parse_args!(args)
-    config = Config.get(cluster)
+
+    config =
+      cluster
+      |> Config.get()
+      |> Map.update(:indexes, %{}, fn indexes ->
+        indexes
+        |> Enum.to_list()
+        |> Enum.map(fn {index, local_settings} -> {index, Map.merge(local_settings, settings)} end)
+        |> Enum.into(%{})
+      end)
 
     for alias <- indexes do
-      build(type, config, alias, settings)
+      build(type, config, alias)
     end
   end
 
-  defp build(:existing, config, alias, settings) do
+  defp build(:existing, config, alias) do
     case Index.latest_starting_with(config, alias) do
       {:ok, name} ->
         IO.puts("Index already exists: #{name}")
 
       {:error, :not_found} ->
-        build(:rebuild, config, alias, settings)
+        build(:rebuild, config, alias)
 
       {:error, exception} ->
         Mix.raise("""
@@ -73,8 +82,8 @@ defmodule Mix.Tasks.Elasticsearch.Build do
     end
   end
 
-  defp build(:rebuild, config, alias, settings) do
-    with :ok <- Index.hot_swap(config, alias, Map.merge(config.indexes[alias], settings)) do
+  defp build(:rebuild, config, alias) do
+    with :ok <- Index.hot_swap(config, alias) do
       :ok
     else
       {:error, errors} when is_list(errors) ->
