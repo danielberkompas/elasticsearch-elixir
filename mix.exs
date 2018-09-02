@@ -75,6 +75,7 @@ defmodule Elasticsearch.Mixfile do
       extras: [
         "README.md",
         "guides/deployment/distillery.md": [title: "Distillery"],
+        "guides/upgrading/0.4.x_to_0.5.x.md": [title: "0.4.x to 0.5.x"],
         "guides/upgrading/0.3.x_to_0.4.x.md": [title: "0.3.x to 0.4.x"],
         "guides/upgrading/0.2.x_to_0.3.x.md": [title: "0.2.x to 0.3.x"],
         "guides/upgrading/0.1.x_to_0.2.x.md": [title: "0.1.x to 0.2.x"]

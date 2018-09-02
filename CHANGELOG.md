@@ -1,14 +1,19 @@
 # Change Log
 
-## [v0.5.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.0) (2018-08-01)
-[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.1...v0.5.0)
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.1...HEAD)
 
 **Closed issues:**
 
+- Issue with dialyzer. [\#35](https://github.com/infinitered/elasticsearch-elixir/issues/35)
+- Elasticsearch.StreamingStore behaviour or something alike [\#31](https://github.com/infinitered/elasticsearch-elixir/issues/31)
+
 **Merged pull requests:**
 
-- Add support for routing keys in Document protocol. Add breaking change
-documentation.
+- \[\#40\] Support Distillery [\#41](https://github.com/infinitered/elasticsearch-elixir/pull/41) ([danielberkompas](https://github.com/danielberkompas))
+- Support \_routing meta-field [\#37](https://github.com/infinitered/elasticsearch-elixir/pull/37) ([cdunn](https://github.com/cdunn))
+- \[\#31\] Base Store behaviour on streams [\#36](https://github.com/infinitered/elasticsearch-elixir/pull/36) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.4.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.4.1) (2018-06-26)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.0...v0.4.1)

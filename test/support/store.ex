@@ -3,8 +3,6 @@ defmodule Elasticsearch.Test.Store do
 
   alias Elasticsearch.Test.Repo
 
-  import Ecto.Query
-
   @impl true
   def stream(Post) do
     Repo.stream(Post)
@@ -14,13 +12,5 @@ defmodule Elasticsearch.Test.Store do
   def transaction(fun) do
     {:ok, result} = Repo.transaction(fun, timeout: :infinity)
     result
-  end
-
-  def load(Comment, offset, limit) do
-    Comment
-    |> offset(^offset)
-    |> limit(^limit)
-    |> preload([:post])
-    |> Repo.all()
   end
 end
