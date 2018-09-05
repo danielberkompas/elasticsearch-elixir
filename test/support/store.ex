@@ -2,6 +2,7 @@ defmodule Elasticsearch.Test.Store do
   @behaviour Elasticsearch.Store
 
   alias Elasticsearch.Test.Repo
+  import Ecto.Query
 
   @impl true
   def stream(Post) do
