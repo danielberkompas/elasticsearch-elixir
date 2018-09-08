@@ -59,5 +59,26 @@ defmodule Elasticsearch.ExceptionTest do
                  query: nil
                )
     end
+
+    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/39
+    @tag :regression
+    test "handles arbitrary error maps" do
+      assert %Exception{type: nil, message: nil, query: nil, raw: %{"message" => nil}} =
+               Exception.exception(%{
+                 response: %{"message" => nil},
+                 query: nil
+               })
+
+      assert %Exception{
+               type: nil,
+               message: "Unable to connect to the server.",
+               query: nil,
+               raw: %{"message" => "Unable to connect to the server.", "ok" => false}
+             } =
+               Exception.exception(%{
+                 response: %{"message" => "Unable to connect to the server.", "ok" => false},
+                 query: nil
+               })
+    end
   end
 end

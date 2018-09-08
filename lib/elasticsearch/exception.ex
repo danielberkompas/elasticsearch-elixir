@@ -70,6 +70,18 @@ defmodule Elasticsearch.Exception do
     ]
   end
 
+  defp build(error, query) when is_map(error) do
+    [
+      status: nil,
+      line: nil,
+      col: nil,
+      message: error["message"],
+      type: nil,
+      query: query,
+      raw: error
+    ]
+  end
+
   defp build(error, query) when is_binary(error) do
     binary_error(error, query)
   end
