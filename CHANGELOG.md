@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
 
-[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.1...HEAD)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.0...HEAD)
+
+**Closed issues:**
+
+- Error when call build task with distillery [\#40](https://github.com/infinitered/elasticsearch-elixir/issues/40)
+- FunctionClauseError: No function clause matching [\#39](https://github.com/infinitered/elasticsearch-elixir/issues/39)
+
+## [v0.5.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.0) (2018-09-02)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.4.1...v0.5.0)
 
 **Closed issues:**
 
