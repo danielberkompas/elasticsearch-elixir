@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.1...HEAD)
+
+**Closed issues:**
+
+- Error with the elasticsearch.build task [\#43](https://github.com/infinitered/elasticsearch-elixir/issues/43)
+
+**Merged pull requests:**
+
+- \[\#43\] Stop sending empty JSON payloads [\#44](https://github.com/infinitered/elasticsearch-elixir/pull/44) ([danielberkompas](https://github.com/danielberkompas))
+
 ## [v0.5.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.1) (2018-09-08)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.0...v0.5.1)
 
