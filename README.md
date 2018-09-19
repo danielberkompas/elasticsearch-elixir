@@ -18,7 +18,7 @@ Add `elasticsearch` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:elasticsearch, "~> 0.5.1"}
+    {:elasticsearch, "~> 0.5.2"}
   ]
 end
 ```
