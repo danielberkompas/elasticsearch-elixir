@@ -28,13 +28,17 @@ defmodule Elasticsearch.API.HTTP do
   end
 
   # Converts the request body into JSON, unless it has already
-  # been converted
+  # been converted. If the data is empty, sends ""
   defp process_request_body(data, _config) when is_binary(data) do
     data
   end
 
-  defp process_request_body(data, config) when is_map(data) do
+  defp process_request_body(data, config) when is_map(data) and data != %{} do
     json_library(config).encode!(data)
+  end
+
+  defp process_request_body(_data, _config) do
+    ""
   end
 
   # Converts the response body string from JSON into a map, if it looks like it
