@@ -17,7 +17,7 @@ defmodule Elasticsearch do
   @type url :: Path.t()
   @type opts :: Keyword.t()
   @type data :: map | String.t()
-  @type response :: {:ok, map} :: {:error, Elasticsearch.Exception.t()}
+  @type response :: {:ok, map} | {:error, Elasticsearch.Exception.t()}
 
   @doc """
   Creates or updates a document in a given index.
