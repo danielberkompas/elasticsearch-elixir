@@ -46,6 +46,9 @@ defmodule Mix.Tasks.Elasticsearch.Install do
         {:unix, :darwin} ->
           "kibana-#{version}-darwin-x86_64"
 
+        {:unix, :linux} ->
+          "kibana-#{version}-darwin-x86_64"
+
         other ->
           Mix.raise("Unsupported system for Kibana: #{inspect(other)}")
       end
