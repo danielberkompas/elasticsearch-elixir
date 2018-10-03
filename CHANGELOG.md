@@ -2,7 +2,18 @@
 
 ## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
 
-[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.2...HEAD)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.3...HEAD)
+
+**Closed issues:**
+
+- Error installing on ubuntu linux [\#46](https://github.com/infinitered/elasticsearch-elixir/issues/46)
+
+**Merged pull requests:**
+
+- adds case statement to kibana download [\#47](https://github.com/infinitered/elasticsearch-elixir/pull/47) ([g13ydson](https://github.com/g13ydson))
+
+## [v0.5.3](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.3) (2018-10-01)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.2...v0.5.3)
 
 **Merged pull requests:**
 
