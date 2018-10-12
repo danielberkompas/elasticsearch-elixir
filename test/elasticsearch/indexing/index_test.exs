@@ -16,7 +16,7 @@ defmodule Elasticsearch.IndexTest do
       {:ok,
        %HTTPoison.Response{
          status_code: 200,
-         body: [%{"index" => "index-name"}]
+         body: [%{"index" => "index-123"}]
        }}
     end
 
