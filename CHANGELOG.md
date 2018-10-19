@@ -1,5 +1,14 @@
 # Change Log
 
+## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.4...HEAD)
+
+**Merged pull requests:**
+
+- Delete the right index [\#49](https://github.com/infinitered/elasticsearch-elixir/pull/49) ([jfrolich](https://github.com/jfrolich))
+- convert index alias to microseconds [\#48](https://github.com/infinitered/elasticsearch-elixir/pull/48) ([jfrolich](https://github.com/jfrolich))
+
 ## [v0.5.4](https://github.com/infinitered/elasticsearch-elixir/tree/v0.5.4) (2018-10-03)
 [Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.3...v0.5.4)
 

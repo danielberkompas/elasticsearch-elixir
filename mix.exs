@@ -6,7 +6,7 @@ defmodule Elasticsearch.Mixfile do
       app: :elasticsearch,
       description: "Elasticsearch without DSLs",
       source_url: "https://github.com/infinitered/elasticsearch-elixir",
-      version: "0.5.4",
+      version: "0.6.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
