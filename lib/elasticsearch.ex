@@ -65,7 +65,7 @@ defmodule Elasticsearch do
         "result" => "created"
       }
   """
-  @spec put_document(Cluster.t(), Document.t(), index_name) :: map | no_return
+  @spec put_document!(Cluster.t(), Document.t(), index_name) :: map | no_return
   def put_document!(cluster, document, index) do
     put!(cluster, document_url(document, index), Document.encode(document))
   end
