@@ -12,7 +12,7 @@ defmodule Elasticsearch.API.HTTP do
       process_url(url, config),
       process_request_body(data, config),
       headers(config),
-      opts ++ Map.get(config, :default_opts, [])
+      opts ++ Map.get(config, :default_options, [])
     )
     |> process_response(config)
   end

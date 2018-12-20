@@ -104,6 +104,17 @@ config :my_app, MyApp.ElasticsearchCluster,
   }
 ```
 
+#### Specifying HTTPoison Options
+
+```
+config :my_app, MyApp.ElasticsearchCluster,
+  default_options: [
+    timeout: 5_000,
+    recv_timeout: 5_000,
+    hackney: [pool: :pool_name]
+  ]
+```
+
 ## Protocols and Behaviours
 
 #### Elasticsearch.Store
@@ -120,7 +131,7 @@ defmodule MyApp.ElasticsearchStore do
   @behaviour Elasticsearch.Store
 
   import Ecto.Query
-  
+
   alias MyApp.Repo
 
   @impl true

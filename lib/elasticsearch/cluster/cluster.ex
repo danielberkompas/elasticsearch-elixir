@@ -98,7 +98,7 @@ defmodule Elasticsearch.Cluster do
         username: "username",
         password: "password",
         default_headers: [{"authorization", "custom-value"}],
-        default_opts: [ssl: [{:versions, [:'tlsv1.2']}],
+        default_options: [ssl: [{:versions, [:'tlsv1.2']}],
         indexes: %{
           posts: %{
             settings: "priv/elasticsearch/posts.json",
