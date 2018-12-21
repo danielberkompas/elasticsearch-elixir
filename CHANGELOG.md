@@ -1,8 +1,21 @@
 # Change Log
 
-## [Unreleased](https://github.com/infinitered/elasticsearch-elixir/tree/HEAD)
+## [v0.6.1](https://github.com/infinitered/elasticsearch-elixir/tree/v0.6.1) (2018-12-21)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.6.0...v0.6.1)
 
-[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.4...HEAD)
+**Closed issues:**
+
+- Document mapping type name can't start with '\_' [\#52](https://github.com/infinitered/elasticsearch-elixir/issues/52)
+- Settings should maybe look in the current application's directory [\#51](https://github.com/infinitered/elasticsearch-elixir/issues/51)
+
+**Merged pull requests:**
+
+- Fix :default\_options config name [\#55](https://github.com/infinitered/elasticsearch-elixir/pull/55) ([nitinstp23](https://github.com/nitinstp23))
+- Test against Elasticsearch 6.5.2 [\#53](https://github.com/infinitered/elasticsearch-elixir/pull/53) ([danielberkompas](https://github.com/danielberkompas))
+- small typo fix: bang the spec [\#50](https://github.com/infinitered/elasticsearch-elixir/pull/50) ([alexfilatov](https://github.com/alexfilatov))
+
+## [v0.6.0](https://github.com/infinitered/elasticsearch-elixir/tree/v0.6.0) (2018-10-19)
+[Full Changelog](https://github.com/infinitered/elasticsearch-elixir/compare/v0.5.4...v0.6.0)
 
 **Merged pull requests:**
 
