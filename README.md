@@ -106,7 +106,7 @@ config :my_app, MyApp.ElasticsearchCluster,
 
 #### Specifying HTTPoison Options
 
-```
+```elixir
 config :my_app, MyApp.ElasticsearchCluster,
   default_options: [
     timeout: 5_000,
