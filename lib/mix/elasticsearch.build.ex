@@ -37,8 +37,6 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
   require Logger
 
-  import Maybe
-
   alias Elasticsearch.{
     Cluster.Config,
     Index
@@ -98,7 +96,7 @@ defmodule Mix.Tasks.Elasticsearch.Build do
 
       {:error, :enoent} ->
         Mix.raise("""
-        Settings file not found at #{maybe(config, [:indexes, alias, :settings])}.
+        Settings file not found at #{get_in(config, [:indexes, alias, :settings])}.
         """)
 
       {:error, exception} ->
