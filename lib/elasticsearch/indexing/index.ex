@@ -288,6 +288,6 @@ defmodule Elasticsearch.Index do
   end
 
   defp system_timestamp do
-    DateTime.to_unix(DateTime.utc_now(), :microseconds)
+    DateTime.to_unix(DateTime.utc_now(), :microsecond)
   end
 end
