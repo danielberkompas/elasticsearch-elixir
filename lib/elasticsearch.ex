@@ -47,6 +47,36 @@ defmodule Elasticsearch do
   end
 
   @doc """
+  Creates a document in a given index. Use this function when your documents
+  do not have IDs or you want to use Elasticsearch's automatic ID generation.
+
+  https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#_automatic_id_generation
+
+  The document must implement the `Elasticsearch.Document`. protocol.
+
+  ## Example
+
+
+      Index.create_from_file(Cluster, "posts-1", "test/support/settings/posts.json")
+      Elasticsearch.post_document(Cluster, %Post{title: "Post"}, "posts-1")
+      # => {:ok,
+      # =>   %{
+      # =>     "_id" => "W0tpsmIBdwcYyG50zbta",
+      # =>     "_index" => "posts-1",
+      # =>     "_primary_term" => 1,
+      # =>     "_seq_no" => 0,
+      # =>     "_shards" => %{"failed" => 0, "successful" => 1, "total" => 2},
+      # =>     "_type" => "_doc",
+      # =>     "_version" => 1,
+      # =>     "result" => "created"
+      # =>   }}
+  """
+  @spec post_document(Cluster.t(), Document.t(), index_name) :: response
+  def post_document(cluster, document, index) do
+    post(cluster, document_url(document, index), Document.encode(document))
+  end
+
+  @doc """
   Same as `put_document/2`, but raises on errors.
 
   ## Example
