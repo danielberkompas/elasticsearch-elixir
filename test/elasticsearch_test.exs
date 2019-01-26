@@ -51,7 +51,7 @@ defmodule ElasticsearchTest do
   end
 
   describe ".post_document/3" do
-    # GitHub: https://github.com/infinitered/elasticsearch-elixir/issues/60
+    # GitHub: https://github.com/danielberkompas/elasticsearch-elixir/issues/60
     @tag timeout: :infinity
     @tag :regression
     test "does not post ID when ID is nil" do

@@ -34,7 +34,7 @@ defmodule Elasticsearch.Index.BulkTest do
   doctest Elasticsearch.Index.Bulk
 
   describe ".upload/4" do
-    # Regression test for https://github.com/infinitered/elasticsearch-elixir/issues/10
+    # Regression test for https://github.com/danielberkompas/elasticsearch-elixir/issues/10
     @tag :regression
     test "calls itself recursively properly" do
       assert {:error, [%TestException{}]} =

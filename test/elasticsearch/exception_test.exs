@@ -26,7 +26,7 @@ defmodule Elasticsearch.ExceptionTest do
                Exception.exception(response: "message", query: "query")
     end
 
-    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/28
+    # See issue: https://github.com/danielberkompas/elasticsearch-elixir/issues/28
     @tag :regression
     test "understands the not_found error" do
       assert %Exception{type: "not_found", message: nil, query: nil} =
@@ -45,7 +45,7 @@ defmodule Elasticsearch.ExceptionTest do
                )
     end
 
-    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/33
+    # See issue: https://github.com/danielberkompas/elasticsearch-elixir/issues/33
     @tag :regression
     test "understands the document_not_found error" do
       assert %Exception{type: "document_not_found", message: nil, query: nil} =
@@ -60,7 +60,7 @@ defmodule Elasticsearch.ExceptionTest do
                )
     end
 
-    # See issue: https://github.com/infinitered/elasticsearch-elixir/issues/39
+    # See issue: https://github.com/danielberkompas/elasticsearch-elixir/issues/39
     @tag :regression
     test "handles arbitrary error maps" do
       assert %Exception{type: nil, message: nil, query: nil, raw: %{"message" => nil}} =

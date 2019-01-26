@@ -5,7 +5,7 @@ defmodule Elasticsearch.Mixfile do
     [
       app: :elasticsearch,
       description: "Elasticsearch without DSLs",
-      source_url: "https://github.com/infinitered/elasticsearch-elixir",
+      source_url: "https://github.com/danielberkompas/elasticsearch-elixir",
       version: "0.6.2",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
@@ -46,7 +46,7 @@ defmodule Elasticsearch.Mixfile do
       maintainers: ["Daniel Berkompas"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => "https://github.com/infinitered/elasticsearch-elixir"
+        "GitHub" => "https://github.com/danielberkompas/elasticsearch-elixir"
       }
     ]
   end
