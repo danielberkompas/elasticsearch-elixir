@@ -96,10 +96,10 @@ defmodule Elasticsearch.API.AWS do
   defp build_options(method, config, body) do
     [
       method: String.capitalize(Atom.to_string(method)),
-      region: Map.get(config, "aws_region"),
-      service: Map.get(config, "aws_service"),
-      access_key: Map.get(config, "aws_access_key_id"),
-      secret: Map.get(config, "aws_secret_access_key"),
+      region: Map.get(config, :aws_region),
+      service: Map.get(config, :aws_service),
+      access_key: Map.get(config, :aws_access_key_id),
+      secret: Map.get(config, :aws_secret_access_key),
       body: body
     ]
   end
