@@ -104,7 +104,7 @@ defmodule Elasticsearch.API.AWS do
     ]
   end
 
-  def build_signed_request(url, options, default_headers) do
+  def build_signed_request(url, options, default_headers \\ %{}) do
     {:ok, signed_data, _} = Sigaws.sign_req(url, options)
 
     default_headers
