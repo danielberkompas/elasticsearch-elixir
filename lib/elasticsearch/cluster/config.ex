@@ -33,6 +33,10 @@ defmodule Elasticsearch.Cluster.Config do
              url: &(is_binary(&1) && String.starts_with?(&1, "http")),
              username: [presence: [unless: &(&1[:password] == nil)]],
              password: [presence: [unless: &(&1[:username] == nil)]],
+             aws_region: &(is_binary(&1)),
+             aws_service: &(is_binary(&1)),
+             aws_access_key_id: [presence: [unless: &(&1[:aws_secret_access_key] == nil)]],
+             aws_secret_access_key: [presence: [unless: &(&1[:aws_access_key_id] == nil)]],
              api: [presence: true, by: &is_module/1],
              json_library: [by: &(is_nil(&1) || is_module(&1))]
            ),
