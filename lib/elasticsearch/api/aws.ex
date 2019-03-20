@@ -81,7 +81,8 @@ defmodule Elasticsearch.API.AWS do
     build_signed_request(url, options, default_headers)
   end
 
-  defp sign_request(method, url, body, config, default_headers) when is_map(body) and body != %{} do
+  defp sign_request(method, url, body, config, default_headers)
+       when is_map(body) and body != %{} do
     options = build_options(method, config, json_library(config).encode!(body))
 
     build_signed_request(url, options, default_headers)
