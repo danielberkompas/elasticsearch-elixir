@@ -194,8 +194,10 @@ defmodule MyApp.ElasticsearchMock do
     }}
   end
 end
+```
 
 #### Elasticsearch.API.AWS
+
 As AWS does not provide credentials' based http authentication, you can use the `Elasticsearch.AWS` module if you want to use AWS Elasticsearch Service with AWS Signature V4 signed HTTP connections.
 
 To use this, just add to your config:
