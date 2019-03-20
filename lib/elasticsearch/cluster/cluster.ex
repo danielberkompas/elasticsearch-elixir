@@ -122,6 +122,10 @@ defmodule Elasticsearch.Cluster do
           optional(:json_library) => module,
           optional(:username) => String.t(),
           optional(:password) => String.t(),
+          optional(:aws_access_key_id) => String.t(),
+          optional(:aws_secret_access_key) => String.t(),
+          optional(:aws_region) => String.t(),
+          optional(:aws_service) => String.t(),
           optional(:default_headers) => [{String.t(), String.t()}],
           optional(:default_options) => Keyword.t(),
           optional(:indexes) => %{
