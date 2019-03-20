@@ -198,7 +198,7 @@ end
 
 #### Elasticsearch.API.AWS
 
-As AWS does not provide credentials' based http authentication, you can use the `Elasticsearch.AWS` module if you want to use AWS Elasticsearch Service with AWS Signature V4 signed HTTP connections.
+As AWS does not provide credentials' based http authentication, you can use the `Elasticsearch.API.AWS` module if you want to use AWS Elasticsearch Service with AWS Signature V4 signed HTTP connections.
 
 To use this, just add to your config:
 
@@ -209,7 +209,7 @@ config :my_app, MyApp.ElasticsearchCluster,
   aws_region: "us-east-1",
   aws_service: "es",
   aws_access_key_id: "aws_access_key_id",
-  aws_secret_access_key: "aws_secret_access_key",
+  aws_secret_access_key: "aws_secret_access_key"
 ```
 
 ## Indexing
