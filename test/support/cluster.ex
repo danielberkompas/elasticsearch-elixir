@@ -21,13 +21,13 @@ defmodule Elasticsearch.Test.Cluster do
          }
        },
        default_options: [
-        aws: [
-          region: "us-east-1",
-          service: "es",
-          access_key: "aws_access_key_id",
-          secret: "aws_secret_access_key"
-        ]
-      ]
+         aws: [
+           region: "us-east-1",
+           service: "es",
+           access_key: "aws_access_key_id",
+           secret: "aws_secret_access_key"
+         ]
+       ]
      }}
   end
 end
