@@ -11,10 +11,6 @@ defmodule Elasticsearch.Test.Cluster do
        url: "http://localhost:9200",
        username: "username",
        password: "password",
-       aws_access_key_id: "aws_access_key_id",
-       aws_secret_access_key: "aws_secret_access_key",
-       aws_region: "us-east-1",
-       aws_service: "es",
        indexes: %{
          posts: %{
            settings: "test/support/settings/posts.json",
@@ -23,7 +19,15 @@ defmodule Elasticsearch.Test.Cluster do
            bulk_page_size: 5000,
            bulk_wait_interval: 0
          }
-       }
+       },
+       default_options: [
+        aws: [
+          region: "us-east-1",
+          service: "es",
+          access_key: "aws_access_key_id",
+          secret: "aws_secret_access_key"
+        ]
+      ]
      }}
   end
 end

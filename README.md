@@ -206,10 +206,14 @@ To use this, just add to your config:
 # config/prod.exs
 config :my_app, MyApp.ElasticsearchCluster,
   api: Elasticsearch.API.AWS,
-  aws_region: "us-east-1",
-  aws_service: "es",
-  aws_access_key_id: "aws_access_key_id",
-  aws_secret_access_key: "aws_secret_access_key"
+  default_options: [
+    aws: [
+      region: "us-east-1",
+      service: "es",
+      access_key: "aws_access_key_id",
+      secret: "aws_secret_access_key"
+    ]
+  ]
 ```
 
 ## Indexing

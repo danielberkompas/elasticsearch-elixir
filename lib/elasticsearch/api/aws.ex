@@ -9,15 +9,23 @@ defmodule Elasticsearch.API.AWS do
   def request(config, method, url, data, opts) do
     full_url = process_url(url, config)
     payload = process_request_body(data, config)
+    default_options =
+      Map.get(config, :default_options, [])
+      |> cleanup_default_options()
 
     method
     |> HTTPoison.request(
       full_url,
       payload,
       headers(method, full_url, data, config),
-      opts ++ Map.get(config, :default_options, [])
+      opts ++ default_options
     )
     |> process_response(config)
+  end
+
+  # Delete AWS from default_options as we only want to use them for encryption purposes
+  def cleanup_default_options(default_options) do
+    Keyword.delete(default_options, :aws)
   end
 
   # Respect absolute URLs if passed
@@ -97,12 +105,8 @@ defmodule Elasticsearch.API.AWS do
   defp build_options(method, config, body) do
     [
       method: String.capitalize(Atom.to_string(method)),
-      region: Map.get(config, :aws_region),
-      service: Map.get(config, :aws_service),
-      access_key: Map.get(config, :aws_access_key_id),
-      secret: Map.get(config, :aws_secret_access_key),
       body: body
-    ]
+    ] ++ Keyword.get(config, :aws)
   end
 
   def build_signed_request(url, options, default_headers) when is_nil(default_headers) do
