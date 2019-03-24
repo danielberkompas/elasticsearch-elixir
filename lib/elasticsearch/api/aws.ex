@@ -9,6 +9,7 @@ defmodule Elasticsearch.API.AWS do
   def request(config, method, url, data, opts) do
     full_url = process_url(url, config)
     payload = process_request_body(data, config)
+
     default_options =
       Map.get(config, :default_options, [])
       |> cleanup_default_options()
