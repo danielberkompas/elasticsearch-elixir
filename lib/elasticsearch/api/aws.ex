@@ -106,7 +106,11 @@ defmodule Elasticsearch.API.AWS do
     [
       method: String.capitalize(Atom.to_string(method)),
       body: body
-    ] ++ Keyword.get(config, :aws)
+    ] ++ aws_credentials(config)
+  end
+
+  def aws_credentials(config) do
+    Keyword.get(config, :default_options) |> Keyword.get(:aws)
   end
 
   def build_signed_request(url, options, default_headers) when is_nil(default_headers) do
