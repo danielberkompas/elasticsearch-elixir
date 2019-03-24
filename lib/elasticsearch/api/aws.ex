@@ -111,7 +111,7 @@ defmodule Elasticsearch.API.AWS do
   end
 
   def aws_credentials(config) do
-    Keyword.get(config, :default_options) |> Keyword.get(:aws)
+    Map.get(config, :default_options) |> Keyword.get(:aws)
   end
 
   def build_signed_request(url, options, default_headers) when is_nil(default_headers) do
