@@ -1,5 +1,22 @@
 # Change Log
 
+## [v1.0.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v1.0.0) (2019-03-30)
+[Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.6.1...v1.0.0)
+
+**Closed issues:**
+
+- AWS Elasticsearch Service signed requests [\#66](https://github.com/danielberkompas/elasticsearch-elixir/issues/66)
+- Elasticsearch.put\_document does not save to database [\#60](https://github.com/danielberkompas/elasticsearch-elixir/issues/60)
+- Is HTTPoison configuration setup required for this app? [\#59](https://github.com/danielberkompas/elasticsearch-elixir/issues/59)
+- Remove dependency on maybe package [\#57](https://github.com/danielberkompas/elasticsearch-elixir/issues/57)
+
+**Merged pull requests:**
+
+- Add support to AWS [\#67](https://github.com/danielberkompas/elasticsearch-elixir/pull/67) ([marcelolebre](https://github.com/marcelolebre))
+- \[\#60\] Add Elasticsearch.post\_document/3 [\#62](https://github.com/danielberkompas/elasticsearch-elixir/pull/62) ([danielberkompas](https://github.com/danielberkompas))
+- rename microseconds to microsecond [\#61](https://github.com/danielberkompas/elasticsearch-elixir/pull/61) ([tap349](https://github.com/tap349))
+- remove dependency on maybe [\#58](https://github.com/danielberkompas/elasticsearch-elixir/pull/58) ([tap349](https://github.com/tap349))
+
 ## [v0.6.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.6.1) (2018-12-21)
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.6.0...v0.6.1)
 
