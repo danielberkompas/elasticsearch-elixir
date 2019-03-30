@@ -196,6 +196,26 @@ defmodule MyApp.ElasticsearchMock do
 end
 ```
 
+#### Elasticsearch.API.AWS
+
+As AWS does not provide credentials' based http authentication, you can use the `Elasticsearch.API.AWS` module if you want to use AWS Elasticsearch Service with AWS Signature V4 signed HTTP connections.
+
+To use this, just add to your config:
+
+```elixir
+# config/prod.exs
+config :my_app, MyApp.ElasticsearchCluster,
+  api: Elasticsearch.API.AWS,
+  default_options: [
+    aws: [
+      region: "us-east-1",
+      service: "es",
+      access_key: "aws_access_key_id",
+      secret: "aws_secret_access_key"
+    ]
+  ]
+```
+
 ## Indexing
 
 #### Bulk
