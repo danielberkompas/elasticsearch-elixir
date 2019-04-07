@@ -200,9 +200,17 @@ end
 
 As AWS does not provide credentials' based http authentication, you can use the `Elasticsearch.API.AWS` module if you want to use AWS Elasticsearch Service with AWS Signature V4 signed HTTP connections.
 
-To use this, just add to your config:
+To use this, just add `sigaws` to your dependencies and add this to your configuration:
 
 ```elixir
+# Add to deps 
+def deps do
+  [          
+    # ...
+    {:sigaws, ">= 0.0.0"}
+  ]
+end
+
 # config/prod.exs
 config :my_app, MyApp.ElasticsearchCluster,
   api: Elasticsearch.API.AWS,
