@@ -30,8 +30,8 @@ defmodule Elasticsearch.Index.Bulk do
   @spec encode(Cluster.t(), struct, String.t()) ::
           {:ok, String.t()}
           | {:error, Error.t()}
-  def encode(cluster, struct, index) do
-    {:ok, encode!(cluster, struct, index)}
+  def encode(cluster, struct, index, opts \\ []) do
+    {:ok, encode!(cluster, struct, index, opts)}
   rescue
     exception ->
       {:error, exception}
@@ -51,9 +51,10 @@ defmodule Elasticsearch.Index.Bulk do
       iex> Bulk.encode!(Cluster, 123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Comment, Post
   """
-  def encode!(cluster, struct, index) do
+  def encode!(cluster, struct, index, opts \\ []) do
+    opts = Enum.into(opts, %{action_type: "create"})
     config = Cluster.Config.get(cluster)
-    header = header(config, "create", index, struct)
+    header = header(config, opts[:action_type], index, struct)
 
     document =
       struct
@@ -83,11 +84,18 @@ defmodule Elasticsearch.Index.Bulk do
   Uploads all the data from the list of `sources` to the given index.
   Data for each `source` will be fetched using the configured `:store`.
   """
-  @spec upload(Cluster.t(), index_name :: String.t(), Elasticsearch.Store.t(), list) ::
+  @spec upload(
+          Cluster.t(),
+          index_name :: String.t(),
+          Elasticsearch.Store.t(),
+          list
+        ) ::
           :ok | {:error, [map]}
   def upload(cluster, index_name, index_config, errors \\ [])
   def upload(_cluster, _index_name, %{sources: []}, []), do: :ok
-  def upload(_cluster, _index_name, %{sources: []}, errors), do: {:error, errors}
+
+  def upload(_cluster, _index_name, %{sources: []}, errors),
+    do: {:error, errors}
 
   def upload(
         cluster,
@@ -114,7 +122,8 @@ defmodule Elasticsearch.Index.Bulk do
     upload(config, index_name, %{index_config | sources: tail}, errors)
   end
 
-  defp put_bulk_page(_config, _index_name, wait_interval) when is_integer(wait_interval) do
+  defp put_bulk_page(_config, _index_name, wait_interval)
+       when is_integer(wait_interval) do
     Logger.debug("Pausing #{wait_interval}ms between bulk pages")
     :timer.sleep(wait_interval)
   end
