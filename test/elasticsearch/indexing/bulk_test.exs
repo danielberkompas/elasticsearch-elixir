@@ -81,7 +81,7 @@ defmodule Elasticsearch.Index.BulkTest do
     end
   end
 
-  describe ".encode!/3" do
+  describe ".encode!/4" do
     test "respects _routing meta-field" do
       assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index") =~
                "\"_routing\":\"123\""
