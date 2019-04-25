@@ -86,5 +86,15 @@ defmodule Elasticsearch.Index.BulkTest do
       assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index") =~
                "\"_routing\":\"123\""
     end
+
+    test "accepts an `action_type` option" do
+      assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index",
+               action_type: "create"
+             ) =~ "{\"create\":{\"_routing\":\"123\""
+
+      assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index",
+               action_type: "index"
+             ) =~ "{\"index\":{\"_routing\":\"123\""
+    end
   end
 end
