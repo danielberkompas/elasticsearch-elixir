@@ -34,8 +34,8 @@ defmodule Elasticsearch.Index do
 
     with :ok <- create_from_file(config, name, settings_file),
          :ok <- Bulk.upload(config, name, index_config),
-         :ok <- __MODULE__.alias(config, name, alias),
-         :ok <- clean_starting_with(config, alias, 2),
+         :ok <- __MODULE__.alias(config, name, to_string(alias)),
+         :ok <- clean_starting_with(config, to_string(alias), 2),
          :ok <- refresh(config, name) do
       :ok
     end

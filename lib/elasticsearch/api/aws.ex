@@ -118,7 +118,7 @@ if Code.ensure_loaded?(Sigaws) do
     def build_signed_request(url, options, default_headers) when is_nil(default_headers) do
       {:ok, signed_data, _} = Sigaws.sign_req(url, options)
 
-      Map.merge(%{"Content-Type": "application/json"}, signed_data)
+      Map.merge(%{"Content-Type" => "application/json"}, signed_data)
     end
 
     def build_signed_request(url, options, default_headers) do
