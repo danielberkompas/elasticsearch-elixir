@@ -11,9 +11,12 @@ env:
   - ELASTICSEARCH_VERSION=6.5.2
 services:
   - elasticsearch
+  - postgresql
 before_install:
   - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb && sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb && sudo service elasticsearch restart
 before_script:
   - sleep 10
+  - cp config/travis.exs config/config.exs
+  - mix do ecto.create, ecto.migrate
 script:
   - bin/setup
