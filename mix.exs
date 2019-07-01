@@ -60,7 +60,7 @@ defmodule Elasticsearch.Mixfile do
     [
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
-      {:vex, "~> 0.6.0"},
+      {:vex, ">= 0.6.0 and < 0.9.0"},
       {:sigaws, "~> 0.7", optional: true},
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
