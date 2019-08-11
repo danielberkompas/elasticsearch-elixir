@@ -1,28 +1,24 @@
 defmodule Elasticsearch.Cluster.Config do
   @moduledoc false
 
+  @doc false
   def get(cluster) when is_atom(cluster) do
     cluster.__config__()
   end
 
   def get(config) when is_map(config) or is_list(config) do
-    Enum.into(config, %{})
+    maybe_read_envs(config)
   end
 
   @doc false
-  def build(nil, config) do
-    Enum.into(config, %{})
-  end
-
   def build(otp_app, module, config) do
     config = Enum.into(config, %{})
 
-    from_app =
-      otp_app
-      |> Application.get_env(module, [])
-      |> Enum.into(%{})
-
-    Map.merge(from_app, config)
+    otp_app
+    |> Application.get_env(module, [])
+    |> Enum.into(%{})
+    |> Map.merge(config)
+    |> maybe_read_envs()
   end
 
   @doc false
@@ -83,4 +79,35 @@ defmodule Elasticsearch.Cluster.Config do
       bulk_wait_interval: [presence: true, by: &is_integer/1]
     )
   end
+
+  defp maybe_read_envs(config) do
+    config
+    |> Enum.map(fn {key, value} -> {key, get_config_value(value)} end)
+    |> Map.new()
+  end
+
+  defp get_config_value({:system, env_name}), do: System.get_env(env_name)
+
+  defp get_config_value({:system, :integer, env_name}) do
+    case System.get_env(env_name) do
+      nil -> nil
+      value -> String.to_integer(value)
+    end
+  end
+
+  defp get_config_value({:system, :integer, env_name, default}) do
+    case System.get_env(env_name) do
+      nil -> default
+      value -> String.to_integer(value)
+    end
+  end
+
+  defp get_config_value({:system, env_name, default}) do
+    case System.get_env(env_name) do
+      nil -> default
+      value -> value
+    end
+  end
+
+  defp get_config_value(value), do: value
 end
