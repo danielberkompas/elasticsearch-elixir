@@ -61,6 +61,33 @@ defmodule Elasticsearch.Cluster.ConfigTest do
                  port: {:system, :integer, "ELASTICSEARCH_PORT"}
                })
     end
+
+    test "allows to use {:system, _} tuple in nested maps" do
+      set_envs(%{
+        "ELASTICSEARCH_USERNAME" => "username",
+        "ELASTICSEARCH_PASSWORD" => "password",
+        "POSTS_BULK_PAGE_SIZE" => "5000"
+      })
+
+      assert %{
+               username: "username",
+               password: "password",
+               indexes: %{
+                 posts: %{
+                   bulk_page_size: 5000
+                 }
+               }
+             } =
+               Config.build(:elasticsearch, Cluster, %{
+                 username: {:system, "ELASTICSEARCH_USERNAME"},
+                 password: {:system, "ELASTICSEARCH_PASSWORD"},
+                 indexes: %{
+                   posts: %{
+                     bulk_page_size: {:system, :integer, "POSTS_BULK_PAGE_SIZE"}
+                   }
+                 }
+               })
+    end
   end
 
   defp set_envs(envs) do

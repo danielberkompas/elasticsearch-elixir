@@ -109,5 +109,11 @@ defmodule Elasticsearch.Cluster.Config do
     end
   end
 
+  defp get_config_value(map) when is_map(map) do
+    map
+    |> Enum.map(fn {key, value} -> {key, get_config_value(value)} end)
+    |> Map.new()
+  end
+
   defp get_config_value(value), do: value
 end
