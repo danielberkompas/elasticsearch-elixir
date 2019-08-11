@@ -3,9 +3,9 @@ cache:
   directories:
     - $HOME/.mix
 elixir:
-  - 1.7.2
+  - 1.9.1
 otp_release:
-  - 20.1
+  - 22.0
 env:
   - ELASTICSEARCH_VERSION=6.2.4
   - ELASTICSEARCH_VERSION=6.5.2
