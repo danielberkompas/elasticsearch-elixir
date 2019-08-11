@@ -104,6 +104,42 @@ config :my_app, MyApp.ElasticsearchCluster,
   }
 ```
 
+If you need a runtime configuration there are two options. The first one is to use `{:system, _}` tuple:
+
+```
+config :my_app, MyApp.ElasticsearchCluster,
+  # Use value from ELASTICSEARCH_URL environment variable:
+  url: {:system, "ELASTICSEARCH_URL"},
+
+  # Use ELASTICSEARCH_USERNAME environment variable or fallback to "changeme" if it is missing
+  username: {:system, "ELASTICSEARCH_USERNAME", "changeme"},
+
+  # You can also use environment variables in nested configurations:
+  indexes: %{
+    posts: %{
+      # Cast POSTS_BULK_PAGE_SIZE value to integer:
+      bulk_page_size: {:system, :integer, "POSTS_BULK_PAGE_SIZE"},
+
+      # Fallback to 15 seconds if environment variable is not present:
+      bulk_wait_interval: {:system, :integer, "POSTS_BULK_WAIT_INTERVAL", 15_000}
+    }
+  }
+```
+
+Another option is to override `init/1` callback in your cluster module:
+
+```
+defmodule MyApp.ElasticsearchCluster do
+  use Elasticsearch.Cluster, otp_app: :my_app
+
+  @impl true
+  def init(config) do
+    config = Map.put(config, :url, System.get_env("ELASTICSEARCH_URL"))
+    {:ok, config}
+  end
+end
+```
+
 #### Specifying HTTPoison Options
 
 ```elixir
