@@ -52,8 +52,9 @@ defmodule Elasticsearch.Index.Bulk do
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Comment, Post
   """
   def encode!(cluster, struct, index, opts \\ []) do
+    action = Keyword.get(opts, :action, "create")
     config = Cluster.Config.get(cluster)
-    header = header(config, "create", index, struct, opts)
+    header = header(config, action, index, struct, opts)
 
     document =
       struct
