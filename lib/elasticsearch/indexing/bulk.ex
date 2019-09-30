@@ -27,11 +27,11 @@ defmodule Elasticsearch.Index.Bulk do
         %Protocol.UndefinedError{description: "",
         protocol: Elasticsearch.Document, value: 123}}
   """
-  @spec encode(Cluster.t(), struct, String.t(), Keyword.t()) ::
+  @spec encode(Cluster.t(), struct, String.t(), String.t()) ::
           {:ok, String.t()}
           | {:error, Error.t()}
-  def encode(cluster, struct, index, opts \\ []) do
-    {:ok, encode!(cluster, struct, index, opts)}
+  def encode(cluster, struct, index, action \\ "create") do
+    {:ok, encode!(cluster, struct, index, action)}
   rescue
     exception ->
       {:error, exception}
@@ -51,10 +51,9 @@ defmodule Elasticsearch.Index.Bulk do
       iex> Bulk.encode!(Cluster, 123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123. This protocol is implemented for: Comment, Post
   """
-  def encode!(cluster, struct, index, opts \\ []) do
-    action = Keyword.get(opts, :action, "create")
+  def encode!(cluster, struct, index, action \\ "create") do
     config = Cluster.Config.get(cluster)
-    header = header(config, action, index, struct, opts)
+    header = header(config, action, index, struct)
 
     document =
       struct
@@ -64,16 +63,11 @@ defmodule Elasticsearch.Index.Bulk do
     "#{header}\n#{document}\n"
   end
 
-  defp header(config, type, index, struct, opts) do
+  defp header(config, type, index, struct) do
     attrs = %{
       "_index" => index,
       "_id" => Document.id(struct)
     }
-
-    attrs = case opts[:type] do
-      nil -> attrs
-      type -> Map.put(attrs, "_type", type)
-    end
 
     attrs =
       if routing = Document.routing(struct) do
