@@ -100,6 +100,10 @@ config :my_app, MyApp.ElasticsearchCluster,
       # Likewise, wait a given period between posting pages to give
       # Elasticsearch time to catch up.
       bulk_wait_interval: 15_000 # 15 seconds
+
+      # By default bulk indexing uses the "create" action. To allow existing
+      # documents to be replaced, use the "index" action instead.
+      bulk_action: "create"
     }
   }
 ```

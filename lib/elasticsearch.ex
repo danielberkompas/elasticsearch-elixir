@@ -425,6 +425,61 @@ defmodule Elasticsearch do
     |> unwrap!()
   end
 
+  @doc """
+  Determines whether a resource exists at a given Elasticsearch path
+
+  ## Examples
+
+      iex> Index.create_from_file(Cluster, "posts", "test/support/settings/posts.json")
+      ...> Elasticsearch.head(Cluster, "/posts")
+      {:ok, ""}
+
+  It returns an error if the given resource does not exist.
+
+      iex> Elasticsearch.head(Cluster, "/nonexistent")
+      {:error,
+      %Elasticsearch.Exception{
+        col: nil,
+        line: nil,
+        message: "",
+        query: nil,
+        raw: nil,
+        status: nil,
+        type: nil
+      }}
+  """
+  @spec head(Cluster.t(), url) :: response
+  @spec head(Cluster.t(), url, opts) :: response
+  def head(cluster, url, opts \\ []) do
+    config = Config.get(cluster)
+
+    config
+    |> config.api.request(:head, url, "", opts)
+    |> format()
+  end
+
+  @doc """
+  Same as `head/1`, but returns the response and raises errors.
+
+  ## Examples
+
+      iex> Index.create_from_file(Cluster, "posts", "test/support/settings/posts.json")
+      ...> Elasticsearch.head!(Cluster, "/posts")
+      ""
+
+  Raises an error if the resource is invalid.
+
+      iex> Elasticsearch.head!(Cluster, "/nonexistent")
+      ** (Elasticsearch.Exception)
+  """
+  @spec head!(Cluster.t(), url) :: map | no_return
+  @spec head!(Cluster.t(), url, opts) :: map | no_return
+  def head!(cluster, url, opts \\ []) do
+    cluster
+    |> head(url, opts)
+    |> unwrap!()
+  end
+
   defp format({:ok, %{status_code: code, body: body}})
        when code >= 200 and code < 300 do
     {:ok, body}
