@@ -394,12 +394,13 @@ defmodule Elasticsearch do
         status: 404, type: "index_not_found_exception"}}
   """
   @spec delete(Cluster.t(), url) :: response
-  @spec delete(Cluster.t(), url, opts) :: response
-  def delete(cluster, url, opts \\ []) do
+  @spec delete(Cluster.t(), url, data) :: response
+  @spec delete(Cluster.t(), url, data, opts) :: response
+  def delete(cluster, url, data \\ "", opts \\ []) do
     config = Config.get(cluster)
 
     config
-    |> config.api.request(:delete, url, "", opts)
+    |> config.api.request(:delete, url, data, opts)
     |> format()
   end
 
@@ -418,10 +419,11 @@ defmodule Elasticsearch do
       ** (Elasticsearch.Exception) (index_not_found_exception) no such index
   """
   @spec delete!(Cluster.t(), url) :: map | no_return
-  @spec delete!(Cluster.t(), url, opts) :: map | no_return
-  def delete!(cluster, url, opts \\ []) do
+  @spec delete!(Cluster.t(), url, data) :: map | no_return
+  @spec delete!(Cluster.t(), url, data, opts) :: map | no_return
+  def delete!(cluster, url, data \\ "", opts \\ []) do
     cluster
-    |> delete(url, opts)
+    |> delete(url, data, opts)
     |> unwrap!()
   end
 
