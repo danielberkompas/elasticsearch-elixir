@@ -31,7 +31,7 @@ if [ ! $CI ]; then
 
   rm -rf vendor/;
   mkdir vendor/;
-  mix elasticsearch.install vendor --version 6.8.1 || { echo "Elasticsearch could not be installed!"; exit 1; }
+  mix elasticsearch.install vendor --version 7.6.0 || { echo "Elasticsearch could not be installed!"; exit 1; }
 fi
 
 echo "----------------------------------------------------------"

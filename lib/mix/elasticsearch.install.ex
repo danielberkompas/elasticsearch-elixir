@@ -28,7 +28,24 @@ defmodule Mix.Tasks.Elasticsearch.Install do
   end
 
   defp download_elasticsearch(version, location) do
-    name = "elasticsearch-#{version}"
+    name =
+      case :os.type() do
+        {:unix, :darwin} ->
+          "elasticsearch-#{version}-darwin-x86_64"
+
+        {:unix, :linux} ->
+          "elasticsearch-#{version}-linux-x86_64"
+
+        other ->
+          Mix.raise("Unsupported system for elasticsearch: #{inspect(other)}")
+      end
+
+    major_version = String.split(version, ".") |> hd
+
+    if major_version < "7" do
+      name = "elasticsearch-#{version}"
+    end
+
     tar = "#{name}.tar.gz"
 
     System.cmd(
