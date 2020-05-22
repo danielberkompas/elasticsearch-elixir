@@ -13,6 +13,8 @@ defmodule Mix.Tasks.Elasticsearch.Install do
       mix elasticsearch.install vendor --version 5.1.1
   """
 
+  @download_url "https://artifacts.elastic.co/downloads"
+
   @doc false
   def run(args) do
     with {[{:version, version}], [location]} <-
@@ -29,44 +31,36 @@ defmodule Mix.Tasks.Elasticsearch.Install do
 
   defp download_elasticsearch(version, location) do
     name = "elasticsearch-#{version}"
-    tar = "#{name}.tar.gz"
+    tar = elasticsearch_tar(name, version)
 
-    System.cmd(
-      "curl",
-      ["-L", "-O", "https://artifacts.elastic.co/downloads/elasticsearch/#{tar}"],
-      cd: location
-    )
+    System.cmd("curl", ["-L", "-O", "#{@download_url}/elasticsearch/#{tar}"], cd: location)
 
     unpack(tar, name, "elasticsearch", location)
   end
 
   defp download_kibana(version, location) do
-    name =
-      case :os.type() do
-        {:unix, :darwin} ->
-          "kibana-#{version}-darwin-x86_64"
-
-        {:unix, :linux} ->
-          "kibana-#{version}-darwin-x86_64"
-
-        other ->
-          Mix.raise("Unsupported system for Kibana: #{inspect(other)}")
-      end
-
+    name = "kibana-#{version}#{os_suffix!()}"
     tar = "#{name}.tar.gz"
 
-    System.cmd(
-      "curl",
-      ["-L", "-O", "https://artifacts.elastic.co/downloads/kibana/#{tar}"],
-      cd: location
-    )
+    System.cmd("curl", ["-L", "-O", "#{@download_url}/kibana/#{tar}"], cd: location)
 
     unpack(tar, name, "kibana", location)
   end
+
+  defp elasticsearch_tar(name, "7." <> _), do: tar = "#{name}#{os_suffix!()}.tar.gz"
+  defp elasticsearch_tar(name, version), do: tar = "#{name}.tar.gz"
 
   defp unpack(tar, name, alias, location) do
     System.cmd("tar", ["-zxvf", tar], cd: location)
     System.cmd("rm", [tar], cd: location)
     System.cmd("mv", [name, alias], cd: location)
+  end
+
+  defp os_suffix!() do
+    case :os.type() do
+      {:unix, :darwin} -> "-darwin-x86_64"
+      {:unix, :linux} -> "-linux-x86_64"
+      other -> Mix.raise("Unsupported system: #{inspect(other)}")
+    end
   end
 end
