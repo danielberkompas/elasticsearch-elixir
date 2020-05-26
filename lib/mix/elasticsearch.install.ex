@@ -47,8 +47,8 @@ defmodule Mix.Tasks.Elasticsearch.Install do
     unpack(tar, name, "kibana", location)
   end
 
-  defp elasticsearch_tar(name, "7." <> _), do: tar = "#{name}#{os_suffix!()}.tar.gz"
-  defp elasticsearch_tar(name, version), do: tar = "#{name}.tar.gz"
+  defp elasticsearch_tar(name, "7." <> _), do: "#{name}#{os_suffix!()}.tar.gz"
+  defp elasticsearch_tar(name, _version), do: "#{name}.tar.gz"
 
   defp unpack(tar, name, alias, location) do
     System.cmd("tar", ["-zxvf", tar], cd: location)
