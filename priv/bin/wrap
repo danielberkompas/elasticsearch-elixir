@@ -14,7 +14,7 @@
 #
 # http://erlang.2086793.n4.nabble.com/closing-a-port-doesn-t-kill-the-connected-process-td2119170.html
 
-$1 > /dev/null 2>&1 &
+$@ > /dev/null 2>&1 &
 last_pid=$!
 while read line ; do
   :

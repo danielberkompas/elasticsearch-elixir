@@ -3,12 +3,14 @@ defmodule Elasticsearch.Test.Cluster do
 
   use Elasticsearch.Cluster
 
-  def init(_config) do
+  def init(config) do
+    url = Map.get(config, :url, "http://localhost:9200")
+
     {:ok,
      %{
        api: Elasticsearch.API.HTTP,
        json_library: Poison,
-       url: "http://localhost:9200",
+       url: url,
        username: "username",
        password: "password",
        indexes: %{

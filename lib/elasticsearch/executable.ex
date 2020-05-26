@@ -29,7 +29,7 @@ defmodule Elasticsearch.Executable do
     case System.cmd("lsof", ["-i", ":#{port_number}"]) do
       {"", _} ->
         wrap = Application.app_dir(:elasticsearch) <> "/priv/bin/wrap"
-        port = Port.open({:spawn, "#{wrap} #{executable} --port #{port_number}"}, [])
+        port = Port.open({:spawn, "#{wrap} #{executable} -E http.port=#{port_number}"}, [])
         {:os_pid, os_pid} = Port.info(port, :os_pid)
         IO.puts("[info] Running #{name} with PID #{os_pid} on port #{port_number}")
         {:ok, port}
