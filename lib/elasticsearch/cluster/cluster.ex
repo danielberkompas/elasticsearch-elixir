@@ -146,6 +146,8 @@ defmodule Elasticsearch.Cluster do
     quote do
       use GenServer
 
+      @table_name :"#{__MODULE__}.Config"
+
       alias Elasticsearch.Cluster.Config
 
       # Cache configuration into the state of the GenServer so that
@@ -157,6 +159,9 @@ defmodule Elasticsearch.Cluster do
         # Ensure that the configuration is validated on startup
         with {:ok, pid} <- GenServer.start_link(__MODULE__, config, name: __MODULE__),
              :ok <- GenServer.call(pid, :validate) do
+          # Ensure that the configuration is saved
+          GenServer.call(pid, :save_config, 10_000)
+
           {:ok, pid}
         else
           error ->
@@ -170,7 +175,7 @@ defmodule Elasticsearch.Cluster do
 
       @doc false
       def __config__ do
-        GenServer.call(__MODULE__, :config)
+        Elasticsearch.Cluster.read_config(@table_name)
       end
 
       @impl GenServer
@@ -189,7 +194,33 @@ defmodule Elasticsearch.Cluster do
         end
       end
 
+      @impl GenServer
+      def handle_call(:save_config, _from, config) do
+        Elasticsearch.Cluster.save_config(@table_name, config)
+        {:reply, :ok, config}
+      end
+
       defoverridable init: 1
+    end
+  end
+
+  @doc false
+  def save_config(table_name, config) do
+    if :ets.info(table_name) == :undefined do
+      :ets.new(table_name, [:named_table, :protected])
+    end
+
+    :ets.insert(table_name, {:config, config})
+  end
+
+  @doc false
+  def read_config(table_name) do
+    case :ets.lookup(table_name, :config) do
+      [{:config, config} | _] ->
+        config
+
+      _ ->
+        :error
     end
   end
 end
