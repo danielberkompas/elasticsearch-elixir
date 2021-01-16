@@ -1,0 +1,41 @@
+version: v1.0
+name: CI Build
+agent:
+  machine:
+    type: e1-standard-1
+    os_image: ubuntu1804
+auto_cancel:
+  running:
+    when: 'true'
+fail_fast:
+  stop:
+    when: 'true'
+blocks:
+  - name: Build
+    dependencies: []
+    task:
+      env_vars:
+        - name: MIX_ENV
+          value: test
+        - name: DATABASE_URL
+          value: 'postgresql://postgres@localhost/test?encoding=utf8'
+      jobs:
+        - name: Build
+          matrix:
+            - env_var: ELIXIR_VERSION
+              values:
+                - 1.11.3
+            - env_var: ELASTICSEARCH_VERSION
+              values:
+                - 7.10.2
+          commands:
+            - sem-version elixir $ELIXIR_VERSION
+            - sem-service start postgres
+            - sem-service start elasticsearch $ELASTICSEARCH_VERSION
+            - checkout
+            - cache restore
+            - mix local.hex --force
+            - mix local.rebar --force
+            - mix deps.get
+            - bin/test
+            - cache store
