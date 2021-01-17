@@ -16,7 +16,7 @@ defmodule Elasticsearch.Mixfile do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.travis": :test
+        "coveralls.semaphore": :test
       ],
       docs: docs(),
       deps: deps(),
@@ -60,11 +60,12 @@ defmodule Elasticsearch.Mixfile do
     [
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
-      {:vex, "~> 0.6.0"},
+      {:vex, "~> 0.6"},
       {:sigaws, "~> 0.7", optional: true},
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:ecto, ">= 0.0.0", only: [:dev, :test]},
+      {:ecto_sql, ">= 0.0.0", only: [:dev, :test]},
       {:excoveralls, ">= 0.0.0", only: :test}
     ]
   end

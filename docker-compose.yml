@@ -1,0 +1,42 @@
+version: "3.2"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.8.13
+    environment:
+      - node.name=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+  code:
+    container_name: "elasticsearch_elixir"
+    build: .
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+        consistency: delegated
+    environment:
+      - "DATABASE_HOST=db"
+      - "ELASTICSEARCH_HOST=elasticsearch"
+    depends_on:
+      - db
+      - elasticsearch
+    links:
+      - db:postgres
+volumes:
+  data:
+    driver: local
