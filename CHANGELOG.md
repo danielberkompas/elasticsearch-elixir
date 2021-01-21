@@ -1,6 +1,29 @@
-# Change Log
+# Changelog
+
+## [v1.0.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v1.0.1) (2021-01-21)
+
+[Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v1.0.0...v1.0.1)
+
+**Closed issues:**
+
+- Reloading Indexes on New Record Insertion in DB [\#90](https://github.com/danielberkompas/elasticsearch-elixir/issues/90)
+- Timeout while fetching cluster config [\#88](https://github.com/danielberkompas/elasticsearch-elixir/issues/88)
+- Sample "/priv/elasticsearch/posts.json" file [\#82](https://github.com/danielberkompas/elasticsearch-elixir/issues/82)
+- Deploying with releases [\#76](https://github.com/danielberkompas/elasticsearch-elixir/issues/76)
+- Problem building [\#69](https://github.com/danielberkompas/elasticsearch-elixir/issues/69)
+- Repo.stream no longer supports preload [\#54](https://github.com/danielberkompas/elasticsearch-elixir/issues/54)
+
+**Merged pull requests:**
+
+- Develop with docker, add Semaphore for CI [\#92](https://github.com/danielberkompas/elasticsearch-elixir/pull/92) ([danielberkompas](https://github.com/danielberkompas))
+- Store Cluster config in a ETS table to prevent timeout while fetching cluster config [\#89](https://github.com/danielberkompas/elasticsearch-elixir/pull/89) ([nitinstp23](https://github.com/nitinstp23))
+- Fixes for installing versions \> 7.0.0 and configuring port for elasticsearch test [\#87](https://github.com/danielberkompas/elasticsearch-elixir/pull/87) ([pwcsquared](https://github.com/pwcsquared))
+- Fix TravisCI configuration [\#74](https://github.com/danielberkompas/elasticsearch-elixir/pull/74) ([ImmaculatePine](https://github.com/ImmaculatePine))
+- Bump Elasticsearch to 6.8.1 in setup script [\#72](https://github.com/danielberkompas/elasticsearch-elixir/pull/72) ([ImmaculatePine](https://github.com/ImmaculatePine))
+- Fix minor errors found by Dialyzer [\#70](https://github.com/danielberkompas/elasticsearch-elixir/pull/70) ([soundmonster](https://github.com/soundmonster))
 
 ## [v1.0.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v1.0.0) (2019-03-30)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.6.1...v1.0.0)
 
 **Closed issues:**
@@ -18,6 +41,7 @@
 - remove dependency on maybe [\#58](https://github.com/danielberkompas/elasticsearch-elixir/pull/58) ([tap349](https://github.com/tap349))
 
 ## [v0.6.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.6.1) (2018-12-21)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.6.0...v0.6.1)
 
 **Closed issues:**
@@ -32,6 +56,7 @@
 - small typo fix: bang the spec [\#50](https://github.com/danielberkompas/elasticsearch-elixir/pull/50) ([alexfilatov](https://github.com/alexfilatov))
 
 ## [v0.6.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.6.0) (2018-10-19)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.5.4...v0.6.0)
 
 **Merged pull requests:**
@@ -40,6 +65,7 @@
 - convert index alias to microseconds [\#48](https://github.com/danielberkompas/elasticsearch-elixir/pull/48) ([jfrolich](https://github.com/jfrolich))
 
 ## [v0.5.4](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.5.4) (2018-10-03)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.5.3...v0.5.4)
 
 **Closed issues:**
@@ -51,6 +77,7 @@
 - adds case statement to kibana download [\#47](https://github.com/danielberkompas/elasticsearch-elixir/pull/47) ([g13ydson](https://github.com/g13ydson))
 
 ## [v0.5.3](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.5.3) (2018-10-01)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.5.2...v0.5.3)
 
 **Merged pull requests:**
@@ -58,6 +85,7 @@
 - fix: use correct typespec for response type [\#45](https://github.com/danielberkompas/elasticsearch-elixir/pull/45) ([sambou](https://github.com/sambou))
 
 ## [v0.5.2](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.5.2) (2018-09-19)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.5.1...v0.5.2)
 
 **Closed issues:**
@@ -69,6 +97,7 @@
 - \[\#43\] Stop sending empty JSON payloads [\#44](https://github.com/danielberkompas/elasticsearch-elixir/pull/44) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.5.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.5.1) (2018-09-08)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.5.0...v0.5.1)
 
 **Closed issues:**
@@ -77,6 +106,7 @@
 - FunctionClauseError: No function clause matching [\#39](https://github.com/danielberkompas/elasticsearch-elixir/issues/39)
 
 ## [v0.5.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.5.0) (2018-09-02)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.4.1...v0.5.0)
 
 **Closed issues:**
@@ -91,6 +121,7 @@
 - \[\#31\] Base Store behaviour on streams [\#36](https://github.com/danielberkompas/elasticsearch-elixir/pull/36) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.4.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.4.1) (2018-06-26)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.4.0...v0.4.1)
 
 **Closed issues:**
@@ -106,6 +137,7 @@
 - Add breaking change upgrade to documentation [\#29](https://github.com/danielberkompas/elasticsearch-elixir/pull/29) ([rhnonose](https://github.com/rhnonose))
 
 ## [v0.4.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.4.0) (2018-04-27)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.3.1...v0.4.0)
 
 **Closed issues:**
@@ -118,6 +150,7 @@
 - \[\#26\] Configure bulk settings on indexes [\#27](https://github.com/danielberkompas/elasticsearch-elixir/pull/27) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.3.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.3.1) (2018-04-24)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.3.0...v0.3.1)
 
 **Closed issues:**
@@ -131,6 +164,7 @@
 - Add missing step to README [\#21](https://github.com/danielberkompas/elasticsearch-elixir/pull/21) ([xfumihiro](https://github.com/xfumihiro))
 
 ## [v0.3.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.3.0) (2018-04-19)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.2.0...v0.3.0)
 
 **Implemented enhancements:**
@@ -149,6 +183,7 @@
 - Support Elasticsearch 6.x [\#19](https://github.com/danielberkompas/elasticsearch-elixir/pull/19) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.2.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.2.0) (2018-04-18)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.1.1...v0.2.0)
 
 **Closed issues:**
@@ -162,6 +197,7 @@
 - correct index source in README [\#12](https://github.com/danielberkompas/elasticsearch-elixir/pull/12) ([steffkes](https://github.com/steffkes))
 
 ## [v0.1.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.1.1) (2018-03-03)
+
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v0.1.0...v0.1.1)
 
 **Closed issues:**
@@ -173,6 +209,9 @@
 - \[\#5\] Allow configuring ':default\_options' [\#6](https://github.com/danielberkompas/elasticsearch-elixir/pull/6) ([danielberkompas](https://github.com/danielberkompas))
 
 ## [v0.1.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v0.1.0) (2018-01-02)
+
+[Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/6d65bd3b20ad24c3b22b36018869c5df68217fee...v0.1.0)
+
 **Merged pull requests:**
 
 - Code coverage with Coveralls [\#2](https://github.com/danielberkompas/elasticsearch-elixir/pull/2) ([danielberkompas](https://github.com/danielberkompas))
@@ -180,4 +219,4 @@
 
 
 
-\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
