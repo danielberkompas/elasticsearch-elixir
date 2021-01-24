@@ -25,7 +25,7 @@ defmodule Elasticsearch.Index do
       :ok
   """
   @spec hot_swap(Cluster.t(), alias :: String.t() | atom) ::
-          :ok | {:error, Elasticsearch.Exception.t()}
+          :ok | {:error, Elasticsearch.Exception.t()} | {:error, :enoent}
   def hot_swap(cluster, alias) do
     alias = alias_to_atom(alias)
     name = build_name(alias)
