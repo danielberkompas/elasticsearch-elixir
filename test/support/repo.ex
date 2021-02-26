@@ -1,7 +1,9 @@
 defmodule Elasticsearch.Test.Repo do
   @moduledoc false
 
-  use Ecto.Repo, otp_app: :elasticsearch
+  use Ecto.Repo,
+    otp_app: :elasticsearch,
+    adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the
