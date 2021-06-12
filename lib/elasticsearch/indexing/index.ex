@@ -30,9 +30,9 @@ defmodule Elasticsearch.Index do
     alias = alias_to_atom(alias)
     name = build_name(alias)
     config = Config.get(cluster)
-    %{settings: settings_file} = index_config = config[:indexes][alias]
+    %{settings: settings} = index_config = config[:indexes][alias]
 
-    with :ok <- create_from_file(config, name, settings_file),
+    with :ok <- create_from_settings(config, name, settings),
          :ok <- Bulk.upload(config, name, index_config),
          :ok <- __MODULE__.alias(config, name, to_string(alias)),
          :ok <- clean_starting_with(config, to_string(alias), 2),
@@ -271,6 +271,31 @@ defmodule Elasticsearch.Index do
     with {:ok, settings} <- File.read(file) do
       create(cluster, name, settings)
     end
+  end
+
+  @doc """
+  Creates an index with the given name, with settings loaded from a map or a JSON file (see `create_from_file/3`).
+
+  ## Example
+
+      iex> Index.create_from_settings(Cluster, "posts-1", %{})
+      :ok
+
+      iex> Index.create_from_settings(Cluster, "posts-1", "nonexistent.json")
+      {:error, :enoent}
+  """
+  @spec create_from_settings(Cluster.t(), String.t(), map | Path.t()) ::
+          :ok
+          | {:error, File.posix()}
+          | {:error, Elasticsearch.Exception.t()}
+  def create_from_settings(cluster, name, settings)
+
+  def create_from_settings(cluster, name, settings) when is_map(settings) do
+    create(cluster, name, settings)
+  end
+
+  def create_from_settings(cluster, name, file) do
+    create_from_file(cluster, name, file)
   end
 
   @doc """

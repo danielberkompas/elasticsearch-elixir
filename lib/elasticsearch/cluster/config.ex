@@ -73,7 +73,7 @@ defmodule Elasticsearch.Cluster.Config do
   defp validate_index({_name, settings}) do
     Vex.validate(
       settings,
-      settings: [presence: true, by: &is_binary/1],
+      settings: [by: &(is_binary(&1) or is_map(&1))],
       store: [presence: true, by: &is_module/1],
       sources: [
         presence: true,

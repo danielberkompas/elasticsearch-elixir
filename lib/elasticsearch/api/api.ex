@@ -4,7 +4,7 @@ defmodule Elasticsearch.API do
   """
 
   @typedoc "An HTTP method"
-  @type method :: :get | :put | :post | :delete
+  @type method :: :get | :put | :post | :delete | :head
 
   @typedoc "The URL to request from the API"
   @type url :: String.t()

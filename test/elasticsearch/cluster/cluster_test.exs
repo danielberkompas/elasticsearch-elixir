@@ -103,7 +103,7 @@ defmodule Elasticsearch.ClusterTest do
     test "validates indexes" do
       errors = errors_on(%{valid_config() | indexes: %{example: %{}}})
 
-      for field <- [:settings, :store, :sources, :bulk_page_size, :bulk_wait_interval] do
+      for field <- [:store, :sources, :bulk_page_size, :bulk_wait_interval] do
         assert {"must be present", validation: :presence} in errors[field]
       end
 
