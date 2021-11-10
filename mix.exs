@@ -61,7 +61,7 @@ defmodule Elasticsearch.Mixfile do
       {:poison, ">= 0.0.0", optional: true},
       {:httpoison, ">= 0.0.0"},
       {:vex, "~> 0.6"},
-      {:sigaws, "~> 0.7", optional: true},
+      {:sigaws_otp_24, "~> 1.0", optional: true},
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:ecto, ">= 0.0.0", only: [:dev, :test]},
