@@ -137,12 +137,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       {:ok, pid} = ErrorCluster.start_link(api: BulkErrorAPI)
 
       assert_raise Mix.Error,
-                   """
-                   Index created, but not aliased: posts
-                   The following errors occurred:
-
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"reason\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}, status: nil, type: \"type\"}\n
-                   """,
+                   ~r/Index created, but not aliased: posts/,
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
                    end
@@ -180,11 +175,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       {:ok, cluster} = ErrorCluster.start_link(api: IndexErrorAPI)
 
       assert_raise Mix.Error,
-                   """
-                   Index posts could not be created.
-
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"Gateway Error\", query: nil, raw: nil, status: nil, type: nil}
-                   """,
+                   ~r/Index posts could not be created/,
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
                    end
