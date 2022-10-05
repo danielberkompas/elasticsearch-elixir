@@ -29,9 +29,9 @@ blocks:
         - name: "Build"
           matrix:
             - env_var: ELIXIR_VERSION
-              values: ["1.11.3"]
+              values: ["1.14.0"]
             - env_var: ELASTICSEARCH_VERSION
-              values: ["6.8.13"]
+              values: ["6.8.13", "7.12.0"]
           commands:
             - sem-version elixir $ELIXIR_VERSION
             - sem-service start postgres

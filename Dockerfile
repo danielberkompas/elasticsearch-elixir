@@ -1,6 +1,6 @@
 # Elixir + Phoenix
 
-FROM hexpm/elixir:1.11.3-erlang-23.2.2-ubuntu-focal-20201008
+FROM hexpm/elixir:1.14.0-erlang-25.1-ubuntu-focal-20211006
 
 # Install debian packages
 RUN apt-get update
