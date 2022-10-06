@@ -106,8 +106,8 @@ config :my_app, MyApp.ElasticsearchCluster,
       bulk_action: "create",
 
       # Path to bulk api url. Should start with a slash.
-      # You may need to use `/_doc/_bulk` for older ElasticSearch versions.
-      bulk_path: "/_bulk"
+      # You may need to use `/_bulk` for newer ElasticSearch versions.
+      bulk_path: "/_doc/_bulk"
     }
   }
 ```
