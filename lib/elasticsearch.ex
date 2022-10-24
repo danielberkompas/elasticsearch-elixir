@@ -12,17 +12,40 @@ defmodule Elasticsearch do
 
     * `[:elasticsearch, :request, :start]` - emitted at the beginning of the request to Elasticsearch.
       * Measurement: `%{system_time: System.system_time()}`
-      * Metadata: `%{telemetry_span_context: term(), config: Elasticsearch.Cluster.config(),
-        method: Elasticsearch.API.method(), url: Elasticsearch.API.url(), data: Elasticsearch.API.data()}`
+      * Metadata:
+            %{
+              telemetry_span_context: term(),
+              config: Elasticsearch.Cluster.config(),
+              method: Elasticsearch.API.method(),
+              url: Elasticsearch.API.url(),
+              data: Elasticsearch.API.data()
+            }
 
     * `[:elasticsearch, :request, :stop]` - emitted at the end of the request to Elasticsearch.
       * Measurement: `%{duration: native_time}`
-      * Metadata: `%{telemetry_span_context: term(), result: Elasticsearch.API.response()}`
+      * Metadata:
+            %{
+              telemetry_span_context: term(),
+              config: Elasticsearch.Cluster.config(),
+              method: Elasticsearch.API.method(),
+              url: Elasticsearch.API.url(),
+              data: Elasticsearch.API.data(),
+              result: Elasticsearch.API.response()
+            }
 
     * `[:elasticsearch, :request, :exception]` - emitted when an exception has been raised.
       * Measurement: `%{system_time: System.system_time()}`
-      * Metadata: `%{telemetry_span_context: term(), kind: Exception.kind(), reason: term(),
-        stacktrace: Exception.stacktrace()}`
+      * Metadata:
+            %{
+              telemetry_span_context: term(),
+              config: Elasticsearch.Cluster.config(),
+              method: Elasticsearch.API.method(),
+              url: Elasticsearch.API.url(),
+              data: Elasticsearch.API.data(),
+              kind: Exception.kind(),
+              reason: term(),
+              stacktrace: Exception.stacktrace()
+            }
   """
 
   alias Elasticsearch.{
@@ -503,7 +526,9 @@ defmodule Elasticsearch do
 
     :telemetry.span([:elasticsearch, :request], start_metadata, fn ->
       result = config.api.request(config, method, url, data, opts)
-      {result, %{result: result}}
+      stop_metadata = Map.merge(start_metadata, %{result: result})
+
+      {result, stop_metadata}
     end)
   end
 
