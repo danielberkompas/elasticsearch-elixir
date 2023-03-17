@@ -141,7 +141,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
                    Index created, but not aliased: posts
                    The following errors occurred:
 
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"reason\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}, status: nil, type: \"type\"}\n
+                       %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"reason\", type: \"type\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}}\n
                    """,
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
@@ -183,7 +183,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
                    """
                    Index posts could not be created.
 
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"Gateway Error\", query: nil, raw: nil, status: nil, type: nil}
+                       %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"Gateway Error\", type: nil, query: nil, raw: nil}
                    """,
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
@@ -204,7 +204,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
       assert output =~ "Pausing 0ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
-      assert resp["hits"]["total"] == 10_000
+      assert resp["hits"]["total"]["value"] == 10_000
     end
 
     test "respects --bulk options" do
@@ -222,7 +222,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
       assert output =~ "Pausing 10ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
-      assert resp["hits"]["total"] == 2
+      assert resp["hits"]["total"]["value"] == 2
     end
 
     test "only keeps two index versions" do
