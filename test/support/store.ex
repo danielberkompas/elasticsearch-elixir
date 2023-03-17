@@ -8,6 +8,10 @@ defmodule Elasticsearch.Test.Store do
     Repo.stream(Post)
   end
 
+  def stream(Comment) do
+    Repo.stream(Comment)
+  end
+
   @impl true
   def transaction(fun) do
     {:ok, result} = Repo.transaction(fun, timeout: :infinity)

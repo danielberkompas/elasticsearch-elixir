@@ -43,6 +43,27 @@ defmodule Elasticsearch.Index.BulkTest do
                ])
     end
 
+    test "handles routing properly in ES7 with Bulk index action" do
+      populate_posts_table(2)
+      populate_comments_table(2)
+
+      Logger.configure(level: :debug)
+
+      output =
+        capture_log([level: :debug], fn ->
+          assert :ok =
+                   Bulk.upload(Cluster, "posts-bulk-test", %{
+                     store: Store,
+                     sources: [Comment],
+                     bulk_page_size: 1,
+                     bulk_wait_interval: 0,
+                     bulk_action: "index"
+                   })
+        end)
+
+      assert output =~ "Pausing 0ms between bulk pages"
+    end
+
     test "collects errors properly" do
       populate_posts_table(1)
 
@@ -84,7 +105,7 @@ defmodule Elasticsearch.Index.BulkTest do
   describe ".encode!/3" do
     test "respects _routing meta-field" do
       assert Bulk.encode!(Cluster, %Comment{id: "my-id", post_id: "123"}, "my-index") =~
-               "\"_routing\":\"123\""
+               "\"routing\":\"123\""
     end
   end
 end

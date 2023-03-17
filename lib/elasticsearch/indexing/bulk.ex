@@ -71,7 +71,7 @@ defmodule Elasticsearch.Index.Bulk do
 
     attrs =
       if routing = Document.routing(struct) do
-        Map.put(attrs, "_routing", routing)
+        Map.put(attrs, "routing", routing)
       else
         attrs
       end
