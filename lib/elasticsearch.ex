@@ -229,13 +229,13 @@ defmodule Elasticsearch do
       iex> Elasticsearch.get(Cluster, "/nonexistent")
       {:error,
        %Elasticsearch.Exception{col: nil, line: nil,
-        message: "no such index", query: nil,
+        message: "no such index [nonexistent]", query: nil,
         raw: %{"error" => %{"index" => "nonexistent",
-            "index_uuid" => "_na_", "reason" => "no such index",
+            "index_uuid" => "_na_", "reason" => "no such index [nonexistent]",
             "resource.id" => "nonexistent",
             "resource.type" => "index_or_alias",
             "root_cause" => [%{"index" => "nonexistent",
-               "index_uuid" => "_na_", "reason" => "no such index",
+               "index_uuid" => "_na_", "reason" => "no such index [nonexistent]",
                "resource.id" => "nonexistent",
                "resource.type" => "index_or_alias",
                "type" => "index_not_found_exception"}],
@@ -263,7 +263,7 @@ defmodule Elasticsearch do
       true
 
       iex> Elasticsearch.get!(Cluster, "/nonexistent")
-      ** (Elasticsearch.Exception) (index_not_found_exception) no such index
+      ** (Elasticsearch.Exception) (index_not_found_exception) no such index [nonexistent]
   """
   @spec get!(Cluster.t(), url) :: map | no_return
   @spec get!(Cluster.t(), url, opts) :: map | no_return
@@ -374,7 +374,7 @@ defmodule Elasticsearch do
 
       iex> query = %{"query" => %{"match_all" => %{}}}
       ...> Elasticsearch.post!(Cluster, "/nonexistent/_search", query)
-      ** (Elasticsearch.Exception) (index_not_found_exception) no such index
+      ** (Elasticsearch.Exception) (index_not_found_exception) no such index [nonexistent]
   """
   @spec post!(Cluster.t(), url, data) :: map | no_return
   @spec post!(Cluster.t(), url, data, opts) :: map | no_return
@@ -398,13 +398,13 @@ defmodule Elasticsearch do
       iex> Elasticsearch.delete(Cluster, "/nonexistent")
       {:error,
        %Elasticsearch.Exception{col: nil, line: nil,
-        message: "no such index", query: nil,
+        message: "no such index [nonexistent]", query: nil,
         raw: %{"error" => %{"index" => "nonexistent",
-            "index_uuid" => "_na_", "reason" => "no such index",
+            "index_uuid" => "_na_", "reason" => "no such index [nonexistent]",
             "resource.id" => "nonexistent",
             "resource.type" => "index_or_alias",
             "root_cause" => [%{"index" => "nonexistent",
-               "index_uuid" => "_na_", "reason" => "no such index",
+               "index_uuid" => "_na_", "reason" => "no such index [nonexistent]",
                "resource.id" => "nonexistent",
                "resource.type" => "index_or_alias",
                "type" => "index_not_found_exception"}],
@@ -433,7 +433,7 @@ defmodule Elasticsearch do
   Raises an error if the resource is invalid.
 
       iex> Elasticsearch.delete!(Cluster, "/nonexistent")
-      ** (Elasticsearch.Exception) (index_not_found_exception) no such index
+      ** (Elasticsearch.Exception) (index_not_found_exception) no such index [nonexistent]
   """
   @spec delete!(Cluster.t(), url) :: map | no_return
   @spec delete!(Cluster.t(), url, opts) :: map | no_return
