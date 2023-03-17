@@ -1,23 +1,21 @@
 {
-  "mappings": {
-    "_doc": {
-      "properties": {
-        "title": {
-          "type": "text"
-        },
-        "body": {
-          "type": "text"
-        },
-        "author": {
-          "type": "text"
-        },
-        "doctype": {
-          "type": "join",
-          "relations": {
-            "post": "comment"
-          }
+    "mappings": {
+        "properties": {
+            "title": {
+                "type": "text"
+            },
+            "body": {
+                "type": "text"
+            },
+            "author": {
+                "type": "text"
+            },
+            "doctype": {
+                "type": "join",
+                "relations": {
+                    "post": "comment"
+                }
+            }
         }
-      }
     }
-  }
 }
