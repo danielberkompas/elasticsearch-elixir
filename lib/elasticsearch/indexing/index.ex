@@ -159,7 +159,7 @@ defmodule Elasticsearch.Index do
       :ok
 
       iex> Index.refresh!(Cluster, "nonexistent")
-      ** (Elasticsearch.Exception) (index_not_found_exception) no such index
+      ** (Elasticsearch.Exception) (index_not_found_exception) no such index [nonexistent]
   """
   @spec refresh!(Cluster.t(), String.t()) :: :ok
   def refresh!(cluster, name) do

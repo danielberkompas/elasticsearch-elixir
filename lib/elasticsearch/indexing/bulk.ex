@@ -49,7 +49,7 @@ defmodule Elasticsearch.Index.Bulk do
       \"\"\"
 
       iex> Bulk.encode!(Cluster, 123, "my-index")
-      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123 of type Integer
+      ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123 of type Integer. This protocol is implemented for the following type(s): Comment, Post
   """
   def encode!(cluster, struct, index, action \\ "create") do
     config = Cluster.Config.get(cluster)
