@@ -19,8 +19,8 @@ defmodule Elasticsearch.Index.BulkTest do
     @impl true
     def request(_config, :put, _url, _data, _opts) do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 201,
+       %Req.Response{
+         status: 201,
          body: %{
            "errors" => true,
            "items" => [

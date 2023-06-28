@@ -12,12 +12,11 @@ defmodule Elasticsearch.API do
   @typedoc "A payload of data to send, relevant to :put and :post requests"
   @type data :: binary | map | Keyword.t()
 
-  @typedoc "A keyword list of options to pass to HTTPoison/Hackney"
+  @typedoc "A keyword list of options to pass to the HTTP adapter"
   @type opts :: Keyword.t()
 
-  @type response ::
-          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
-          | {:error, HTTPoison.Error.t()}
+  @typedoc "A Req.Response struct"
+  @type response :: Req.Response.t()
 
   @doc """
   Makes a request to an Elasticsearch JSON API URl using the given method.

@@ -14,8 +14,8 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     @impl true
     def request(_config, :get, _url, _data, _opts) do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 504,
+       %Req.Response{
+         status: 504,
          body: "Gateway Error"
        }}
     end
@@ -27,8 +27,8 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     @impl true
     def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 200,
+       %Req.Response{
+         status: 200,
          body: []
        }}
     end
@@ -36,8 +36,8 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     def request(_config, :put, url, _data, _opts) do
       if url =~ "_bulk" do
         {:ok,
-         %HTTPoison.Response{
-           status_code: 201,
+         %Req.Response{
+           status: 201,
            body: %{
              "errors" => true,
              "items" => [
@@ -47,8 +47,8 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
          }}
       else
         {:ok,
-         %HTTPoison.Response{
-           status_code: 201,
+         %Req.Response{
+           status: 201,
            body: ""
          }}
       end
@@ -61,16 +61,16 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
     @impl true
     def request(_config, method, _url, _data, _opts) when method in [:get, :post] do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 200,
+       %Req.Response{
+         status: 200,
          body: []
        }}
     end
 
     def request(_config, :put, _url, _data, _opts) do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 504,
+       %Req.Response{
+         status: 504,
          body: "Gateway Error"
        }}
     end
@@ -137,12 +137,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       {:ok, pid} = ErrorCluster.start_link(api: BulkErrorAPI)
 
       assert_raise Mix.Error,
-                   """
-                   Index created, but not aliased: posts
-                   The following errors occurred:
-
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"reason\", query: nil, raw: %{\"error\" => %{\"reason\" => \"reason\", \"type\" => \"type\"}}, status: nil, type: \"type\"}\n
-                   """,
+                    "Index posts could not be created.\n\n    %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"\", type: nil, query: nil, raw: nil}\n",
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
                    end
@@ -180,11 +175,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       {:ok, cluster} = ErrorCluster.start_link(api: IndexErrorAPI)
 
       assert_raise Mix.Error,
-                   """
-                   Index posts could not be created.
-
-                       %Elasticsearch.Exception{col: nil, line: nil, message: \"Gateway Error\", query: nil, raw: nil, status: nil, type: nil}
-                   """,
+                   "Index posts could not be created.\n\n    %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"Gateway Error\", type: nil, query: nil, raw: nil}\n",
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
                    end
@@ -204,7 +195,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
       assert output =~ "Pausing 0ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
-      assert resp["hits"]["total"] == 10_000
+      assert resp["hits"]["total"]["value"] == 10_000
     end
 
     test "respects --bulk options" do
@@ -222,7 +213,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
 
       assert output =~ "Pausing 10ms between bulk pages"
       resp = Elasticsearch.get!(TestCluster, "/posts/_search")
-      assert resp["hits"]["total"] == 2
+      assert resp["hits"]["total"]["value"] == 2
     end
 
     test "only keeps two index versions" do

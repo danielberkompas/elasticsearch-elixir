@@ -14,16 +14,16 @@ defmodule Elasticsearch.IndexTest do
     @impl true
     def request(_config, :get, _url, _data, _opts) do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 200,
+       %{
+         status: 200,
          body: [%{"index" => "index-123"}]
        }}
     end
 
     def request(_config, :delete, _url, _data, _opts) do
       {:ok,
-       %HTTPoison.Response{
-         status_code: 404,
+       %{
+         status: 404,
          body: "index not found"
        }}
     end
