@@ -59,7 +59,8 @@ defmodule Elasticsearch.Mixfile do
   defp deps do
     [
       {:poison, ">= 0.0.0", optional: true},
-      {:httpoison, ">= 0.0.0"},
+      {:jason, ">= 0.0.0", optional: true},
+      {:httpoison, ">= 0.0.0", optional: true},
       {:telemetry, "~> 0.4.3 or ~> 1.0"},
       {:vex, "~> 0.6"},
       {:sigaws_otp_24, "~> 1.0", optional: true},
@@ -67,7 +68,8 @@ defmodule Elasticsearch.Mixfile do
       {:ex_doc, ">= 0.0.0", only: [:dev, :test]},
       {:ecto, ">= 0.0.0", only: [:dev, :test]},
       {:ecto_sql, ">= 0.0.0", only: [:dev, :test]},
-      {:excoveralls, ">= 0.0.0", only: :test}
+      {:excoveralls, ">= 0.0.0", only: :test},
+      {:car_req, git: "git@github.com:carsdotcom/car_req.git", tag: "0.2.0"}
     ]
   end
 
