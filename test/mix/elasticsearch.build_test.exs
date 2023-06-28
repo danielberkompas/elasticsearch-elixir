@@ -137,7 +137,7 @@ defmodule Mix.Tasks.Elasticsearch.BuildTest do
       {:ok, pid} = ErrorCluster.start_link(api: BulkErrorAPI)
 
       assert_raise Mix.Error,
-                    "Index posts could not be created.\n\n    %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"\", type: nil, query: nil, raw: nil}\n",
+                   "Index posts could not be created.\n\n    %Elasticsearch.Exception{status: nil, line: nil, col: nil, message: \"\", type: nil, query: nil, raw: nil}\n",
                    fn ->
                      rerun("elasticsearch.build", ["posts", "--cluster", inspect(ErrorCluster)])
                    end
