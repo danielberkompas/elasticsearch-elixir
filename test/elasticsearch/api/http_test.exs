@@ -5,7 +5,7 @@ defmodule Elasticsearch.API.HTTPTest do
 
   describe ".request/5" do
     test "respects absolute URLs" do
-      assert {:ok, %HTTPoison.Response{body: body}} =
+      assert {:ok, %{body: body}} =
                HTTP.request(
                  %{},
                  :get,
@@ -18,7 +18,7 @@ defmodule Elasticsearch.API.HTTPTest do
     end
 
     test "handles HTTP errors" do
-      assert {:error, %HTTPoison.Error{}} =
+      assert {:error, %{}} =
                HTTP.request(
                  %{},
                  :get,
@@ -31,13 +31,13 @@ defmodule Elasticsearch.API.HTTPTest do
     # See https://github.com/danielberkompas/elasticsearch-elixir/issues/81
     @tag :regression
     test "handles timeouts" do
-      assert {:error, %HTTPoison.Error{reason: :timeout}} =
+      assert {:error, %{reason: :timeout}} =
                HTTP.request(
                  %{},
                  :get,
                  "http://#{System.get_env("ELASTICSEARCH_HOST", "localhost")}:9200/_cat/health",
                  "",
-                 recv_timeout: 0
+                 receive_timeout: 0
                )
     end
   end
