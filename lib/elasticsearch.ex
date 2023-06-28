@@ -302,7 +302,6 @@ defmodule Elasticsearch do
   @spec put(Cluster.t(), url, data, opts) :: response
   def put(cluster, url, data, opts \\ []) do
     config = Config.get(cluster)
-    # |> IO.inspect(label: "config")
 
     config
     |> do_request(:put, url, data, opts)
