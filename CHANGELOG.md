@@ -1,5 +1,36 @@
 # Changelog
 
+## [v1.1.0](https://github.com/danielberkompas/elasticsearch-elixir/tree/v1.1.0) (2023-09-15)
+
+[Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v1.0.1...v1.1.0)
+
+**Fixed bugs:**
+
+- Missing Elasticsearch.Exception.t causes dialyzer error [\#75](https://github.com/danielberkompas/elasticsearch-elixir/issues/75)
+
+**Closed issues:**
+
+- New release with latest code? [\#116](https://github.com/danielberkompas/elasticsearch-elixir/issues/116)
+- support for embedded schema [\#102](https://github.com/danielberkompas/elasticsearch-elixir/issues/102)
+- Failed to run cli app [\#94](https://github.com/danielberkompas/elasticsearch-elixir/issues/94)
+- Deleting with a body [\#93](https://github.com/danielberkompas/elasticsearch-elixir/issues/93)
+- Release 1.0.1 [\#91](https://github.com/danielberkompas/elasticsearch-elixir/issues/91)
+- mix elasticsearch.install does not work for elasticsearch \>= 7 [\#85](https://github.com/danielberkompas/elasticsearch-elixir/issues/85)
+- Maximum amount of index saved [\#84](https://github.com/danielberkompas/elasticsearch-elixir/issues/84)
+- AWS Request Signature mismatch only for post query [\#83](https://github.com/danielberkompas/elasticsearch-elixir/issues/83)
+- Error when elasticsearch url times out [\#81](https://github.com/danielberkompas/elasticsearch-elixir/issues/81)
+- Consistent memory usage when bulk indexing? [\#80](https://github.com/danielberkompas/elasticsearch-elixir/issues/80)
+- Comparison with elastix? [\#71](https://github.com/danielberkompas/elasticsearch-elixir/issues/71)
+- Example of working app [\#56](https://github.com/danielberkompas/elasticsearch-elixir/issues/56)
+- Add --append option to `mix elasticsearch.build` [\#4](https://github.com/danielberkompas/elasticsearch-elixir/issues/4)
+
+**Merged pull requests:**
+
+- Telemetry for Elasticsearch API calls [\#104](https://github.com/danielberkompas/elasticsearch-elixir/pull/104) ([andrewhr](https://github.com/andrewhr))
+- Update to sigaws\_otp\_24 [\#101](https://github.com/danielberkompas/elasticsearch-elixir/pull/101) ([LetThereBeDwight](https://github.com/LetThereBeDwight))
+- Adds missing comma [\#99](https://github.com/danielberkompas/elasticsearch-elixir/pull/99) ([chadfennell](https://github.com/chadfennell))
+- Bulk "index" action and HEAD support [\#78](https://github.com/danielberkompas/elasticsearch-elixir/pull/78) ([tcrossland](https://github.com/tcrossland))
+
 ## [v1.0.1](https://github.com/danielberkompas/elasticsearch-elixir/tree/v1.0.1) (2021-01-21)
 
 [Full Changelog](https://github.com/danielberkompas/elasticsearch-elixir/compare/v1.0.0...v1.0.1)
