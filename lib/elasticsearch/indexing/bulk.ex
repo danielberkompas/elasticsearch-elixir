@@ -48,10 +48,23 @@ defmodule Elasticsearch.Index.Bulk do
       {"doctype":{"name":"post"},"author":null,"title":null}
       \"\"\"
 
+      iex> Bulk.encode!(Cluster, %Post{id: "my-id"}, "my-index", "delete")
+      \"\"\"
+      {"delete":{"_index":"my-index","_id":"my-id"}}
+      \"\"\"
+
       iex> Bulk.encode!(Cluster, 123, "my-index")
       ** (Protocol.UndefinedError) protocol Elasticsearch.Document not implemented for 123 of type Integer
   """
-  def encode!(cluster, struct, index, action \\ "create") do
+  def encode!(cluster, struct, index, action \\ "create")
+
+  def encode!(cluster, struct, index, "delete") do
+    config = Cluster.Config.get(cluster)
+    header = header(config, "delete", index, struct)
+    "#{header}\n"
+  end
+
+  def encode!(cluster, struct, index, action) do
     config = Cluster.Config.get(cluster)
     header = header(config, action, index, struct)
 
