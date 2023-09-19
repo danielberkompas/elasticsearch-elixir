@@ -103,7 +103,11 @@ config :my_app, MyApp.ElasticsearchCluster,
 
       # By default bulk indexing uses the "create" action. To allow existing
       # documents to be replaced, use the "index" action instead.
-      bulk_action: "create"
+      bulk_action: "create",
+
+      # Path to bulk api url. Should start with a slash.
+      # You may need to use `/_bulk` for newer ElasticSearch versions.
+      bulk_path: "/_doc/_bulk"
     }
   }
 ```
@@ -207,9 +211,9 @@ As AWS does not provide credentials' based http authentication, you can use the 
 To use this, just add `sigaws` to your dependencies and add this to your configuration:
 
 ```elixir
-# Add to deps 
+# Add to deps
 def deps do
-  [          
+  [
     # ...
     {:sigaws, ">= 0.0.0"}
   ]
